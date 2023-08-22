@@ -1,0 +1,19 @@
+* {
+	margin: 0;
+	padding: 0;
+	scroll-snap-align: start;
+	box-sizing: border-box;
+	scrollbar-width: none;
+	&::-webkit-scrollbar {
+		display: none;
+	}
+}
+
+body {
+	margin: 0;
+	font-family: 'Roboto', sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	scroll-behavior: smooth;
+	scroll-snap-type: y mandatory;
+}

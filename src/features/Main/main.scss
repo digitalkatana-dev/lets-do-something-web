@@ -1,0 +1,24 @@
+.main {
+	height: calc(100vh - 56px);
+	padding-top: 57px;
+	// border: 1px ridge crimson;
+}
+
+@media only screen and (min-width: 600px) {
+	.main {
+		height: calc(100vh - 64px);
+		padding-top: 65px;
+	}
+}
+
+@media only screen and (min-width: 700px) {
+}
+
+@media only screen and (min-width: 900px) {
+}
+
+@media only screen and (min-width: 1200px) {
+}
+
+@media only screen and (min-width: 1536px) {
+}
