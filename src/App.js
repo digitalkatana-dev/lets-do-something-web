@@ -7,14 +7,16 @@ import Main from './features/Main';
 import Profile from './features/Profile';
 
 function App() {
+	const { user } = useSelector((state) => state.user);
+
 	return (
 		<div className='App'>
-			<Navbar />
-			<NavMenu />
 			<Router>
+				<Navbar />
+				<NavMenu />
 				<Routes>
 					<Route path='/' element={<Main />} />
-					<Route path='/profile' element={<Profile />} />
+					<Route path='/profile' element={user ? <Profile /> : <Main />} />
 				</Routes>
 			</Router>
 		</div>
