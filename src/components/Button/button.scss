@@ -1,0 +1,12 @@
+.btn {
+	margin: 10px 0;
+	padding: 8px;
+	border-radius: 30px;
+	border: none;
+	color: whitesmoke;
+	background-color: indigo;
+
+	&:hover {
+		background-color: green;
+	}
+}

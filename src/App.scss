@@ -1,3 +1,31 @@
 .App {
 	text-align: center;
+
+	.white-txt {
+		color: whitesmoke;
+	}
+
+	.visibility-icon {
+		color: grey;
+	}
+
+	.success {
+		color: green;
+	}
+
+	.fail {
+		color: red;
+	}
+
+	.link {
+		text-decoration: none;
+		color: steelblue;
+		font-weight: bold;
+	}
+
+	.error {
+		color: red;
+		text-align: center;
+		margin-top: 5px;
+	}
 }
