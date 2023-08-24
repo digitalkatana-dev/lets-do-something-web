@@ -23,8 +23,8 @@ const Memories = () => {
 		{
 			id: 3,
 			date: '8/15/2023',
-			location: 'Right near da beach maaan!',
-			pic: 'https://res.cloudinary.com/dk9gbz4ag/image/upload/v1684994354/samples/imagecon-group.jpg',
+			location: 'Right near da beach Boy-eee!',
+			pic: 'https://res.cloudinary.com/dk9gbz4ag/image/upload/v1684994352/samples/landscapes/beach-boat.jpg',
 			user: 'Samson Simpson',
 		},
 	]);
