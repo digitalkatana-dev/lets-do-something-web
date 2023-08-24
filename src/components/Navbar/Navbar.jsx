@@ -1,10 +1,4 @@
-import {
-	AppBar,
-	Avatar,
-	IconButton,
-	Toolbar,
-	useScrollTrigger,
-} from '@mui/material';
+import { AppBar, Avatar, Toolbar, useScrollTrigger } from '@mui/material';
 import { cloneElement } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -79,14 +73,14 @@ const Navbar = (props) => {
 					{user ? (
 						<div className='user-controls'>
 							<Link to='/'>
-								<IconButton>
+								<IconBtn>
 									<HomeIcon className='white-txt home' />
-								</IconButton>
+								</IconBtn>
 							</Link>
 							<Link to='/' onClick={handleLogout}>
-								<IconButton>
+								<IconBtn>
 									<LogoutIcon className='white-txt logout' />
-								</IconButton>
+								</IconBtn>
 							</Link>
 						</div>
 					) : (
