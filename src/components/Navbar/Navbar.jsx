@@ -7,6 +7,10 @@ import {
 } from '@mui/material';
 import { cloneElement } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { clearErrors, getUser, logout } from '../../redux/slices/userSlice';
+import { setMenuOpen, setMenuView } from '../../redux/slices/navSlice';
+import { persistor } from '../../redux/rootStore';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import HomeIcon from '@mui/icons-material/Home';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -14,12 +18,9 @@ import './navbar.scss';
 import IconBtn from '../../components/IconBtn';
 
 const Navbar = (props) => {
-	const menuOpen = false;
-	// const user = {
-	// 	firstName: 'Brandon',
-	// 	lastName: 'Benoit',
-	// };
-	const user = null;
+	const { menuOpen } = useSelector((state) => state.nav);
+	const { user } = useSelector((state) => state.user);
+	const dispatch = useDispatch();
 
 	const ElevationScroll = (props) => {
 		const { children } = props;
@@ -33,6 +34,24 @@ const Navbar = (props) => {
 		});
 	};
 
+	const handleMenu = () => {
+		dispatch(setMenuOpen(!menuOpen));
+		setTimeout(() => {
+			dispatch(clearErrors());
+			dispatch(setMenuView('Login'));
+		}, 1000);
+	};
+
+	const handleProfile = () => {
+		dispatch(getUser(user?._id));
+	};
+
+	const handleLogout = (e) => {
+		e.preventDefault();
+		dispatch(logout());
+		persistor.purge();
+	};
+
 	return (
 		<ElevationScroll {...props}>
 			<AppBar>
@@ -40,7 +59,7 @@ const Navbar = (props) => {
 					{user ? (
 						<div className='user-area'>
 							<h3>Hello, {user.firstName}!</h3>
-							<a href='/profile'>
+							<Link to='/profile' onClick={handleProfile}>
 								<IconBtn tooltip='Profile' placement='right-end'>
 									{user?.profilePic ? (
 										<Avatar
@@ -49,29 +68,29 @@ const Navbar = (props) => {
 											sx={{ width: 30, height: 30 }}
 										/>
 									) : (
-										<AccountCircleIcon className='settings-icon' />
+										<AccountCircleIcon className='profile-icon white-txt' />
 									)}
 								</IconBtn>
-							</a>
+							</Link>
 						</div>
 					) : (
 						<div></div>
 					)}
 					{user ? (
 						<div className='user-controls'>
-							<a href='/'>
+							<Link to='/'>
 								<IconButton>
-									<HomeIcon className='home' />
+									<HomeIcon className='white-txt home' />
 								</IconButton>
-							</a>
-							<a href='/'>
+							</Link>
+							<Link to='/' onClick={handleLogout}>
 								<IconButton>
-									<LogoutIcon className='logout' />
+									<LogoutIcon className='white-txt logout' />
 								</IconButton>
-							</a>
+							</Link>
 						</div>
 					) : (
-						<div className='hamburger'>
+						<div className='hamburger' onClick={handleMenu}>
 							<span className='line1'></span>
 							<span className='line2'></span>
 							<span className='line3'></span>

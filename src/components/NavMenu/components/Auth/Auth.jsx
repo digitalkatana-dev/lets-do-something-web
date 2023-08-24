@@ -7,6 +7,20 @@ import {
 	RadioGroup,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
+import {
+	register,
+	login,
+	setFirstName,
+	setLastName,
+	setPhone,
+	setEmail,
+	setPassword,
+	setNotify,
+	setShow,
+	clearForm,
+	clearErrors,
+} from '../../../../redux/slices/userSlice';
+import { setMenuView } from '../../../../redux/slices/navSlice';
 import LoginIcon from '@mui/icons-material/Login';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import Visibility from '@mui/icons-material/Visibility';
@@ -17,14 +31,94 @@ import TextInput from '../../../../components/TextInput';
 import TouchableOpacity from '../../../../components/TouchableOpacity';
 
 const Auth = () => {
-	const menuView = 'Login';
-	const errors = null;
-	const show = false;
-	const loading = false;
+	const { menuView } = useSelector((state) => state.nav);
+	const {
+		loading,
+		firstName,
+		lastName,
+		phone,
+		email,
+		password,
+		notify,
+		show,
+		errors,
+	} = useSelector((state) => state.user);
+	const dispatch = useDispatch();
+
+	const handleFocus = () => {
+		dispatch(clearErrors());
+	};
+
+	const handleChange = (input, value) => {
+		switch (input) {
+			case 'toggle':
+				dispatch(clearErrors());
+				dispatch(clearForm());
+				dispatch(setMenuView(value));
+				break;
+
+			case 'first':
+				dispatch(setFirstName(value));
+				break;
+
+			case 'last':
+				dispatch(setLastName(value));
+				break;
+
+			case 'phone':
+				dispatch(setPhone(value));
+				break;
+
+			case 'email':
+				dispatch(setEmail(value));
+				break;
+
+			case 'password':
+				dispatch(setPassword(value));
+				break;
+
+			case 'notify':
+				dispatch(setNotify(value));
+				break;
+
+			default:
+				break;
+		}
+	};
+
+	const handleSubmit = (e) => {
+		e.preventDefault();
+
+		const data = {
+			email: email.toLowerCase(),
+			password,
+		};
+
+		switch (menuView) {
+			case 'Login':
+				dispatch(login(data));
+				break;
+
+			case 'Register':
+				data.firstName = firstName;
+				data.lastName = lastName;
+				data.phone = phone;
+				data.notify = notify;
+				dispatch(register(data));
+				break;
+
+			default:
+				break;
+		}
+	};
 
 	return (
 		<>
-			<TouchableOpacity>
+			<TouchableOpacity
+				onClick={() =>
+					handleChange('toggle', menuView === 'Login' ? 'Register' : 'Login')
+				}
+			>
 				<h2>{menuView}</h2>
 				{menuView === 'Register' ? (
 					<>
@@ -42,15 +136,29 @@ const Auth = () => {
 					</>
 				)}
 			</TouchableOpacity>
-			<form>
+			<form onSubmit={handleSubmit}>
 				<FormControl variant='standard'>
 					{menuView === 'Register' && (
 						<>
-							<TextInput label='First Name' margin='dense' size='small' />
+							<TextInput
+								label='First Name'
+								margin='dense'
+								size='small'
+								value={firstName}
+								onFocus={handleFocus}
+								onChange={(e) => handleChange('first', e.target.value)}
+							/>
 							{errors && errors.firstName && (
 								<h6 className='error'>{errors.firstName}</h6>
 							)}
-							<TextInput label='Last Name' margin='dense' size='small' />
+							<TextInput
+								label='Last Name'
+								margin='dense'
+								size='small'
+								value={lastName}
+								onFocus={handleFocus}
+								onChange={(e) => handleChange('last', e.target.value)}
+							/>
 							{errors && errors.lastName && (
 								<h6 className='error'>{errors.lastName}</h6>
 							)}
@@ -59,23 +167,41 @@ const Auth = () => {
 								label='Mobile Number'
 								margin='dense'
 								size='small'
+								value={phone}
+								onFocus={handleFocus}
+								onChange={(e) => handleChange('phone', e.target.value)}
 							/>
 							{errors && errors.phone && (
 								<h6 className='error'>{errors.phone}</h6>
 							)}
 						</>
 					)}
-					<TextInput type='email' label='Email' margin='dense' size='small' />
+					<TextInput
+						type='email'
+						label='Email'
+						margin='dense'
+						size='small'
+						value={email}
+						onFocus={handleFocus}
+						onChange={(e) => handleChange('email', e.target.value)}
+					/>
 					{errors && errors.email && <h6 className='error'>{errors.email}</h6>}
 					<TextInput
 						type={show ? 'text' : 'password'}
 						label='Password'
 						margin='dense'
 						size='small'
+						value={password}
+						onFocus={handleFocus}
+						onChange={(e) => handleChange('password', e.target.value)}
 						InputProps={{
 							endAdornment: (
 								<InputAdornment position='end'>
-									<IconBtn edge='end'>
+									<IconBtn
+										edge='end'
+										onMouseDown={(e) => e.preventDefault()}
+										onClick={() => dispatch(setShow())}
+									>
 										{show ? (
 											<VisibilityOff className='visibility-icon' />
 										) : (
@@ -94,7 +220,11 @@ const Auth = () => {
 							<FormLabel className='notify-label'>
 								How do want to be notified?
 							</FormLabel>
-							<RadioGroup row>
+							<RadioGroup
+								row
+								value={notify}
+								onChange={(e) => handleChange('notify', e.target.value)}
+							>
 								<FormControlLabel
 									className='notify-label'
 									value='sms'
@@ -129,7 +259,11 @@ const Auth = () => {
 					<Button type='submit' loading={loading} label='SUBMIT' />
 				</FormControl>
 			</form>
-			{menuView === 'Login' && <h6 className='link'>Forgot Password</h6>}
+			{menuView === 'Login' && (
+				<h6 className='link' onClick={() => dispatch(setMenuView('Forgot'))}>
+					Forgot Password
+				</h6>
+			)}
 		</>
 	);
 };
