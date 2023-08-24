@@ -1,0 +1,34 @@
+.slide {
+	width: 90%;
+	align-self: center;
+
+	.slick-arrow::before {
+		color: black !important;
+	}
+
+	.pic-container {
+		width: 100%;
+		max-width: 500px;
+		height: 300px;
+		position: relative;
+
+		img {
+			width: 100%;
+			height: 100%;
+			object-fit: fill;
+		}
+
+		.overlay {
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			bottom: 0;
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+			padding: 10px;
+			background-color: rgba(0, 0, 0, 0.4);
+			color: whitesmoke;
+		}
+	}
+}

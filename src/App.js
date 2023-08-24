@@ -5,6 +5,8 @@ import Navbar from './components/Navbar';
 import NavMenu from './components/NavMenu';
 import Main from './features/Main';
 import Profile from './features/Profile';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
 function App() {
 	const { user } = useSelector((state) => state.user);
