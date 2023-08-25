@@ -50,7 +50,10 @@ function App() {
 				onClose={() =>
 					handleClose(success ? 'success' : errors ? 'errors' : null)
 				}
-			></Snackbar>
+			>
+				{success && <Alert severity='success'>{success.message}</Alert>}
+				{errors && <Alert severity='error'>{errors.message}</Alert>}
+			</Snackbar>
 		</div>
 	);
 }
