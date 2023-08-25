@@ -1,0 +1,19 @@
+.action-btn {
+	display: flex;
+	align-items: center;
+	padding: 5px 10px;
+	margin: 5px 0;
+	border: 1px solid lightgrey;
+	border-radius: 30px;
+	cursor: pointer;
+
+	&:hover {
+		box-shadow: 0 2.5px grey;
+	}
+
+	.action-btn-icon {
+		width: 20px;
+		height: 20px;
+		margin-right: 2px;
+	}
+}

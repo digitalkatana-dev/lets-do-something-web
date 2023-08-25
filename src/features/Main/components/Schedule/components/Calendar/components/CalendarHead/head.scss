@@ -1,0 +1,55 @@
+.head {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 2px 4px;
+
+	h3,
+	h4 {
+		color: grey;
+		font-weight: 200;
+	}
+
+	h3 {
+		font-size: 12px;
+		margin-right: 15px;
+	}
+
+	h4 {
+		font-size: 11px;
+		margin-left: 15px;
+	}
+
+	.icon {
+		width: 30px;
+		height: 30px;
+		margin-right: 2px;
+	}
+
+	.today-btn {
+		padding: 2px 4px;
+		margin-right: 10px;
+		color: grey;
+		border-color: lightgrey;
+	}
+
+	.icon-btn.left {
+		margin-left: 5px;
+	}
+}
+@media only screen and (min-width: 600px) {
+	.head {
+		h3,
+		h4 {
+			font-size: initial;
+		}
+	}
+}
+@media only screen and (min-width: 700px) {
+}
+@media only screen and (min-width: 900px) {
+}
+@media only screen and (min-width: 1200px) {
+}
+@media only screen and (min-width: 1536px) {
+}

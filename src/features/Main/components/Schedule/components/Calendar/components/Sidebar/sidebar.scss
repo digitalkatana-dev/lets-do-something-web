@@ -1,0 +1,32 @@
+.sidebar {
+	display: none;
+}
+
+@media only screen and (min-width: 500px) {
+}
+@media only screen and (min-width: 600px) {
+}
+@media only screen and (min-width: 900px) {
+	.sidebar {
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+		align-items: center;
+		padding: 2px 4px;
+		margin: 0 10px;
+
+		.small-cal {
+			display: block;
+
+			.small-head {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
+		}
+	}
+}
+@media only screen and (min-width: 1200px) {
+}
+@media only screen and (min-width: 1536px) {
+}

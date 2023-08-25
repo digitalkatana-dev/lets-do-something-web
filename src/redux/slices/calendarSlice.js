@@ -100,9 +100,10 @@ export const deleteEvent = createAsyncThunk(
 	'calendar/delete_event',
 	async (eventInfo, { rejectWithValue, dispatch }) => {
 		try {
-			const res = await doSomethingApi.delete(`/events/${eventInfo}`);
+			const res = await doSomethingApi.delete(`/events/${eventInfo.event}`);
 			if (res.data.success) {
 				dispatch(getUser(eventInfo.user));
+				dispatch(toggleOpen(false));
 				dispatch(setSelectedEvent(null));
 			}
 
