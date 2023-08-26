@@ -1,18 +1,9 @@
 import { Grid } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-	setDaySelected,
-	toggleOpen,
-} from '../../../../../../../../redux/slices/calendarSlice';
-import {
-	setEventTime,
-	setSelectedEvent,
-} from '../../../../../../../../redux/slices/eventSlice';
-import {
-	getCurrentDayClass,
-	defaultTime,
-} from '../../../../../../../../util/helpers';
+import { setDaySelected } from '../../../../../../../../redux/slices/calendarSlice';
+import { setSelectedEvent } from '../../../../../../../../redux/slices/eventSlice';
+import { getCurrentDayClass } from '../../../../../../../../util/helpers';
 import dayjs from 'dayjs';
 import TouchableOpacity from '../../../../../../../../components/TouchableOpacity';
 import './day.scss';
@@ -24,8 +15,6 @@ const Day = ({ day, rowIdx }) => {
 
 	const handleClick = () => {
 		dispatch(setDaySelected(day));
-		dispatch(setEventTime(defaultTime(day)));
-		dispatch(toggleOpen(true));
 	};
 
 	useEffect(() => {

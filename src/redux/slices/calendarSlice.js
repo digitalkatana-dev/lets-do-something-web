@@ -4,10 +4,23 @@ import {
 	createSlice,
 } from '@reduxjs/toolkit';
 import { getUser } from './userSlice';
-import { setSelectedEvent } from './eventSlice';
-import { getMonth } from '../../util/helpers';
+import { setSelectedEvent, setEventTime } from './eventSlice';
+import { getMonth, defaultTime } from '../../util/helpers';
 import dayjs from 'dayjs';
 import doSomethingApi from '../../api/doSomethingApi';
+
+export const setDaySelected = createAsyncThunk(
+	'calendar/set_selected_day',
+	async (calendarInfo, { dispatch }) => {
+		try {
+			dispatch(setEventTime(defaultTime(calendarInfo)));
+			dispatch(toggleOpen(true));
+			return calendarInfo;
+		} catch (err) {
+			return { message: 'Error settng date' };
+		}
+	}
+);
 
 export const createEvent = createAsyncThunk(
 	'calendar/create_event',
@@ -167,9 +180,6 @@ export const calendarSlice = createSlice({
 		setMonthIndexSmall: (state, action) => {
 			state.monthIndexSmall = action.payload;
 		},
-		setDaySelected: (state, action) => {
-			state.daySelected = action.payload;
-		},
 		setGuestList: (state, action) => {
 			state.guestList = action.payload;
 		},
@@ -188,6 +198,18 @@ export const calendarSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder
+			.addCase(setDaySelected.pending, (state) => {
+				state.loading = true;
+				state.errors = null;
+			})
+			.addCase(setDaySelected.fulfilled, (state, action) => {
+				state.loading = false;
+				state.daySelected = action.payload;
+			})
+			.addCase(setDaySelected.rejected, (state, action) => {
+				state.loading = false;
+				state.errors = action.payload;
+			})
 			.addCase(createEvent.pending, (state) => {
 				state.loading = true;
 				state.errors = null;
@@ -317,7 +339,6 @@ export const {
 	setMonthIndex,
 	setCurrentMonthSmall,
 	setMonthIndexSmall,
-	setDaySelected,
 	setGuestList,
 	setEventsAttending,
 	setErrors,
