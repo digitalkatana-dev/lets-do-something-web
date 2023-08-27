@@ -1,0 +1,38 @@
+.calendar {
+	// border: 2px solid firebrick;
+	// width: fit-content;
+
+	.container {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		// border: 2px solid chartreuse;
+	}
+}
+@media only screen and (min-width: 600px) {
+	.calendar {
+		// max-width: 90%;
+	}
+}
+@media only screen and (min-width: 700px) {
+	.calendar {
+		max-width: 65%;
+	}
+}
+@media only screen and (min-width: 900px) {
+	.calendar {
+		.container {
+			flex-direction: row;
+		}
+	}
+}
+@media only screen and (min-width: 1200px) {
+	.calendar {
+		max-width: 57%;
+	}
+}
+@media only screen and (min-width: 1536px) {
+	.calendar {
+		max-width: 45%;
+	}
+}

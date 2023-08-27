@@ -1,4 +1,5 @@
 import { IconButton, Tooltip } from '@mui/material';
+import './iconBtn.scss';
 
 const IconBtn = ({
 	tooltip,
@@ -17,12 +18,18 @@ const IconBtn = ({
 					disabled={disabled}
 					onClick={onClick}
 					onMouseDown={onMouseDown}
+					className='base-btn'
 				>
 					{children}
 				</IconButton>
 			) : (
 				<Tooltip title={tooltip} placement={placement}>
-					<IconButton edge={edge} onClick={onClick} onMouseDown={onMouseDown}>
+					<IconButton
+						edge={edge}
+						onClick={onClick}
+						onMouseDown={onMouseDown}
+						className='base-btn'
+					>
 						{children}
 					</IconButton>
 				</Tooltip>

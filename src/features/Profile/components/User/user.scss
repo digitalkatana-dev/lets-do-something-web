@@ -1,0 +1,138 @@
+.user {
+	width: 100vw;
+	height: fit-content;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+	// border: 2px ridge red;
+
+	#update {
+		position: absolute;
+		top: 10px;
+		right: 10px;
+		background-color: green;
+		color: whitesmoke;
+		padding: 7px;
+		border: none;
+		border-radius: 15px;
+	}
+
+	.pic-box {
+		width: 175px;
+		height: 175px;
+		position: relative;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		margin-bottom: 10px;
+		// border: 1px ridge green;
+
+		.no-pic,
+		.profile-pic {
+			width: 125px;
+			height: 125px;
+		}
+
+		.profile-pic {
+			border-radius: 50%;
+		}
+
+		.pic-add {
+			position: absolute;
+			bottom: 0;
+			right: 0;
+			color: green;
+		}
+	}
+
+	.info-box {
+		width: 95%;
+		display: flex;
+		justify-content: space-around;
+		padding: 5px;
+		// border: 1px ridge indigo;
+
+		label,
+		// input,
+		.MuiFormControlLabel-label {
+			font-size: 13px;
+		}
+
+		input {
+			font-size: 11px;
+		}
+	}
+}
+
+@media only screen and (min-width: 500px) {
+	.user {
+		height: calc(100vh / 3);
+		flex-direction: row;
+		align-items: center;
+
+		.pic-box {
+			margin-bottom: 0;
+			margin-right: 10px;
+			margin-left: 10px;
+		}
+
+		.info-box {
+			margin-right: 10px;
+		}
+	}
+}
+@media only screen and (min-width: 600px) {
+	.user {
+		.pic-box {
+			width: 250px;
+			height: 100%;
+
+			.no-pic,
+			.profile-pic {
+				width: 225px;
+				height: 225px;
+			}
+		}
+	}
+}
+@media only screen and (min-width: 900px) {
+	.user {
+		.pic-box {
+			width: 300px;
+
+			.no-pic,
+			.profile-pic {
+				width: 275px;
+				height: 275px;
+			}
+		}
+	}
+}
+@media only screen and (min-width: 1200px) {
+	.user {
+		.pic-box {
+			width: 450px;
+
+			.no-pic,
+			.profile-pic {
+				width: 300px;
+				height: 300px;
+			}
+		}
+	}
+}
+@media only screen and (min-width: 1536px) {
+	.user {
+		.pic-box {
+			width: 600px;
+
+			.no-pic,
+			.profile-pic {
+				width: 400px;
+				height: inherit;
+			}
+		}
+	}
+}
