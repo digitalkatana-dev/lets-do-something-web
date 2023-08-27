@@ -4,7 +4,7 @@ import {
 	createSlice,
 } from '@reduxjs/toolkit';
 import { getUser } from './userSlice';
-import { setSelectedEvent, setEventTime } from './eventSlice';
+import { setSelectedEvent, setEventTime, setHeadcount } from './eventSlice';
 import { getMonth, defaultTime } from '../../util/helpers';
 import dayjs from 'dayjs';
 import doSomethingApi from '../../api/doSomethingApi';
@@ -66,7 +66,7 @@ export const updateEvent = createAsyncThunk(
 	async (eventInfo, { rejectWithValue, dispatch }) => {
 		try {
 			const res = await doSomethingApi.put(`/events/update`, eventInfo);
-			const creator = res.data.updateEvent.createdBy;
+			const creator = res.data.updatedEvent.createdBy;
 			if (creator) dispatch(getUser(creator));
 
 			return res.data;
@@ -81,7 +81,8 @@ export const attendEvent = createAsyncThunk(
 	async (eventInfo, { rejectWithValue, dispatch }) => {
 		try {
 			const res = await doSomethingApi.put('/events/add-attendee', eventInfo);
-			const creator = res.data.updateEvent.createdBy;
+			dispatch(setHeadcount(''));
+			const creator = res.data.updatedEvent.createdBy;
 			if (creator) dispatch(getUser(creator));
 
 			return res.data;
@@ -99,7 +100,7 @@ export const cancelRsvp = createAsyncThunk(
 				'/events/remove-attendee',
 				eventInfo
 			);
-			const creator = res.data.updateEvent.createdBy;
+			const creator = res.data.updatedEvent.createdBy;
 			if (creator) dispatch(getUser(creator));
 
 			return res.data;
@@ -132,7 +133,7 @@ export const uploadMemory = createAsyncThunk(
 	async (eventInfo, { rejectWithValue, dispatch }) => {
 		try {
 			const res = await doSomethingApi.post('/events/photo-upload', eventInfo);
-			const creator = res.data.updateEvent.createdBy;
+			const creator = res.data.updatedEvent.createdBy;
 			if (creator) dispatch(getUser(creator));
 
 			return res.data;

@@ -171,7 +171,6 @@ const EventModal = () => {
 			dispatch(setErrors(errors));
 		} else {
 			dispatch(findGuest(data));
-			dispatch(setInvitedGuestInput(''));
 		}
 	};
 
@@ -255,7 +254,6 @@ const EventModal = () => {
 				headcount,
 			};
 			dispatch(attendEvent(data));
-			dispatch(setHeadcount(''));
 		}
 	};
 
@@ -272,7 +270,6 @@ const EventModal = () => {
 			user: user?._id,
 		};
 		dispatch(deleteEvent(data));
-		// dispatch(setSelectedEvent(null));
 	};
 
 	useEffect(() => {
@@ -405,6 +402,26 @@ const EventModal = () => {
 									<DialogContentText className='rsvp-details'>
 										{selectedEvent?.type} @ {selectedEvent?.location}
 									</DialogContentText>
+									<DialogContentText className='rsvp-details'>
+										Hosted by:{' '}
+										{selectedEvent?.invitedGuests[0].firstName +
+											' ' +
+											selectedEvent?.invitedGuests[0].lastName}
+									</DialogContentText>
+									<div className='event-section'>
+										<EventIcon className='icon space' />
+										<h5>
+											{dayjs(selectedEvent?.date).format('dddd, MMMM DD')}
+										</h5>
+									</div>
+									<div className='event-section'>
+										<ScheduleIcon className='icon space' />
+										<h5>{dayjs(selectedEvent?.time).format('LT')}</h5>
+									</div>
+									<div className='event-section'>
+										<MyLocationIcon className='icon space' />
+										<h5>{selectedEvent?.location}</h5>
+									</div>
 									<DialogContentText className='rsvp-details sign-in-warning'>
 										{' '}
 										Sign in to RSVP!

@@ -5,10 +5,7 @@ import './upNext.scss';
 import Loading from '../../../../components/Loading';
 
 const UpNext = () => {
-	const loading = false;
-	const currentEvents = [
-		{ type: 'Brunch', date: '08-26-2023', location: 'House of Blues' },
-	];
+	const { loading, currentEvents } = useSelector((state) => state.calendar);
 
 	return (
 		<div className='up-next'>

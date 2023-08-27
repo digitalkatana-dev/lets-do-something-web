@@ -44,9 +44,10 @@ export const inviteSingle = createAsyncThunk(
 
 export const findGuest = createAsyncThunk(
 	'event/find_guest',
-	async (guestInfo, { rejectWithValue }) => {
+	async (guestInfo, { rejectWithValue, dispatch }) => {
 		try {
 			const res = await doSomethingApi.post('/users/find', guestInfo);
+			dispatch(setInvitedGuestInput(''));
 			return res.data;
 		} catch (err) {
 			return rejectWithValue(err.response.data);
