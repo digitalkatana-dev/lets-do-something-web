@@ -4,7 +4,12 @@ import {
 	createSlice,
 } from '@reduxjs/toolkit';
 import { getUser } from './userSlice';
-import { setSelectedEvent, setEventTime, setHeadcount } from './eventSlice';
+import {
+	setSelectedEvent,
+	setEventTime,
+	setHeadcount,
+	clearEvent,
+} from './eventSlice';
 import { getMonth, defaultTime } from '../../util/helpers';
 import dayjs from 'dayjs';
 import doSomethingApi from '../../api/doSomethingApi';
@@ -29,6 +34,7 @@ export const createEvent = createAsyncThunk(
 			const res = await doSomethingApi.post('/events', eventInfo);
 			const creator = res.data.event.createdBy;
 			if (creator) dispatch(getUser(creator));
+			dispatch(clearEvent());
 
 			return res.data;
 		} catch (err) {
@@ -68,6 +74,7 @@ export const updateEvent = createAsyncThunk(
 			const res = await doSomethingApi.put(`/events/update`, eventInfo);
 			const creator = res.data.updatedEvent.createdBy;
 			if (creator) dispatch(getUser(creator));
+			dispatch(clearEvent());
 
 			return res.data;
 		} catch (err) {
@@ -234,7 +241,7 @@ export const calendarSlice = createSlice({
 				state.loading = false;
 				state.savedEvents = action.payload.all;
 				state.currentEvents = action.payload.current;
-				state.memoryEvents = action.payload.all;
+				state.memoryEvents = action.payload.memories;
 			})
 			.addCase(getAllEvents.rejected, (state, action) => {
 				state.loading = false;
@@ -248,6 +255,7 @@ export const calendarSlice = createSlice({
 				state.loading = false;
 				state.savedEvents = action.payload.invited;
 				state.currentEvents = action.payload.current;
+				state.memoryEvents = action.payload.memories;
 			})
 			.addCase(getInvitedEvents.rejected, (state, action) => {
 				state.loading = false;
@@ -310,6 +318,7 @@ export const calendarSlice = createSlice({
 				state.success = action.payload.success;
 				state.savedEvents = action.payload.updatedAll;
 				state.currentEvents = action.payload.current;
+				state.memoryEvents = action.payload.memories;
 				state.open = false;
 			})
 			.addCase(deleteEvent.rejected, (state, action) => {
@@ -325,7 +334,7 @@ export const calendarSlice = createSlice({
 				state.success = action.payload.success;
 				state.savedEvents = action.payload.updatedAll;
 				state.currentEvents = action.payload.current;
-				state.memoryEvents = action.payload.updatedAll;
+				state.memoryEvents = action.payload.memories;
 			})
 			.addCase(uploadMemory.rejected, (state, action) => {
 				state.loading = false;
