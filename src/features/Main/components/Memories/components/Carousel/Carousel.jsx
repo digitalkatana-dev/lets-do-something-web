@@ -13,10 +13,12 @@ const Carousel = ({ memories }) => {
 		<Slider {...settings} className='slide' autoplay>
 			{memories?.map((item) => (
 				<div className='pic-container' key={item.id}>
-					<img src={item.pic} alt='test' />
-					<div className='overlay'>
-						<h5>{item.location + ' ' + item.date}</h5>
-						<h5>Uploaded by: {item.user}</h5>
+					<div className='pic-wrapper'>
+						<img src={item.pic} alt='test' />
+						<div className='overlay'>
+							<h5>{item.location + ' ' + item.date}</h5>
+							<h5>Uploaded by: {item.user}</h5>
+						</div>
 					</div>
 				</div>
 			))}
