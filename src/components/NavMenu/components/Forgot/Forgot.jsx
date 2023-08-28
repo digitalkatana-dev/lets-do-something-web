@@ -43,16 +43,16 @@ const Forgot = () => {
 		}
 	};
 
-	useEffect(() => {
-		if (success) {
-			setTimeout(() => {
-				dispatch(setEmail(''));
-				dispatch(clearSuccess());
-				dispatch(setMenuOpen(false));
-				dispatch(setMenuView('Login'));
-			}, 5000);
-		}
-	}, [success]);
+	// useEffect(() => {
+	// 	if (success) {
+	// 		setTimeout(() => {
+	// 			dispatch(setEmail(''));
+	// 			dispatch(clearSuccess());
+	// 			dispatch(setMenuOpen(false));
+	// 			dispatch(setMenuView('Login'));
+	// 		}, 5000);
+	// 	}
+	// }, [success]);
 
 	return (
 		<>

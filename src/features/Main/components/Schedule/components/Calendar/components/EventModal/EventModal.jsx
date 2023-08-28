@@ -83,7 +83,7 @@ dayjs.extend(isSameOrBefore);
 
 const EventModal = () => {
 	const { user } = useSelector((state) => state.user);
-	const { open, daySelected, eventsAttending, success } = useSelector(
+	const { open, daySelected, eventsAttending } = useSelector(
 		(state) => state.calendar
 	);
 	const {
@@ -272,9 +272,9 @@ const EventModal = () => {
 		dispatch(deleteEvent(data));
 	};
 
-	useEffect(() => {
-		if (success) dispatch(clearEvent());
-	}, [success]);
+	// useEffect(() => {
+	// 	if (success) dispatch(clearEvent());
+	// }, [success]);
 
 	useEffect(() => {
 		if (selectedEvent) dispatch(setEventTime(selectedEvent?.time));
