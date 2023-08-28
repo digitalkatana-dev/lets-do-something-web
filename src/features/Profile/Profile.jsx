@@ -3,6 +3,7 @@ import './profile.scss';
 import User from './components/User';
 import Friends from './components/Friends';
 import Events from './components/Events';
+import EventsAlt from './components/EventsAlt';
 
 const Profile = () => {
 	return (
@@ -10,6 +11,7 @@ const Profile = () => {
 			<User />
 			<Friends />
 			<Events />
+			<EventsAlt />
 		</div>
 	);
 };

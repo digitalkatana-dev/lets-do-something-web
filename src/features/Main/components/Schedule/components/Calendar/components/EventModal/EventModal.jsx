@@ -252,6 +252,7 @@ const EventModal = () => {
 			data = {
 				eventId: selectedEvent?._id,
 				headcount,
+				user: user?._id,
 			};
 			dispatch(attendEvent(data));
 		}
@@ -260,6 +261,7 @@ const EventModal = () => {
 	const handleUndo = () => {
 		const data = {
 			eventId: selectedEvent?._id,
+			user: user?._id,
 		};
 		dispatch(cancelRsvp(data));
 	};

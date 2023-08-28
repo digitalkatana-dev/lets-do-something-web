@@ -89,8 +89,7 @@ export const attendEvent = createAsyncThunk(
 		try {
 			const res = await doSomethingApi.put('/events/add-attendee', eventInfo);
 			dispatch(setHeadcount(''));
-			const creator = res.data.updatedEvent.createdBy;
-			if (creator) dispatch(getUser(creator));
+			dispatch(getUser(eventInfo.user));
 
 			return res.data;
 		} catch (err) {
@@ -107,8 +106,7 @@ export const cancelRsvp = createAsyncThunk(
 				'/events/remove-attendee',
 				eventInfo
 			);
-			const creator = res.data.updatedEvent.createdBy;
-			if (creator) dispatch(getUser(creator));
+			dispatch(getUser(eventInfo.user));
 
 			return res.data;
 		} catch (err) {
