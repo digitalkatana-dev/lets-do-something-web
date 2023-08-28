@@ -4,15 +4,17 @@ import {
 	createSlice,
 } from '@reduxjs/toolkit';
 import { PURGE } from 'redux-persist';
+import { setMenuView } from './navSlice';
 import doSomethingApi from '../../api/doSomethingApi';
 
 export const register = createAsyncThunk(
 	'user/register',
-	async (data, { rejectWithValue }) => {
+	async (data, { rejectWithValue, dispatch }) => {
 		try {
 			const res = await doSomethingApi.post('/users/register', data);
 			const { token, userData } = res.data;
 			await localStorage.setItem('token', token);
+			dispatch(setMenuView('Login'));
 			return userData;
 		} catch (err) {
 			return rejectWithValue(err.response.data);
@@ -22,11 +24,12 @@ export const register = createAsyncThunk(
 
 export const login = createAsyncThunk(
 	'user/login',
-	async (data, { rejectWithValue }) => {
+	async (data, { rejectWithValue, dispatch }) => {
 		try {
 			const res = await doSomethingApi.post('/users/login', data);
 			const { token, userData } = res.data;
 			await localStorage.setItem('token', token);
+			dispatch(setMenuView('Login'));
 			return userData;
 		} catch (err) {
 			return rejectWithValue(err.response.data);
