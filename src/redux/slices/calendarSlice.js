@@ -122,11 +122,9 @@ export const deleteEvent = createAsyncThunk(
 	async (eventInfo, { rejectWithValue, dispatch }) => {
 		try {
 			const res = await doSomethingApi.delete(`/events/${eventInfo.event}`);
-			if (res.data.success) {
-				dispatch(getUser(eventInfo.user));
-				dispatch(toggleOpen(false));
-				dispatch(setSelectedEvent(null));
-			}
+			dispatch(getUser(eventInfo.user));
+			dispatch(toggleOpen(false));
+			dispatch(setSelectedEvent(null));
 
 			return res.data;
 		} catch (err) {
