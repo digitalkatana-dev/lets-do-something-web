@@ -40,8 +40,7 @@ const Navbar = (props) => {
 		dispatch(getUser(user?._id));
 	};
 
-	const handleLogout = (e) => {
-		e.preventDefault();
+	const handleLogout = () => {
 		dispatch(logout());
 		persistor.purge();
 	};
