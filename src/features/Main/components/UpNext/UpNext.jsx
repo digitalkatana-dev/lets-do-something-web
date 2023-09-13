@@ -13,7 +13,7 @@ const UpNext = () => {
 				Up next:{' '}
 				{loading ? (
 					<Loading size={20} style={{ marginBottom: -5, marginLeft: 5 }} />
-				) : !loading && currentEvents ? (
+				) : !loading && currentEvents?.length > 0 ? (
 					<TypeAnimation
 						cursor={true}
 						sequence={[
