@@ -3,18 +3,13 @@ import {
 	AccordionSummary,
 	AccordionDetails,
 	IconButton,
-	Stack,
-	Switch,
-	Typography,
 } from '@mui/material';
-import { useState } from 'react';
 import dayjs from 'dayjs';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import DeleteIcon from '@mui/icons-material/Delete';
-import './eventAccordion.scss';
+import UndoIcon from '@mui/icons-material/Undo';
+import './attending.scss';
 
-const EventAccordion = ({ event }) => {
-	const [rsvpOpen, setRsvpOpen] = useState(event ? event.rsvpOpen : false);
+const Attending = ({ event }) => {
 	let color;
 
 	switch (event?.label) {
@@ -34,11 +29,11 @@ const EventAccordion = ({ event }) => {
 
 	return (
 		<Accordion
-			sx={{ '&:not(:last-child)': { borderBottom: '2px ridge white' } }}
+			sx={{ '&:not(:last-child)': { borderBottom: '2px ridge whitesmoke' } }}
 			style={{ backgroundColor: event?.label, margin: 0 }}
 		>
 			<AccordionSummary expandIcon={<ExpandMoreIcon />}>
-				<h4 style={{ color: color }}>
+				<h4 style={{ color }}>
 					{event?.type +
 						' ' +
 						event?.date +
@@ -51,31 +46,13 @@ const EventAccordion = ({ event }) => {
 			<AccordionDetails>
 				<div className='detail-row'>
 					<div className='row-section'>
-						<h4>RSVP Open</h4>
-					</div>
-					<div className='row-section'>
-						<h4>Delete</h4>
+						<h4>Cancel</h4>
 					</div>
 				</div>
 				<div className='detail-row'>
 					<div className='row-section'>
-						{event?.isPublic ? (
-							<Stack direction='row' spacing={1} alignItems='center'>
-								<Typography style={{ color: 'whitesmoke' }}>Closed</Typography>
-								<Switch
-									checked={rsvpOpen}
-									onChange={() => setRsvpOpen(!rsvpOpen)}
-									color='default'
-								/>
-								<Typography style={{ color: 'whitesmoke' }}>Open</Typography>
-							</Stack>
-						) : (
-							<h4>N/A</h4>
-						)}
-					</div>
-					<div className='row-section'>
 						<IconButton style={{ backgroundColor: 'whitesmoke' }}>
-							<DeleteIcon htmlColor='red' />
+							<UndoIcon htmlColor='green' />
 						</IconButton>
 					</div>
 				</div>
@@ -84,4 +61,4 @@ const EventAccordion = ({ event }) => {
 	);
 };
 
-export default EventAccordion;
+export default Attending;

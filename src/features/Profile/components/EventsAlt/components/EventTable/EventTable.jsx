@@ -17,9 +17,10 @@ import {
 import { updateEvent } from '../../../../../../redux/slices/calendarSlice';
 import dayjs from 'dayjs';
 import DeleteIcon from '@mui/icons-material/Delete';
+import UndoIcon from '@mui/icons-material/Undo';
 import './eventTable.scss';
 
-const EventTable = ({ event }) => {
+const EventTable = ({ eventType, event }) => {
 	const { user } = useSelector((state) => state.user);
 	// const { success, errors } = useSelector((state) => state.calendar);
 	const success = null;
@@ -98,26 +99,32 @@ const EventTable = ({ event }) => {
 					{eventDeets.trim()}
 				</h4>
 			</TableCell>
-			<TableCell align='center' className='table-cell'>
-				{event?.isPublic ? (
-					<div className='switch-container'>
-						<Stack direction='row' spacing={1} alignItems='center'>
-							<Typography className='white-txt'>Closed</Typography>
-							<Switch
-								checked={rsvpOpen}
-								onChange={() => setRsvpOpen(!rsvpOpen)}
-								color='default'
-							/>
-							<Typography className='white-txt'>Open</Typography>
-						</Stack>
-					</div>
-				) : (
-					<h4 className='white-txt'>N/A</h4>
-				)}
-			</TableCell>
+			{eventType === 'hosting' && (
+				<TableCell align='center' className='table-cell'>
+					{event?.isPublic ? (
+						<div className='switch-container'>
+							<Stack direction='row' spacing={1} alignItems='center'>
+								<Typography className='white-txt'>Closed</Typography>
+								<Switch
+									checked={rsvpOpen}
+									onChange={() => setRsvpOpen(!rsvpOpen)}
+									color='default'
+								/>
+								<Typography className='white-txt'>Open</Typography>
+							</Stack>
+						</div>
+					) : (
+						<h4 className='white-txt'>N/A</h4>
+					)}
+				</TableCell>
+			)}
 			<TableCell align='center' className='table-cell'>
 				<IconButton style={{ backgroundColor: 'whitesmoke' }}>
-					<DeleteIcon htmlColor='red' />
+					{eventType === 'hosting' ? (
+						<DeleteIcon htmlColor='red' />
+					) : (
+						<UndoIcon htmlColor='green' />
+					)}
 				</IconButton>
 			</TableCell>
 		</TableRow>

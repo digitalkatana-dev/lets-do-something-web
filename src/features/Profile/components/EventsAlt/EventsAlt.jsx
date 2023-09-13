@@ -29,16 +29,6 @@ const EventsAlt = () => {
 						<h4>Hosting</h4>
 					</div>
 					<div className='event-list'>
-						{attending.map((event) => (
-							<EventAccordion key={event._id} event={event} />
-						))}
-					</div>
-				</div>
-				<div className='container'>
-					<div className='toolbar'>
-						<h4>Attending</h4>
-					</div>
-					<div className='event-list'>
 						<TableContainer component={Paper}>
 							<Table sx={{ minWidth: 600 }} size='small'>
 								<TableHead>
@@ -56,7 +46,41 @@ const EventsAlt = () => {
 								</TableHead>
 								<TableBody>
 									{attending.map((event) => (
-										<EventTable key={event._id} event={event} />
+										<EventTable
+											key={event._id}
+											eventType='hosting'
+											event={event}
+										/>
+									))}
+								</TableBody>
+							</Table>
+						</TableContainer>
+					</div>
+				</div>
+				<div className='container'>
+					<div className='toolbar'>
+						<h4>Attending</h4>
+					</div>
+					<div className='event-list'>
+						<TableContainer component={Paper}>
+							<Table sx={{ minWidth: 600 }} size='small'>
+								<TableHead>
+									<TableRow className='table-head'>
+										<TableCell align='center' className='head-cell'>
+											Event
+										</TableCell>
+										<TableCell align='center' className='head-cell'>
+											Cancel
+										</TableCell>
+									</TableRow>
+								</TableHead>
+								<TableBody>
+									{attending.map((event) => (
+										<EventTable
+											key={event._id}
+											eventType='attending'
+											event={event}
+										/>
 									))}
 								</TableBody>
 							</Table>
