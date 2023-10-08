@@ -5,7 +5,7 @@ import Welcome from './components/Welcome';
 import UpNext from './components/UpNext';
 import Schedule from './components/Schedule';
 import Memories from './components/Memories';
-import Footer from './components/Footer';
+import Footer from '../../components/Footer';
 
 const Main = () => {
 	return (
