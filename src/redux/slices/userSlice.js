@@ -76,8 +76,8 @@ export const generatePasswordToken = createAsyncThunk(
 	}
 );
 
-export const resetPassword = createAsyncThunk(
-	'user/reset_password',
+export const resetPasswordWithToken = createAsyncThunk(
+	'user/reset_with_token',
 	async (userData, { rejectWithValue }) => {
 		try {
 			const res = await doSomethingApi.post('/users/reset-password', userData);
@@ -238,20 +238,22 @@ export const userSlice = createSlice({
 			.addCase(generatePasswordToken.fulfilled, (state, action) => {
 				state.loading = false;
 				state.success = action.payload;
+				state.email = '';
 			})
 			.addCase(generatePasswordToken.rejected, (state, action) => {
 				state.loading = false;
 				state.errors = action.payload;
 			})
-			.addCase(resetPassword.pending, (state) => {
+			.addCase(resetPasswordWithToken.pending, (state) => {
 				state.loading = true;
 				state.errors = null;
 			})
-			.addCase(resetPassword.fulfilled, (state, action) => {
+			.addCase(resetPasswordWithToken.fulfilled, (state, action) => {
 				state.loading = false;
 				state.success = action.payload;
+				state.password = '';
 			})
-			.addCase(resetPassword.rejected, (state, action) => {
+			.addCase(resetPasswordWithToken.rejected, (state, action) => {
 				state.loading = false;
 				state.errors = action.payload;
 			})
