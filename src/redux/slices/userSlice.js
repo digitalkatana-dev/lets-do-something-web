@@ -66,7 +66,7 @@ export const generatePasswordToken = createAsyncThunk(
 	async (userData, { rejectWithValue }) => {
 		try {
 			const res = await doSomethingApi.post(
-				'/users/forgot-password-token',
+				'/users/generate-password-token',
 				userData
 			);
 			return res.data;
