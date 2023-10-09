@@ -47,7 +47,7 @@ export const guestListEvents = (savedEvents, errorHandler) => {
 };
 
 export const alreadyAttending = (eventsAttending, selectedEvent) => {
-	const res = eventsAttending?.find((item) => item.id === selectedEvent?._id);
+	const res = eventsAttending?.find((item) => item._id === selectedEvent?._id);
 	return res;
 };
 

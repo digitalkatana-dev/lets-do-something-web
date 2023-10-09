@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {
+	Box,
 	Button,
 	Dialog,
 	DialogActions,
@@ -16,6 +17,8 @@ import {
 	Select,
 	Stack,
 	Switch,
+	Tabs,
+	Tab,
 	TextField,
 	Typography,
 } from '@mui/material';
@@ -78,6 +81,7 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import './eventModal.scss';
+import TabPanel from './components/TabPanel';
 import IconBtn from '../../../../../../../../components/IconBtn';
 dayjs.extend(isSameOrBefore);
 
@@ -100,17 +104,29 @@ const EventModal = () => {
 		selectedLabel,
 		errors,
 	} = useSelector((state) => state.event);
+	const [value, setValue] = useState(0);
 	const [file, setFile] = useState(null);
 	const [base64File, setBase64File] = useState('');
 	const eventAuthor = selectedEvent?.createdBy;
 	const currentUser = user?._id;
 	const dispatch = useDispatch();
 
+	const a11yProps = (index) => {
+		return {
+			id: `simple-tab-${index}`,
+			'aria-controls': `simple-tabpanel-${index}`,
+		};
+	};
+
 	const handleClose = () => {
 		dispatch(toggleOpen(false));
 		setTimeout(() => {
 			dispatch(setSelectedEvent(null));
 		}, 1000);
+	};
+
+	const handleTabs = (e, newVal) => {
+		setValue(newVal);
 	};
 
 	const handleChange = (input, value) => {
@@ -252,6 +268,7 @@ const EventModal = () => {
 			data = {
 				eventId: selectedEvent?._id,
 				headcount,
+				user: user?._id,
 			};
 			dispatch(attendEvent(data));
 		}
@@ -260,6 +277,7 @@ const EventModal = () => {
 	const handleUndo = () => {
 		const data = {
 			eventId: selectedEvent?._id,
+			user: user?._id,
 		};
 		dispatch(cancelRsvp(data));
 	};
@@ -448,154 +466,171 @@ const EventModal = () => {
 							{!selectedEvent ||
 							(selectedEvent && eventAuthor === currentUser) ? (
 								<>
-									<div className='event-section alt'>
-										<Stack direction='row' spacing={1} alignItems='center'>
-											<Typography>Private</Typography>
-											<Switch
-												checked={isPublic}
-												onChange={() => handleChange('public', !isPublic)}
-												color='secondary'
-											/>
-											<Typography>Public</Typography>
-										</Stack>
-									</div>
-									{isPublic && (
+									<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+										<Tabs value={value} onChange={handleTabs}>
+											<Tab label='Create/Modify' {...a11yProps(0)} />
+											<Tab label='Invite' {...a11yProps(1)} />
+										</Tabs>
+									</Box>
+									<TabPanel value={value} index={0}>
 										<div className='event-section alt'>
 											<Stack direction='row' spacing={1} alignItems='center'>
-												<Typography>RSVP Closed</Typography>
+												<Typography>Private</Typography>
 												<Switch
-													checked={rsvpOpen}
-													onChange={() => handleChange('available', !rsvpOpen)}
+													checked={isPublic}
+													onChange={() => handleChange('public', !isPublic)}
 													color='secondary'
 												/>
-												<Typography>RSVP Open</Typography>
+												<Typography>Public</Typography>
 											</Stack>
 										</div>
-									)}
-									<div className='event-section alt'>
-										<FormControl variant='standard' size='small' fullWidth>
-											<InputLabel id='event-type'>Event Type</InputLabel>
-											<Select
-												labelId='event-type'
-												value={eventType}
-												onChange={(e) => handleChange('type', e.target.value)}
-												fullWidth
-											>
-												<MenuItem value=''>
-													<em>None</em>
-												</MenuItem>
-												<MenuItem value='Brunch'>Brunch</MenuItem>
-												<MenuItem value='Dinner'>Dinner</MenuItem>
-												<MenuItem value='Movies'>Movies</MenuItem>
-												<MenuItem value='Game Night'>Game Night</MenuItem>
-												<MenuItem value='Party'>Party</MenuItem>
-												<MenuItem value='other'>Other</MenuItem>
-											</Select>
-										</FormControl>
-										{eventType === 'other' && (
-											<TextField
-												label='Go on...'
+										{isPublic && (
+											<div className='event-section alt'>
+												<Stack direction='row' spacing={1} alignItems='center'>
+													<Typography>RSVP Closed</Typography>
+													<Switch
+														checked={rsvpOpen}
+														onChange={() =>
+															handleChange('available', !rsvpOpen)
+														}
+														color='secondary'
+													/>
+													<Typography>RSVP Open</Typography>
+												</Stack>
+											</div>
+										)}
+										<div className='event-section alt'>
+											<FormControl variant='standard' size='small' fullWidth>
+												<InputLabel id='event-type'>Event Type</InputLabel>
+												<Select
+													labelId='event-type'
+													value={eventType}
+													onChange={(e) => handleChange('type', e.target.value)}
+													fullWidth
+												>
+													<MenuItem value=''>
+														<em>None</em>
+													</MenuItem>
+													<MenuItem value='Brunch'>Brunch</MenuItem>
+													<MenuItem value='Dinner'>Dinner</MenuItem>
+													<MenuItem value='Movies'>Movies</MenuItem>
+													<MenuItem value='Game Night'>Game Night</MenuItem>
+													<MenuItem value='Party'>Party</MenuItem>
+													<MenuItem value='other'>Other</MenuItem>
+												</Select>
+											</FormControl>
+											{eventType === 'other' && (
+												<TextField
+													label='Go on...'
+													variant='standard'
+													value={eventTypeInput}
+													onChange={(e) =>
+														handleChange('other', e.target.value)
+													}
+													fullWidth
+													sx={{ mt: '15px' }}
+													InputProps={{
+														startAdornment: (
+															<InputAdornment position='start'>
+																<DetailsIcon className='icon' />
+															</InputAdornment>
+														),
+													}}
+												/>
+											)}
+										</div>
+										<div className='event-section'>
+											<EventIcon className='icon space' />
+											<h5>
+												{selectedEvent ? (
+													<>
+														{dayjs(selectedEvent.date).format('dddd, MMMM DD')}
+													</>
+												) : (
+													<>{dayjs(daySelected)?.format('dddd, MMMM DD')}</>
+												)}
+											</h5>
+										</div>
+										<div className='event-section'>
+											<TimeField
+												label='Time'
 												variant='standard'
-												value={eventTypeInput}
-												onChange={(e) => handleChange('other', e.target.value)}
+												value={dayjs(eventTime)}
+												onChange={(value) => handleChange('time', value)}
 												fullWidth
-												sx={{ mt: '15px' }}
+												size='small'
 												InputProps={{
 													startAdornment: (
 														<InputAdornment position='start'>
-															<DetailsIcon className='icon' />
+															<ScheduleIcon className='icon' />
 														</InputAdornment>
 													),
 												}}
 											/>
-										)}
-									</div>
-									<div className='event-section'>
-										<EventIcon className='icon space' />
-										<h5>
-											{selectedEvent ? (
-												<>{dayjs(selectedEvent.date).format('dddd, MMMM DD')}</>
-											) : (
-												<>{dayjs(daySelected)?.format('dddd, MMMM DD')}</>
+											{errors && errors.time && (
+												<h6 className='error'>{errors.time}</h6>
 											)}
-										</h5>
-									</div>
-									<div className='event-section'>
-										<TimeField
-											label='Time'
-											variant='standard'
-											value={dayjs(eventTime)}
-											onChange={(value) => handleChange('time', value)}
-											fullWidth
-											size='small'
-											InputProps={{
-												startAdornment: (
-													<InputAdornment position='start'>
-														<ScheduleIcon className='icon' />
-													</InputAdornment>
-												),
-											}}
-										/>
-										{errors && errors.time && (
-											<h6 className='error'>{errors.time}</h6>
-										)}
-									</div>
-									<div className='event-section'>
-										<TextField
-											label='Location'
-											variant='standard'
-											value={eventLoc}
-											onChange={(e) => handleChange('loc', e.target.value)}
-											fullWidth
-											size='small'
-											InputProps={{
-												startAdornment: (
-													<InputAdornment position='start'>
-														<MyLocationIcon className='icon' />
-													</InputAdornment>
-												),
-											}}
-										/>
-										{errors && errors.location && (
-											<h6 className='error'>{errors.location}</h6>
-										)}
-									</div>
-									<div className='event-section'>
-										<BookmarkBorderIcon className='icon space' />
-										<div className='tag-swatch'>
-											{labelClasses.map((item, i) => (
-												<span
-													key={i}
-													onClick={() => handleChange('label', item)}
-													style={tagStyle(item)}
-												>
-													{selectedLabel === item && <CheckIcon fontSize='4' />}
-												</span>
-											))}
 										</div>
-									</div>
-									{selectedEvent &&
-									dayjs(selectedEvent?.date).isSameOrBefore(
-										new Date(),
-										'day'
-									) ? (
-										<div className='event-section alt'>
-											<div className='input-btn-row'>
-												<MuiFileInput
-													label='Upload Pic'
-													placeholder='Click to choose file'
-													variant='standard'
-													value={file}
-													onChange={(file) => handleChange('pic', file)}
-													fullWidth
-													size='small'
-												/>
-												<IconBtn disabled={!file} onClick={handleAddMemory}>
-													<AddAPhotoIcon className='add-icon' />
-												</IconBtn>
+										<div className='event-section'>
+											<TextField
+												label='Location'
+												variant='standard'
+												value={eventLoc}
+												onChange={(e) => handleChange('loc', e.target.value)}
+												fullWidth
+												size='small'
+												InputProps={{
+													startAdornment: (
+														<InputAdornment position='start'>
+															<MyLocationIcon className='icon' />
+														</InputAdornment>
+													),
+												}}
+											/>
+											{errors && errors.location && (
+												<h6 className='error'>{errors.location}</h6>
+											)}
+										</div>
+										<div className='event-section'>
+											<BookmarkBorderIcon className='icon space' />
+											<div className='tag-swatch'>
+												{labelClasses.map((item, i) => (
+													<span
+														key={i}
+														onClick={() => handleChange('label', item)}
+														style={tagStyle(item)}
+													>
+														{selectedLabel === item && (
+															<CheckIcon fontSize='4' />
+														)}
+													</span>
+												))}
 											</div>
 										</div>
-									) : (
+										{selectedEvent &&
+											dayjs(selectedEvent?.date).isSameOrBefore(
+												new Date(),
+												'day'
+											) && (
+												<div className='event-section alt'>
+													<div className='input-btn-row'>
+														<MuiFileInput
+															label='Upload Pic'
+															placeholder='Click to choose file'
+															variant='standard'
+															value={file}
+															onChange={(file) => handleChange('pic', file)}
+															fullWidth
+															size='small'
+														/>
+														<IconBtn disabled={!file} onClick={handleAddMemory}>
+															<AddAPhotoIcon className='add-icon' />
+														</IconBtn>
+													</div>
+												</div>
+											)}
+									</TabPanel>
+									<TabPanel value={value} index={1}>
 										<div className='event-section alt'>
 											<div className='input-btn-row'>
 												<TextField
@@ -715,9 +750,279 @@ const EventModal = () => {
 												</List>
 											)}
 										</div>
-									)}
+									</TabPanel>
 								</>
 							) : (
+								// <>
+								// 	<div className='event-section alt'>
+								// 		<Stack direction='row' spacing={1} alignItems='center'>
+								// 			<Typography>Private</Typography>
+								// 			<Switch
+								// 				checked={isPublic}
+								// 				onChange={() => handleChange('public', !isPublic)}
+								// 				color='secondary'
+								// 			/>
+								// 			<Typography>Public</Typography>
+								// 		</Stack>
+								// 	</div>
+								// 	{isPublic && (
+								// 		<div className='event-section alt'>
+								// 			<Stack direction='row' spacing={1} alignItems='center'>
+								// 				<Typography>RSVP Closed</Typography>
+								// 				<Switch
+								// 					checked={rsvpOpen}
+								// 					onChange={() => handleChange('available', !rsvpOpen)}
+								// 					color='secondary'
+								// 				/>
+								// 				<Typography>RSVP Open</Typography>
+								// 			</Stack>
+								// 		</div>
+								// 	)}
+								// 	<div className='event-section alt'>
+								// 		<FormControl variant='standard' size='small' fullWidth>
+								// 			<InputLabel id='event-type'>Event Type</InputLabel>
+								// 			<Select
+								// 				labelId='event-type'
+								// 				value={eventType}
+								// 				onChange={(e) => handleChange('type', e.target.value)}
+								// 				fullWidth
+								// 			>
+								// 				<MenuItem value=''>
+								// 					<em>None</em>
+								// 				</MenuItem>
+								// 				<MenuItem value='Brunch'>Brunch</MenuItem>
+								// 				<MenuItem value='Dinner'>Dinner</MenuItem>
+								// 				<MenuItem value='Movies'>Movies</MenuItem>
+								// 				<MenuItem value='Game Night'>Game Night</MenuItem>
+								// 				<MenuItem value='Party'>Party</MenuItem>
+								// 				<MenuItem value='other'>Other</MenuItem>
+								// 			</Select>
+								// 		</FormControl>
+								// 		{eventType === 'other' && (
+								// 			<TextField
+								// 				label='Go on...'
+								// 				variant='standard'
+								// 				value={eventTypeInput}
+								// 				onChange={(e) => handleChange('other', e.target.value)}
+								// 				fullWidth
+								// 				sx={{ mt: '15px' }}
+								// 				InputProps={{
+								// 					startAdornment: (
+								// 						<InputAdornment position='start'>
+								// 							<DetailsIcon className='icon' />
+								// 						</InputAdornment>
+								// 					),
+								// 				}}
+								// 			/>
+								// 		)}
+								// 	</div>
+								// 	<div className='event-section'>
+								// 		<EventIcon className='icon space' />
+								// 		<h5>
+								// 			{selectedEvent ? (
+								// 				<>{dayjs(selectedEvent.date).format('dddd, MMMM DD')}</>
+								// 			) : (
+								// 				<>{dayjs(daySelected)?.format('dddd, MMMM DD')}</>
+								// 			)}
+								// 		</h5>
+								// 	</div>
+								// 	<div className='event-section'>
+								// 		<TimeField
+								// 			label='Time'
+								// 			variant='standard'
+								// 			value={dayjs(eventTime)}
+								// 			onChange={(value) => handleChange('time', value)}
+								// 			fullWidth
+								// 			size='small'
+								// 			InputProps={{
+								// 				startAdornment: (
+								// 					<InputAdornment position='start'>
+								// 						<ScheduleIcon className='icon' />
+								// 					</InputAdornment>
+								// 				),
+								// 			}}
+								// 		/>
+								// 		{errors && errors.time && (
+								// 			<h6 className='error'>{errors.time}</h6>
+								// 		)}
+								// 	</div>
+								// 	<div className='event-section'>
+								// 		<TextField
+								// 			label='Location'
+								// 			variant='standard'
+								// 			value={eventLoc}
+								// 			onChange={(e) => handleChange('loc', e.target.value)}
+								// 			fullWidth
+								// 			size='small'
+								// 			InputProps={{
+								// 				startAdornment: (
+								// 					<InputAdornment position='start'>
+								// 						<MyLocationIcon className='icon' />
+								// 					</InputAdornment>
+								// 				),
+								// 			}}
+								// 		/>
+								// 		{errors && errors.location && (
+								// 			<h6 className='error'>{errors.location}</h6>
+								// 		)}
+								// 	</div>
+								// 	<div className='event-section'>
+								// 		<BookmarkBorderIcon className='icon space' />
+								// 		<div className='tag-swatch'>
+								// 			{labelClasses.map((item, i) => (
+								// 				<span
+								// 					key={i}
+								// 					onClick={() => handleChange('label', item)}
+								// 					style={tagStyle(item)}
+								// 				>
+								// 					{selectedLabel === item && <CheckIcon fontSize='4' />}
+								// 				</span>
+								// 			))}
+								// 		</div>
+								// 	</div>
+								// 	{selectedEvent &&
+								// 	dayjs(selectedEvent?.date).isSameOrBefore(
+								// 		new Date(),
+								// 		'day'
+								// 	) ? (
+								// 		<div className='event-section alt'>
+								// 			<div className='input-btn-row'>
+								// 				<MuiFileInput
+								// 					label='Upload Pic'
+								// 					placeholder='Click to choose file'
+								// 					variant='standard'
+								// 					value={file}
+								// 					onChange={(file) => handleChange('pic', file)}
+								// 					fullWidth
+								// 					size='small'
+								// 				/>
+								// 				<IconBtn disabled={!file} onClick={handleAddMemory}>
+								// 					<AddAPhotoIcon className='add-icon' />
+								// 				</IconBtn>
+								// 			</div>
+								// 		</div>
+								// 	) : (
+								// 		<div className='event-section alt'>
+								// 			<div className='input-btn-row'>
+								// 				<TextField
+								// 					label='Invite Guests'
+								// 					placeholder='Email Or Phone'
+								// 					variant='standard'
+								// 					value={invitedGuestInput}
+								// 					onChange={(e) =>
+								// 						handleChange('guest', e.target.value)
+								// 					}
+								// 					fullWidth
+								// 					size='small'
+								// 					InputProps={{
+								// 						startAdornment: (
+								// 							<InputAdornment position='start'>
+								// 								<PersonAddIcon className='icon' />
+								// 							</InputAdornment>
+								// 						),
+								// 					}}
+								// 					onFocus={() => dispatch(clearErrors())}
+								// 				/>
+								// 				<IconBtn
+								// 					tooltip='Add Guest'
+								// 					placement='top'
+								// 					disabled={!invitedGuestInput}
+								// 					onClick={handleAddGuest}
+								// 				>
+								// 					<AddBoxIcon className='add-icon' />
+								// 				</IconBtn>
+								// 			</div>
+								// 			{errors && errors.guest && (
+								// 				<h6 className='error'>{errors.guest}</h6>
+								// 			)}
+								// 			{invitedGuests.length > 0 && (
+								// 				<List className='list'>
+								// 					<ListItem disablePadding className='invited-guests'>
+								// 						<ListItemText secondary='Invited Guests' />
+								// 						{selectedEvent && eventAuthor === currentUser && (
+								// 							<IconBtn
+								// 								tooltip='Send Reminders'
+								// 								placement='top'
+								// 								onClick={handleReminders}
+								// 							>
+								// 								<SendToMobileIcon htmlColor='steelblue' />
+								// 							</IconBtn>
+								// 						)}
+								// 					</ListItem>
+								// 					{invitedGuests
+								// 						?.filter((item) => item._id !== user._id)
+								// 						.map((item) => {
+								// 							if (item?.firstName) {
+								// 								return (
+								// 									<ListItem
+								// 										disablePadding
+								// 										className='list-item'
+								// 										key={item._id}
+								// 									>
+								// 										<ListItemText
+								// 											primary={`${item.firstName} ${item.lastName}`}
+								// 										/>
+								// 										{selectedEvent &&
+								// 											eventAuthor === currentUser && (
+								// 												<IconBtn
+								// 													tooltip='Send Invite'
+								// 													placement='top'
+								// 													onClick={() => handleInvite(item)}
+								// 												>
+								// 													<SendToMobileIcon htmlColor='steelblue' />
+								// 												</IconBtn>
+								// 											)}
+								// 										<IconBtn
+								// 											tooltip='Delete Guest'
+								// 											placement='top'
+								// 											onClick={() =>
+								// 												dispatch(removeInvitedGuest(item))
+								// 											}
+								// 										>
+								// 											<DeleteIcon htmlColor='red' />
+								// 										</IconBtn>
+								// 									</ListItem>
+								// 								);
+								// 							} else {
+								// 								return (
+								// 									<ListItem
+								// 										disablePadding
+								// 										className='list-item'
+								// 										key={item._id}
+								// 									>
+								// 										<ListItemText
+								// 											primary={
+								// 												item?.phone ? item?.phone : item?.email
+								// 											}
+								// 										/>
+								// 										{selectedEvent &&
+								// 											eventAuthor === currentUser && (
+								// 												<IconBtn
+								// 													tooltip='Send Invite'
+								// 													placement='top'
+								// 													onClick={() => handleInvite(item)}
+								// 												>
+								// 													<SendToMobileIcon htmlColor='steelblue' />
+								// 												</IconBtn>
+								// 											)}
+								// 										<IconBtn
+								// 											tooltip='Delete Guest'
+								// 											placement='top'
+								// 											onClick={() =>
+								// 												dispatch(removeInvitedGuest(item))
+								// 											}
+								// 										>
+								// 											<DeleteIcon htmlColor='red' />
+								// 										</IconBtn>
+								// 									</ListItem>
+								// 								);
+								// 							}
+								// 						})}
+								// 				</List>
+								// 			)}
+								// 		</div>
+								// 	)}
+								// </>
 								<>
 									<div className='event-section'>
 										<LocalActivityIcon className='icon space' />

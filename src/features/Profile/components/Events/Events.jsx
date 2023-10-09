@@ -1,15 +1,6 @@
-import {
-	Table,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TableHead,
-	TableRow,
-	Paper,
-} from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import EventAccordion from './components/EventAccordion';
-import EventTable from './components/EventTable';
+import Hosting from './components/Hosting';
+import Attending from './components/Attending';
 import './events.scss';
 
 const Events = () => {
@@ -30,7 +21,7 @@ const Events = () => {
 					</div>
 					<div className='event-list'>
 						{myEvents.map((event) => (
-							<EventAccordion key={event._id} event={event} />
+							<Hosting key={event._id} event={event} />
 						))}
 					</div>
 				</div>
@@ -39,28 +30,9 @@ const Events = () => {
 						<h4>Attending</h4>
 					</div>
 					<div className='event-list'>
-						<TableContainer component={Paper}>
-							<Table sx={{ minWidth: 600 }} size='small'>
-								<TableHead>
-									<TableRow className='table-head'>
-										<TableCell align='center' className='head-cell'>
-											Event
-										</TableCell>
-										<TableCell align='center' className='head-cell'>
-											RSVP Open
-										</TableCell>
-										<TableCell align='center' className='head-cell'>
-											Delete
-										</TableCell>
-									</TableRow>
-								</TableHead>
-								<TableBody>
-									{myEvents.map((event) => (
-										<EventTable key={event._id} event={event} />
-									))}
-								</TableBody>
-							</Table>
-						</TableContainer>
+						{attending.map((event) => (
+							<Attending key={event.id} event={event} />
+						))}
 					</div>
 				</div>
 			</div>
