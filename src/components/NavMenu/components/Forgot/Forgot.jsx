@@ -27,6 +27,10 @@ const Forgot = () => {
 		dispatch(clearErrors());
 	};
 
+	const handleChange = (e) => {
+		dispatch(setEmail(e.target.value));
+	};
+
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
@@ -42,17 +46,6 @@ const Forgot = () => {
 			dispatch(generatePasswordToken(data));
 		}
 	};
-
-	// useEffect(() => {
-	// 	if (success) {
-	// 		setTimeout(() => {
-	// 			dispatch(setEmail(''));
-	// 			dispatch(clearSuccess());
-	// 			dispatch(setMenuOpen(false));
-	// 			dispatch(setMenuView('Login'));
-	// 		}, 5000);
-	// 	}
-	// }, [success]);
 
 	return (
 		<>
@@ -86,7 +79,7 @@ const Forgot = () => {
 						size='small'
 						value={email}
 						onFocus={handleFocus}
-						onChange={(e) => dispatch(setEmail(e.target.value))}
+						onChange={handleChange}
 					/>
 					{errors && errors.email && <h6 className='error'>{errors.email}</h6>}
 					<Button type='submit' loading={loading} label='SEND EMAIL' />

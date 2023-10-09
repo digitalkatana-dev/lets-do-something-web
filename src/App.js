@@ -6,16 +6,16 @@ import { clearSuccess, clearErrors } from './redux/slices/calendarSlice';
 import './App.scss';
 import Navbar from './components/Navbar';
 import NavMenu from './components/NavMenu';
+import ProtectedRoute from './components/ProtectedRoute';
 import Main from './features/Main';
 import Profile from './features/Profile';
+import ResetPassword from './features/ResetPassword';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
 function App() {
-	const { user } = useSelector((state) => state.user);
-	const { success, errors } = useSelector((state) => state.calendar);
-
 	const [open, setOpen] = useState(false);
+	const { success, errors } = useSelector((state) => state.calendar);
 	const dispatch = useDispatch();
 
 	const handleClose = (alert) => {
@@ -47,7 +47,11 @@ function App() {
 				<NavMenu />
 				<Routes>
 					<Route path='/' element={<Main />} />
-					<Route path='/profile' element={user ? <Profile /> : <Main />} />
+					<Route
+						path='/profile'
+						element={<ProtectedRoute element={<Profile />} />}
+					/>
+					<Route path='/reset-password/:id' element={<ResetPassword />} />
 				</Routes>
 			</Router>
 			{success?.message && (
