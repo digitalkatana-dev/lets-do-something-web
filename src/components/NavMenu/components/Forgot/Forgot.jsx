@@ -1,21 +1,17 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { FormControl } from '@mui/material';
-import { useEffect } from 'react';
+import { FormControl, TextField } from '@mui/material';
+import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setMenuOpen, setMenuView } from '../../../../redux/slices/navSlice';
 import {
 	setEmail,
-	setErrors,
 	generatePasswordToken,
 	clearSuccess,
 	clearErrors,
 } from '../../../../redux/slices/userSlice';
-import { validateForgotPassword } from '../../../../util/validators';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import Button from '../../../Button';
-import TextInput from '../../../TextInput';
 
 const Forgot = () => {
 	const { loading, email, success, errors } = useSelector(
@@ -38,54 +34,80 @@ const Forgot = () => {
 			email: email.toLowerCase(),
 		};
 
-		const { valid, errors } = validateForgotPassword(data);
-
-		if (!valid) {
-			dispatch(setErrors(errors));
-		} else {
-			dispatch(generatePasswordToken(data));
-		}
+		dispatch(generatePasswordToken(data));
 	};
 
+	const handleSuccess = useCallback(() => {
+		success &&
+			setTimeout(() => {
+				dispatch(setMenuOpen(false));
+				dispatch(setMenuView('Login'));
+				dispatch(clearSuccess());
+			}, 7000);
+	}, [success, dispatch]);
+
+	const handleError = useCallback(() => {
+		errors?.message &&
+			setTimeout(() => {
+				dispatch(clearErrors());
+			}, 7000);
+	}, [errors, dispatch]);
+
+	useEffect(() => {
+		handleSuccess();
+	}, [handleSuccess]);
+
+	useEffect(() => {
+		handleError();
+	}, [handleError]);
+
 	return (
-		<>
+		<div className='menu-container'>
 			<h2>Forgot Password</h2>
-			<HelpOutlineIcon className='title-icon blue' fontSize='large' />
-			<form id='forgot-form' onSubmit={handleSubmit}>
+			<HelpOutlineIcon className='icon forgot' fontSize='large' />
+			<form onSubmit={handleSubmit}>
+				<h6 className='desc'>
+					A link to reset your password will be sent to the email address
+					associated with your account.
+				</h6>
 				<FormControl variant='standard'>
-					{success ? (
-						<div className='response-container success'>
-							<CheckCircleOutlineIcon
-								className='response-icon'
-								fontSize='inherit'
-							/>
-							<b>{success.message}</b>
-						</div>
-					) : errors && errors.auth ? (
-						<div className='response-container fail'>
-							<HighlightOffIcon className='response-icon' fontSize='inherit' />
-							<b>{errors.auth}</b>
-						</div>
-					) : (
-						<h6 className='forgot-txt'>
-							A link to reset your password will be sent to the email address
-							associated with your account.
-						</h6>
-					)}
-					<TextInput
+					<TextField
 						type='email'
 						label='Email'
-						margin='dense'
 						size='small'
+						margin='dense'
 						value={email}
 						onFocus={handleFocus}
 						onChange={handleChange}
 					/>
-					{errors && errors.email && <h6 className='error'>{errors.email}</h6>}
-					<Button type='submit' loading={loading} label='SEND EMAIL' />
+					{errors?.email && <h6 className='error'>{errors?.email}</h6>}
+					<Button
+						type='submit'
+						label='SUBMIT'
+						btnStyle={{ width: '150px', alignSelf: 'center' }}
+						loading={loading}
+					/>
 				</FormControl>
 			</form>
-		</>
+			<div className='response-container'>
+				{success?.message && (
+					<h5 className='success'>
+						<span>
+							<CheckCircleOutlineIcon fontSize='inherit' />
+						</span>
+						{success?.message}
+					</h5>
+				)}
+				{errors?.message && (
+					<h5 className='error'>
+						<span>
+							<ErrorOutlineIcon fontSize='inherit' />
+						</span>
+						{errors?.message}
+					</h5>
+				)}
+			</div>
+		</div>
 	);
 };
 

@@ -29,7 +29,7 @@ const GuestList = () => {
 				<h3>Guest Book</h3>
 			</header>
 			<div className='container'>
-				<img src='guest-book.png' alt='' />
+				<img src='/guest-book.png' alt='' />
 				<div className='overlay'>
 					{selectedEvent ? (
 						<div className='current-events'>
