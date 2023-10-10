@@ -5,7 +5,9 @@ import {
 	InputAdornment,
 	Radio,
 	RadioGroup,
+	TextField,
 } from '@mui/material';
+import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
 	register,
@@ -25,9 +27,9 @@ import LoginIcon from '@mui/icons-material/Login';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import Button from '../../../../components/Button';
 import IconBtn from '../../../../components/IconBtn';
-import TextInput from '../../../../components/TextInput';
 import TouchableOpacity from '../../../../components/TouchableOpacity';
 
 const Auth = () => {
@@ -50,39 +52,24 @@ const Auth = () => {
 	};
 
 	const handleChange = (input, value) => {
-		switch (input) {
-			case 'toggle':
+		const actionMap = {
+			toggle: () => {
 				dispatch(clearErrors());
 				dispatch(clearForm());
 				dispatch(setMenuView(value));
-				break;
+			},
+			first: () => dispatch(setFirstName(value)),
+			last: () => dispatch(setLastName(value)),
+			phone: () => dispatch(setPhone(value)),
+			email: () => dispatch(setEmail(value)),
+			password: () => dispatch(setPassword(value)),
+			notify: () => dispatch(setNotify(value)),
+		};
 
-			case 'first':
-				dispatch(setFirstName(value));
-				break;
+		const action = actionMap[input];
 
-			case 'last':
-				dispatch(setLastName(value));
-				break;
-
-			case 'phone':
-				dispatch(setPhone(value));
-				break;
-
-			case 'email':
-				dispatch(setEmail(value));
-				break;
-
-			case 'password':
-				dispatch(setPassword(value));
-				break;
-
-			case 'notify':
-				dispatch(setNotify(value));
-				break;
-
-			default:
-				break;
+		if (action) {
+			action();
 		}
 	};
 
@@ -112,8 +99,19 @@ const Auth = () => {
 		}
 	};
 
+	const handleError = useCallback(() => {
+		errors?.message &&
+			setTimeout(() => {
+				dispatch(clearErrors());
+			}, 7000);
+	}, [errors, dispatch]);
+
+	useEffect(() => {
+		handleError();
+	}, [handleError]);
+
 	return (
-		<>
+		<div className='menu-container'>
 			<TouchableOpacity
 				onClick={() =>
 					handleChange('toggle', menuView === 'Login' ? 'Register' : 'Login')
@@ -122,14 +120,14 @@ const Auth = () => {
 				<h2>{menuView}</h2>
 				{menuView === 'Register' ? (
 					<>
-						<PersonAddIcon className='title-icon green' fontSize='large' />
+						<PersonAddIcon className='icon auth' fontSize='large' />
 						<p className='auth-message'>
 							Already have an account? Click <span className='link'>here</span>!
 						</p>
 					</>
 				) : (
 					<>
-						<LoginIcon className='title-icon green' fontSize='large' />
+						<LoginIcon className='icon auth' fontSize='large' />
 						<p className='auth-message'>
 							Don't have an account? Click <span className='link'>here</span>!
 						</p>
@@ -140,57 +138,55 @@ const Auth = () => {
 				<FormControl variant='standard'>
 					{menuView === 'Register' && (
 						<>
-							<TextInput
+							<TextField
 								label='First Name'
-								margin='dense'
 								size='small'
+								margin='dense'
 								value={firstName}
 								onFocus={handleFocus}
 								onChange={(e) => handleChange('first', e.target.value)}
 							/>
-							{errors && errors.firstName && (
-								<h6 className='error'>{errors.firstName}</h6>
+							{errors?.firstName && (
+								<h6 className='error'>{errors?.firstName}</h6>
 							)}
-							<TextInput
+							<TextField
 								label='Last Name'
-								margin='dense'
 								size='small'
+								margin='dense'
 								value={lastName}
 								onFocus={handleFocus}
 								onChange={(e) => handleChange('last', e.target.value)}
 							/>
-							{errors && errors.lastName && (
-								<h6 className='error'>{errors.lastName}</h6>
+							{errors?.lastName && (
+								<h6 className='error'>{errors?.lastName}</h6>
 							)}
-							<TextInput
+							<TextField
 								type='tel'
 								label='Mobile Number'
-								margin='dense'
 								size='small'
+								margin='dense'
 								value={phone}
 								onFocus={handleFocus}
 								onChange={(e) => handleChange('phone', e.target.value)}
 							/>
-							{errors && errors.phone && (
-								<h6 className='error'>{errors.phone}</h6>
-							)}
+							{errors?.phone && <h6 className='error'>{errors?.phone}</h6>}
 						</>
 					)}
-					<TextInput
+					<TextField
 						type='email'
 						label='Email'
-						margin='dense'
 						size='small'
+						margin='dense'
 						value={email}
 						onFocus={handleFocus}
 						onChange={(e) => handleChange('email', e.target.value)}
 					/>
-					{errors && errors.email && <h6 className='error'>{errors.email}</h6>}
-					<TextInput
+					{errors?.email && <h6 className='error'>{errors?.email}</h6>}
+					<TextField
 						type={show ? 'text' : 'password'}
 						label='Password'
-						margin='dense'
 						size='small'
+						margin='dense'
 						value={password}
 						onFocus={handleFocus}
 						onChange={(e) => handleChange('password', e.target.value)}
@@ -212,9 +208,7 @@ const Auth = () => {
 							),
 						}}
 					/>
-					{errors && errors.password && (
-						<h6 className='error'>{errors.password}</h6>
-					)}
+					{errors?.password && <h6 className='error'>{errors?.password}</h6>}
 					{menuView === 'Register' && (
 						<div className='notify'>
 							<FormLabel className='notify-label'>
@@ -252,19 +246,31 @@ const Auth = () => {
 							</RadioGroup>
 						</div>
 					)}
-					{errors && errors.notify && (
-						<h6 className='error'>{errors.notify}</h6>
-					)}
-					{errors && errors.user && <h6 className='error'>{errors.user}</h6>}
-					<Button type='submit' loading={loading} label='SUBMIT' />
+					{errors?.notify && <h6 className='error'>{errors?.notify}</h6>}
+					<Button
+						type='submit'
+						label='SUBMIT'
+						btnStyle={{ width: '150px', alignSelf: 'center' }}
+						loading={loading}
+					/>
 				</FormControl>
 			</form>
+			<div className='response-container'>
+				{errors?.message && (
+					<h5 className='error'>
+						<span>
+							<ErrorOutlineIcon fontSize='inherit' />
+						</span>
+						{errors?.message}
+					</h5>
+				)}
+			</div>
 			{menuView === 'Login' && (
 				<h6 className='link' onClick={() => dispatch(setMenuView('Forgot'))}>
 					Forgot Password
 				</h6>
 			)}
-		</>
+		</div>
 	);
 };
 

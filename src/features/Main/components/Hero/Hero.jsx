@@ -9,7 +9,7 @@ const Hero = () => {
 				src={
 					isAndroid
 						? 'https://player.vimeo.com/external/438686620.sd.mp4?s=5ea7ab27d60b88010819922022532f2ccaf7ef08&amp;profile_id=164&amp;oauth2_token_id=57447761'
-						: 'brunch.mp4'
+						: '/brunch.mp4'
 				}
 				loop
 				playsInline

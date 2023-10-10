@@ -1,6 +1,7 @@
 import { AppBar, Avatar, Toolbar } from '@mui/material';
+import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { clearErrors, getUser, logout } from '../../redux/slices/userSlice';
 import { setMenuOpen, setMenuView } from '../../redux/slices/navSlice';
 import { persistor } from '../../redux/rootStore';
@@ -14,6 +15,8 @@ const Navbar = () => {
 	const { menuOpen } = useSelector((state) => state.nav);
 	const { user } = useSelector((state) => state.user);
 	const dispatch = useDispatch();
+	const location = useLocation();
+	const path = location.pathname.split('/')[2];
 
 	const handleMenu = () => {
 		dispatch(setMenuOpen(!menuOpen));
@@ -31,6 +34,17 @@ const Navbar = () => {
 		dispatch(logout());
 		persistor.purge();
 	};
+
+	const handleResetPreload = useCallback(() => {
+		if (path) {
+			dispatch(setMenuView('Reset'));
+			dispatch(setMenuOpen(true));
+		}
+	}, [path, dispatch]);
+
+	useEffect(() => {
+		handleResetPreload();
+	}, [handleResetPreload]);
 
 	return (
 		<AppBar>

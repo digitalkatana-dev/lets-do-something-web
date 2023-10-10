@@ -5,61 +5,57 @@
 	top: -460px;
 	right: 10px;
 	z-index: 3;
-	display: flex;
-	padding: 20px 0;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
+	padding: 20px;
 	transition: all 1s ease;
 
 	&.active {
 		top: 55px;
 	}
 
-	.title-icon {
-		align-self: center;
-		margin-bottom: 2.5px;
-	}
-
-	.title-icon.green {
-		color: green;
-	}
-
-	.title-icon.blue {
-		color: steelblue;
-	}
-
-	.auth-message {
-		margin-bottom: 5px;
-	}
-
-	.notify {
+	.menu-container {
 		display: flex;
 		flex-direction: column;
-		margin-top: 10px;
 		align-items: center;
-	}
+		// border: 2px ridge indigo;
 
-	#forgot-form {
-		padding: 0 31px;
-	}
+		.icon {
+			&.auth {
+				color: green;
+			}
 
-	.forgot-txt {
-		text-align: center;
-	}
-
-	.response-container {
-		display: flex;
-		align-items: center;
-		align-self: center;
-
-		.response-icon {
-			margin-right: 2.5px;
+			&.forgot,
+			&.reset {
+				color: steelblue;
+			}
 		}
-	}
 
-	h6.link {
-		cursor: pointer;
+		.desc {
+			margin: 10px 0;
+		}
+
+		.notify {
+			display: flex;
+			flex-direction: column;
+			margin-top: 10px;
+			align-items: center;
+		}
+
+		.response-container {
+			text-align: center;
+
+			.success,
+			.error {
+				span {
+					vertical-align: middle;
+					margin-right: 2.5px;
+				}
+			}
+		}
+
+		.link {
+			margin-top: 10px;
+			cursor: pointer;
+		}
 	}
 }
 
