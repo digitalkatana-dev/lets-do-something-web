@@ -47,14 +47,14 @@ const Footer = () => {
 					</Tooltip>
 				</div>
 			</div> */}
-			<div className='contact-info'>
+			<div className='contact'>
 				<p className='content white-txt'>Contact Us At</p>
 				<div className='divider' />
 				{/* <div className='row contact-row'>
 					<CallIcon className='icon' />
 					<h4>619-540-9227</h4>
 				</div> */}
-				<div className='row contact-row'>
+				<h5 className='email'>
 					<EmailIcon className='icon' />
 					<Link
 						className='link email-link white-txt'
@@ -62,31 +62,31 @@ const Footer = () => {
 					>
 						support@letsdosomething.net
 					</Link>
-				</div>
+				</h5>
 			</div>
-			<div className='privacy'>
+			<div className='info'>
 				<p className='content'>Information</p>
 				<div className='divider' />
-				<Link
-					className='link email-link white-txt'
-					to='https://www.privacypolicies.com/live/3bf9d52c-aab9-41ce-8e9d-d37093c5c8b0'
-					target='_blank'
-				>
-					Privacy Policy
-				</Link>
-				<div className='row copyright'>
+				<h5 className='policy'>
+					<Link
+						className='link email-link white-txt'
+						to='https://www.privacypolicies.com/live/3bf9d52c-aab9-41ce-8e9d-d37093c5c8b0'
+						target='_blank'
+					>
+						Privacy Policy
+					</Link>
+				</h5>
+				<h5>
 					<CopyrightIcon className='icon' />
-					<p className='sub-headline-alt'>
-						2023{' '}
-						<Link
-							className='link email-link white-txt'
-							to='mailto:digitalkatana.dev'
-						>
-							digitalkatana.dev
-						</Link>{' '}
-						All Rights Reserved.
-					</p>
-				</div>
+					2023{' '}
+					<Link
+						className='link email-link white-txt'
+						to='mailto:digitalkatana.dev'
+					>
+						digitalkatana.dev
+					</Link>{' '}
+					All Rights Reserved.
+				</h5>
 			</div>
 		</footer>
 	);
