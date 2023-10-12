@@ -81,7 +81,7 @@ const Footer = () => {
 					2023{' '}
 					<Link
 						className='link email-link white-txt'
-						to='mailto:digitalkatana.dev'
+						to='mailto:support@digitalkatana.dev'
 					>
 						digitalkatana.dev
 					</Link>{' '}
