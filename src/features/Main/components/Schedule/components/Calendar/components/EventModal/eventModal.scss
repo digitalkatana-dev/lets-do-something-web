@@ -1,65 +1,80 @@
-.title {
+.dialog-title {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-}
 
-.content-switch {
-	display: flex;
-	align-items: center;
-}
-
-.event-section {
-	min-height: 54px;
-	display: flex;
-	align-items: center;
-	margin: 10px 0;
-	// border: 2px solid peru;
-
-	&.alt {
-		flex-direction: column;
-		justify-content: center;
+	.header {
+		font-size: 0.67em;
+		font-weight: bold;
 	}
+}
 
-	.icon {
-		width: 20px;
-		height: 20px;
-		color: grey;
+.modal-content {
+	height: fit-content;
+	min-height: 464px;
+	max-width: 530px;
 
-		&.space {
-			margin-right: 10px;
+	.event-section {
+		min-height: 54px;
+		display: flex;
+		align-items: center;
+		margin: 10px 0;
+
+		&.alt {
+			flex-direction: column;
+			justify-content: center;
+
+			.input-btn-row {
+				width: 100%;
+				display: flex;
+				align-items: center;
+
+				.add-icon {
+					color: green;
+				}
+			}
+
+			.list {
+				width: 100%;
+				margin-top: 20px;
+
+				.invited-guests {
+					border-bottom: 1px ridge steelblue;
+				}
+
+				.list-item {
+					border-bottom: 1px solid grey;
+					margin-top: 10px;
+				}
+			}
+		}
+
+		.icon {
+			width: 20px;
+			height: 20px;
+			color: grey;
+
+			&.space {
+				margin-right: 10px;
+			}
+		}
+
+		.tag-swatch {
+			width: 100%;
+			display: flex;
+			justify-content: space-between;
 		}
 	}
 
-	.add-icon {
-		color: green;
+	.MuiDialogContentText-root.rsvp-details {
+		text-align: center;
+		margin-top: 5px;
+		margin-bottom: 5px;
+
+		&.sign-in-warning {
+			font-weight: bold;
+		}
 	}
-}
-
-.tag-swatch {
-	width: 100%;
-	display: flex;
-	justify-content: space-between;
-}
-
-.input-btn-row {
-	width: 100%;
-	display: flex;
-	align-items: center;
-}
-
-.MuiDialogContentText-root.rsvp-details {
-	text-align: center;
-	margin-top: 5px;
-	margin-bottom: 5px;
-}
-
-.MuiDialogContentText-root.sign-in-warning {
-	font-weight: bold;
-}
-
-.delete {
-	color: red;
 }
 
 .undo,
@@ -67,16 +82,6 @@
 	color: green;
 }
 
-.list {
-	width: 100%;
-	margin-top: 20px;
-}
-
-.invited-guests {
-	border-bottom: 1px solid steelblue;
-}
-
-.list-item {
-	border-bottom: 1px solid grey;
-	margin-top: 10px;
+.delete {
+	color: red;
 }

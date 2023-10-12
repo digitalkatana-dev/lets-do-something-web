@@ -1,5 +1,5 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import {
+	Alert,
 	Box,
 	Button,
 	Dialog,
@@ -15,6 +15,7 @@ import {
 	ListItemText,
 	MenuItem,
 	Select,
+	Snackbar,
 	Stack,
 	Switch,
 	Tabs,
@@ -24,7 +25,7 @@ import {
 } from '@mui/material';
 import { TimeField } from '@mui/x-date-pickers';
 import { MuiFileInput } from 'mui-file-input';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
 	toggleOpen,
@@ -102,6 +103,7 @@ const EventModal = () => {
 		invitedGuests,
 		headcount,
 		selectedLabel,
+		success,
 		errors,
 	} = useSelector((state) => state.event);
 	const [value, setValue] = useState(0);
@@ -129,50 +131,28 @@ const EventModal = () => {
 		setValue(newVal);
 	};
 
+	const handleFocus = () => {
+		dispatch(clearErrors());
+	};
+
 	const handleChange = (input, value) => {
-		switch (input) {
-			case 'public':
-				dispatch(setIsPublic(value));
-				break;
+		const actionMap = {
+			public: setIsPublic,
+			available: setRSVPOpen,
+			type: setEventType,
+			other: setEventTypeInput,
+			time: (v) => setEventTime(formattedTime(v)),
+			loc: setEventLoc,
+			label: setSelectedLabel,
+			guest: setInvitedGuestInput,
+			count: setHeadcount,
+			pic: setFile,
+		};
 
-			case 'available':
-				dispatch(setRSVPOpen(value));
-				break;
+		const action = actionMap[input];
 
-			case 'type':
-				dispatch(setEventType(value));
-				break;
-
-			case 'other':
-				dispatch(setEventTypeInput(value));
-				break;
-
-			case 'time':
-				dispatch(setEventTime(formattedTime(value)));
-				break;
-
-			case 'loc':
-				dispatch(setEventLoc(value));
-				break;
-
-			case 'label':
-				dispatch(setSelectedLabel(value));
-				break;
-
-			case 'guest':
-				dispatch(setInvitedGuestInput(value));
-				break;
-
-			case 'count':
-				dispatch(setHeadcount(value));
-				break;
-
-			case 'pic':
-				setFile(value);
-				break;
-
-			default:
-				break;
+		if (action) {
+			dispatch(action(value));
 		}
 	};
 
@@ -290,41 +270,39 @@ const EventModal = () => {
 		dispatch(deleteEvent(data));
 	};
 
-	// useEffect(() => {
-	// 	if (success) dispatch(clearEvent());
-	// }, [success]);
+	const handleSetEventTime = useCallback(() => {
+		selectedEvent && dispatch(setEventTime(selectedEvent?.time));
+	}, [selectedEvent, dispatch]);
 
 	useEffect(() => {
-		if (selectedEvent) dispatch(setEventTime(selectedEvent?.time));
-	}, [selectedEvent]);
+		handleSetEventTime();
+	}, [handleSetEventTime]);
 
 	base64Encode(file, setBase64File);
 
 	return (
 		<Dialog open={open} onClose={handleClose} maxWidth='xs' fullWidth>
-			<DialogTitle className='title'>
+			<DialogTitle className='dialog-title'>
 				<DragHandleIcon />
-				<div className='content-switch'>
-					<h6>
-						{!user && <>{!selectedEvent ? 'Create' : 'RSVP'}</>}
-						{user && (
-							<>
-								{!selectedEvent
-									? 'Create'
-									: selectedEvent && eventAuthor === currentUser
-									? 'Manage'
-									: selectedEvent && eventAuthor !== currentUser
-									? 'RSVP'
-									: null}
-							</>
-						)}
-					</h6>
-				</div>
+				<span className='header'>
+					{!user && <>{!selectedEvent ? 'Create' : 'RSVP'}</>}
+					{user && (
+						<>
+							{!selectedEvent
+								? 'Create'
+								: selectedEvent && eventAuthor === currentUser
+								? 'Manage'
+								: selectedEvent && eventAuthor !== currentUser
+								? 'RSVP'
+								: null}
+						</>
+					)}
+				</span>
 				<IconBtn tooltip='Close' onClick={handleClose}>
 					<CloseIcon />
 				</IconBtn>
 			</DialogTitle>
-			<DialogContent>
+			<DialogContent className='modal-content'>
 				<FormControl variant='standard' size='small' fullWidth>
 					{!user && (
 						<>
@@ -567,8 +545,8 @@ const EventModal = () => {
 													),
 												}}
 											/>
-											{errors && errors.time && (
-												<h6 className='error'>{errors.time}</h6>
+											{errors?.time && (
+												<h6 className='error'>{errors?.time}</h6>
 											)}
 										</div>
 										<div className='event-section'>
@@ -587,8 +565,8 @@ const EventModal = () => {
 													),
 												}}
 											/>
-											{errors && errors.location && (
-												<h6 className='error'>{errors.location}</h6>
+											{errors?.location && (
+												<h6 className='error'>{errors?.location}</h6>
 											)}
 										</div>
 										<div className='event-section'>
@@ -650,7 +628,7 @@ const EventModal = () => {
 															</InputAdornment>
 														),
 													}}
-													onFocus={() => dispatch(clearErrors())}
+													onFocus={handleFocus}
 												/>
 												<IconBtn
 													tooltip='Add Guest'
@@ -661,8 +639,8 @@ const EventModal = () => {
 													<AddBoxIcon className='add-icon' />
 												</IconBtn>
 											</div>
-											{errors && errors.guest && (
-												<h6 className='error'>{errors.guest}</h6>
+											{errors?.guest && (
+												<h6 className='error'>{errors?.guest}</h6>
 											)}
 											{invitedGuests.length > 0 && (
 												<List className='list'>
@@ -1116,7 +1094,7 @@ const EventModal = () => {
 														fullWidth
 														size='small'
 														sx={{ marginTop: '15px' }}
-														onFocus={() => dispatch(clearErrors())}
+														onFocus={handleFocus}
 														InputProps={{
 															startAdornment: (
 																<InputAdornment position='start'>

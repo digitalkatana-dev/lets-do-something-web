@@ -8,7 +8,7 @@ const UpNext = () => {
 	const { loading, currentEvents } = useSelector((state) => state.calendar);
 
 	return (
-		<div className='up-next'>
+		<div id='up-next'>
 			<h2>
 				Up next:{' '}
 				{loading ? (

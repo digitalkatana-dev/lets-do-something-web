@@ -1,5 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
 	setCurrentMonth,
@@ -18,22 +17,34 @@ const Calendar = () => {
 	const { currentMonth, monthIndex } = useSelector((state) => state.calendar);
 	const dispatch = useDispatch();
 
-	useEffect(() => {
+	const handleEventsAttending = useCallback(() => {
 		dispatch(setEventsAttending(user?.eventsAttending));
-	}, [user]);
+	}, [user, dispatch]);
 
-	useEffect(() => {
+	const handleGetEvents = useCallback(() => {
 		!user ? dispatch(getAllEvents()) : user && dispatch(getInvitedEvents());
-	}, [user]);
+	}, [user, dispatch]);
+
+	const handleCurrentMonth = useCallback(() => {
+		dispatch(setCurrentMonth(monthIndex));
+	}, [monthIndex, dispatch]);
 
 	useEffect(() => {
-		dispatch(setCurrentMonth(monthIndex));
-	}, [monthIndex]);
+		handleEventsAttending();
+	}, [handleEventsAttending]);
+
+	useEffect(() => {
+		handleGetEvents();
+	}, [handleGetEvents]);
+
+	useEffect(() => {
+		handleCurrentMonth();
+	}, [handleCurrentMonth]);
 
 	return (
 		<>
 			<EventModal />
-			<div className='calendar'>
+			<div id='calendar'>
 				<CalendarHead />
 				<div className='container'>
 					<Sidebar />
