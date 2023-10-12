@@ -33,7 +33,7 @@ const Day = ({ day, rowIdx }) => {
 			<Grid item xs={1} className='cell'>
 				<header>
 					{rowIdx === 0 && <p className='abv'>{dayjs(day).format('ddd')}</p>}
-					<p className={`${getCurrentDayClass(day)}`}>
+					<p className={`${getCurrentDayClass(day)} date`}>
 						{dayjs(day).format('D')}
 					</p>
 				</header>

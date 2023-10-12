@@ -1,7 +1,4 @@
-.calendar {
-	// border: 2px solid firebrick;
-	// width: fit-content;
-
+#calendar {
 	.container {
 		display: flex;
 		flex-direction: column;
@@ -10,29 +7,26 @@
 	}
 }
 @media only screen and (min-width: 600px) {
-	.calendar {
-		// max-width: 90%;
-	}
 }
 @media only screen and (min-width: 700px) {
-	.calendar {
+	#calendar {
 		max-width: 65%;
 	}
 }
 @media only screen and (min-width: 900px) {
-	.calendar {
+	#calendar {
 		.container {
 			flex-direction: row;
 		}
 	}
 }
 @media only screen and (min-width: 1200px) {
-	.calendar {
+	#calendar {
 		max-width: 57%;
 	}
 }
 @media only screen and (min-width: 1536px) {
-	.calendar {
+	#calendar {
 		max-width: 45%;
 	}
 }
