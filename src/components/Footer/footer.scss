@@ -8,23 +8,30 @@
 	padding: 20px;
 	transition: all 1s ease-in-out;
 
-	.social-container,
-	.contact-info,
-	.privacy {
+	// .social-container,
+	.contact,
+	.info {
 		display: flex;
 		flex-direction: column;
+		justify-content: center;
+		align-items: center;
 
 		.icon {
 			margin-right: 5px;
+			vertical-align: middle;
 		}
 	}
 
-	.social-container,
-	.copyright,
-	.contact-info,
-	.privacy {
-		justify-content: center;
-		align-items: center;
+	.contact {
+		.email {
+			margin-bottom: 5px;
+		}
+	}
+
+	.info {
+		.policy {
+			margin-bottom: 5px;
+		}
 	}
 
 	.content,
@@ -47,16 +54,15 @@
 		justify-content: space-around;
 		align-items: center;
 
-		.social-container,
-		.copyright,
-		.contact-info,
-		.privacy {
+		// .social-container,
+		.contact,
+		.info {
 			align-items: flex-start;
 		}
 
-		.social-container .row {
-			margin-left: -5px;
-		}
+		// .social-container .row {
+		// 	margin-left: -5px;
+		// }
 
 		.content,
 		.divider {
