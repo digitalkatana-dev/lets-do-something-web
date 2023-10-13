@@ -1,4 +1,4 @@
-import { AppBar, Avatar, Toolbar } from '@mui/material';
+import { AppBar, Avatar, IconButton, Toolbar } from '@mui/material';
 import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
@@ -9,7 +9,6 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import HomeIcon from '@mui/icons-material/Home';
 import LogoutIcon from '@mui/icons-material/Logout';
 import './navbar.scss';
-import IconBtn from '../../components/IconBtn';
 
 const Navbar = () => {
 	const { menuOpen } = useSelector((state) => state.nav);
@@ -53,7 +52,11 @@ const Navbar = () => {
 					<div className='user-area'>
 						<h3>Hello, {user.firstName}!</h3>
 						<Link to='/profile' onClick={handleProfile}>
-							<IconBtn tooltip='Profile' placement='right-end'>
+							<IconButton
+								tooltip='Profile'
+								placement='right-end'
+								className='avatar'
+							>
 								{user?.profilePic ? (
 									<Avatar
 										alt={user?.firstName + ' ' + user?.lastName}
@@ -63,7 +66,7 @@ const Navbar = () => {
 								) : (
 									<AccountCircleIcon className='profile-icon white-txt' />
 								)}
-							</IconBtn>
+							</IconButton>
 						</Link>
 					</div>
 				) : (
@@ -72,14 +75,14 @@ const Navbar = () => {
 				{user ? (
 					<div className='user-controls'>
 						<Link to='/'>
-							<IconBtn>
-								<HomeIcon className='white-txt home' />
-							</IconBtn>
+							<IconButton className='home'>
+								<HomeIcon className='white-txt' />
+							</IconButton>
 						</Link>
 						<Link to='/' onClick={handleLogout}>
-							<IconBtn>
-								<LogoutIcon className='white-txt logout' />
-							</IconBtn>
+							<IconButton className='logout'>
+								<LogoutIcon className='white-txt' />
+							</IconButton>
 						</Link>
 					</div>
 				) : (

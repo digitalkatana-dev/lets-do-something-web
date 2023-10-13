@@ -65,6 +65,7 @@ import {
 } from '../../../../../../../../util/helpers';
 import dayjs from 'dayjs';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import DragHandleIcon from '@mui/icons-material/DragHandle';
 import SendToMobileIcon from '@mui/icons-material/SendToMobile';
 import CloseIcon from '@mui/icons-material/Close';
@@ -85,6 +86,7 @@ import './eventModal.scss';
 import TabPanel from './components/TabPanel';
 import IconBtn from '../../../../../../../../components/IconBtn';
 dayjs.extend(isSameOrBefore);
+dayjs.extend(isSameOrAfter);
 
 const EventModal = () => {
 	const { user } = useSelector((state) => state.user);
@@ -146,7 +148,6 @@ const EventModal = () => {
 			label: setSelectedLabel,
 			guest: setInvitedGuestInput,
 			count: setHeadcount,
-			pic: setFile,
 		};
 
 		const action = actionMap[input];
@@ -597,7 +598,7 @@ const EventModal = () => {
 															placeholder='Click to choose file'
 															variant='standard'
 															value={file}
-															onChange={(file) => handleChange('pic', file)}
+															onChange={(file) => setFile(file)}
 															fullWidth
 															size='small'
 														/>
@@ -1116,7 +1117,7 @@ const EventModal = () => {
 					)}
 				</FormControl>
 			</DialogContent>
-			{user && (
+			{user && dayjs(daySelected).isSameOrAfter(new Date(), 'day') && (
 				<DialogActions
 					sx={{
 						justifyContent:

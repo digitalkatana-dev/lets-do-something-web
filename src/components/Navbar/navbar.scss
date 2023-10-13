@@ -40,6 +40,12 @@
 		display: flex;
 	}
 
+	.avatar,
+	.home,
+	.logout {
+		margin: 0 10px;
+	}
+
 	&.active {
 		background: #6d41a1;
 

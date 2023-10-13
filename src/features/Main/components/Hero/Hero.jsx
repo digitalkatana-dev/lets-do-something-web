@@ -4,7 +4,7 @@ import './hero.scss';
 
 const Hero = () => {
 	return (
-		<div className='hero'>
+		<div id='hero'>
 			<video
 				src={
 					isAndroid

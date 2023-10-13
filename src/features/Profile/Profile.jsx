@@ -10,8 +10,8 @@ const Profile = () => {
 	return (
 		<div className='profile'>
 			<User />
-			<Friends />
 			<Events />
+			<Friends />
 			{/* <EventsAlt /> */}
 			<Footer />
 		</div>
