@@ -70,7 +70,7 @@ const Footer = () => {
 				<h5 className='policy'>
 					<Link
 						className='link email-link white-txt'
-						to='https://www.privacypolicies.com/live/3bf9d52c-aab9-41ce-8e9d-d37093c5c8b0'
+						to='https://www.privacypolicies.com/live/9bb39cf2-9349-4e2a-aa8c-1d1197c67a62'
 						target='_blank'
 					>
 						Privacy Policy
