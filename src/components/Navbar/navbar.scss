@@ -1,6 +1,8 @@
 .MuiToolbar-root {
 	box-sizing: border-box;
 	justify-content: space-between;
+	// background: #7597bd;
+	background: #33658a;
 	z-index: 4;
 	transition: all 1s ease-in-out;
 
@@ -47,7 +49,7 @@
 	}
 
 	&.active {
-		background: #6d41a1;
+		background: #7d67cb; // #6d41a1
 
 		.hamburger {
 			span {
