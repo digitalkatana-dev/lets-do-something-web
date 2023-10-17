@@ -1,6 +1,7 @@
 .footer {
 	height: calc(100vh / 6);
-	background-color: #1976d2;
+	// background: #7597bd;
+	background: #33658a;
 	color: whitesmoke;
 	display: flex;
 	flex-direction: column;
@@ -40,7 +41,7 @@
 	}
 
 	&.active {
-		background-color: #6d41a1;
+		background-color: #7d67cb;
 	}
 }
 
