@@ -22,7 +22,7 @@ export const register = createAsyncThunk(
 	}
 );
 
-export const login = createAsyncThunk(
+export const userLogin = createAsyncThunk(
 	'user/login',
 	async (data, { rejectWithValue, dispatch }) => {
 		try {
@@ -103,6 +103,7 @@ export const updateUser = createAsyncThunk(
 export const userAdapter = createEntityAdapter();
 const initialState = userAdapter.getInitialState({
 	loading: false,
+	login: '',
 	firstName: '',
 	lastName: '',
 	phone: '',
@@ -119,6 +120,9 @@ export const userSlice = createSlice({
 	name: 'user',
 	initialState,
 	reducers: {
+		setLogin: (state, action) => {
+			state.login = action.payload;
+		},
 		setFirstName: (state, action) => {
 			state.firstName = action.payload;
 		},
@@ -144,6 +148,7 @@ export const userSlice = createSlice({
 			state.errors = action.payload;
 		},
 		clearForm: (state) => {
+			state.login = '';
 			state.firstName = '';
 			state.lastName = '';
 			state.phone = '';
@@ -159,6 +164,7 @@ export const userSlice = createSlice({
 		},
 		logout: (state) => {
 			state.loading = false;
+			state.login = '';
 			state.firstName = '';
 			state.lastName = '';
 			state.phone = '';
@@ -192,18 +198,18 @@ export const userSlice = createSlice({
 				state.loading = false;
 				state.errors = action.payload;
 			})
-			.addCase(login.pending, (state) => {
+			.addCase(userLogin.pending, (state) => {
 				state.loading = true;
 				state.errors = null;
 			})
-			.addCase(login.fulfilled, (state, action) => {
+			.addCase(userLogin.fulfilled, (state, action) => {
 				state.loading = false;
-				state.email = '';
+				state.login = '';
 				state.password = '';
 				state.user = action.payload;
 				state.errors = false;
 			})
-			.addCase(login.rejected, (state, action) => {
+			.addCase(userLogin.rejected, (state, action) => {
 				state.loading = false;
 				state.errors = action.payload;
 			})
@@ -280,6 +286,7 @@ export const userSlice = createSlice({
 });
 
 export const {
+	setLogin,
 	setFirstName,
 	setLastName,
 	setPhone,
