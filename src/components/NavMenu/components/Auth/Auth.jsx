@@ -11,7 +11,8 @@ import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
 	register,
-	login,
+	userLogin,
+	setLogin,
 	setFirstName,
 	setLastName,
 	setPhone,
@@ -19,7 +20,6 @@ import {
 	setPassword,
 	setNotify,
 	setShow,
-	clearForm,
 	clearErrors,
 } from '../../../../redux/slices/userSlice';
 import { setMenuView } from '../../../../redux/slices/navSlice';
@@ -36,6 +36,7 @@ const Auth = () => {
 	const { menuView } = useSelector((state) => state.nav);
 	const {
 		loading,
+		login,
 		firstName,
 		lastName,
 		phone,
@@ -53,44 +54,44 @@ const Auth = () => {
 
 	const handleChange = (input, value) => {
 		const actionMap = {
-			toggle: () => {
-				dispatch(clearErrors());
-				dispatch(clearForm());
-				dispatch(setMenuView(value));
-			},
-			first: () => dispatch(setFirstName(value)),
-			last: () => dispatch(setLastName(value)),
-			phone: () => dispatch(setPhone(value)),
-			email: () => dispatch(setEmail(value)),
-			password: () => dispatch(setPassword(value)),
-			notify: () => dispatch(setNotify(value)),
+			toggle: setMenuView,
+			login: setLogin,
+			first: setFirstName,
+			last: setLastName,
+			phone: setPhone,
+			email: setEmail,
+			password: setPassword,
+			notify: setNotify,
 		};
 
 		const action = actionMap[input];
 
-		if (action) {
-			action();
-		}
+		action && dispatch(action(value));
 	};
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
-		const data = {
-			email: email.toLowerCase(),
-			password,
-		};
+		let data;
 
 		switch (menuView) {
 			case 'Login':
-				dispatch(login(data));
+				data = {
+					login,
+					password,
+				};
+				dispatch(userLogin(data));
 				break;
 
 			case 'Register':
-				data.firstName = firstName;
-				data.lastName = lastName;
-				data.phone = phone;
-				data.notify = notify;
+				data = {
+					firstName,
+					lastName,
+					phone,
+					email,
+					password,
+					notify,
+				};
 				dispatch(register(data));
 				break;
 
@@ -170,18 +171,31 @@ const Auth = () => {
 								onChange={(e) => handleChange('phone', e.target.value)}
 							/>
 							{errors?.phone && <h6 className='error'>{errors?.phone}</h6>}
+							<TextField
+								type='email'
+								label='Email'
+								size='small'
+								margin='dense'
+								value={email}
+								onFocus={handleFocus}
+								onChange={(e) => handleChange('email', e.target.value)}
+							/>
+							{errors?.email && <h6 className='error'>{errors?.email}</h6>}
 						</>
 					)}
-					<TextField
-						type='email'
-						label='Email'
-						size='small'
-						margin='dense'
-						value={email}
-						onFocus={handleFocus}
-						onChange={(e) => handleChange('email', e.target.value)}
-					/>
-					{errors?.email && <h6 className='error'>{errors?.email}</h6>}
+					{menuView === 'Login' && (
+						<>
+							<TextField
+								label='Email or Mobile Number'
+								size='small'
+								margin='dense'
+								value={login}
+								onFocus={handleFocus}
+								onChange={(e) => handleChange('login', e.target.value)}
+							/>
+							{errors?.login && <h6 className='error'>{errors?.login}</h6>}
+						</>
+					)}
 					<TextField
 						type={show ? 'text' : 'password'}
 						label='Password'

@@ -3,6 +3,7 @@ import {
 	createAsyncThunk,
 	createSlice,
 } from '@reduxjs/toolkit';
+import { getUser } from './userSlice';
 import { labelClasses, typeOptions } from '../../util/data';
 import doSomethingApi from '../../api/doSomethingApi';
 
@@ -44,10 +45,25 @@ export const inviteSingle = createAsyncThunk(
 
 export const findGuest = createAsyncThunk(
 	'event/find_guest',
-	async (guestInfo, { rejectWithValue, dispatch }) => {
+	async (guestInfo, { rejectWithValue }) => {
 		try {
 			const res = await doSomethingApi.post('/users/find', guestInfo);
-			dispatch(setInvitedGuestInput(''));
+			return res.data;
+		} catch (err) {
+			return rejectWithValue(err.response.data);
+		}
+	}
+);
+
+export const findAndInvite = createAsyncThunk(
+	'event/find_and_invite',
+	async (eventInfo, { rejectWithValue, dispatch }) => {
+		try {
+			const res = await doSomethingApi.post(
+				'/events/find-and-invite',
+				eventInfo
+			);
+			res.data.success && dispatch(getUser(eventInfo.creator));
 			return res.data;
 		} catch (err) {
 			return rejectWithValue(err.response.data);
@@ -208,10 +224,24 @@ export const eventSlice = createSlice({
 				if (alreadyInvited) {
 					state.errors = { guest: 'Guest already invited' };
 				} else {
+					state.invitedGuestInput = '';
 					state.invitedGuests = [...state.invitedGuests, action.payload];
 				}
 			})
 			.addCase(findGuest.rejected, (state, action) => {
+				state.loading = false;
+				state.errors = action.payload;
+			})
+			.addCase(findAndInvite.pending, (state) => {
+				state.loading = true;
+				state.errors = null;
+			})
+			.addCase(findAndInvite.fulfilled, (state, action) => {
+				state.loading = false;
+				state.success = action.payload.success;
+				state.selectedEvent = action.payload.updatedEvent;
+			})
+			.addCase(findAndInvite.rejected, (state, action) => {
 				state.loading = false;
 				state.errors = action.payload;
 			});

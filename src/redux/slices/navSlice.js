@@ -1,9 +1,30 @@
-import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
+import {
+	createAsyncThunk,
+	createEntityAdapter,
+	createSlice,
+} from '@reduxjs/toolkit';
+import { clearForm, clearErrors } from './userSlice';
+
+export const setMenuView = createAsyncThunk(
+	'nav/set_view',
+	async (data, { dispatch }) => {
+		try {
+			dispatch(clearForm());
+			dispatch(clearErrors());
+			return data;
+		} catch (err) {
+			console.log(err);
+			return { message: 'Error setting menu view!' };
+		}
+	}
+);
 
 export const navAdapter = createEntityAdapter();
 const initialState = navAdapter.getInitialState({
+	loading: false,
 	menuOpen: false,
 	menuView: 'Login',
+	errors: null,
 });
 
 export const navSlice = createSlice({
@@ -13,12 +34,19 @@ export const navSlice = createSlice({
 		setMenuOpen: (state, action) => {
 			state.menuOpen = action.payload;
 		},
-		setMenuView: (state, action) => {
-			state.menuView = action.payload;
-		},
+	},
+	extraReducers: (builder) => {
+		builder
+			.addCase(setMenuView.pending, (state) => {
+				state.loading = true;
+				state.errors = null;
+			})
+			.addCase(setMenuView.fulfilled, (state, action) => {
+				state.menuView = action.payload;
+			});
 	},
 });
 
-export const { setMenuOpen, setMenuView } = navSlice.actions;
+export const { setMenuOpen } = navSlice.actions;
 
 export default navSlice.reducer;

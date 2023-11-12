@@ -46,6 +46,7 @@ import {
 	setEventLoc,
 	setInvitedGuestInput,
 	findGuest,
+	findAndInvite,
 	removeInvitedGuest,
 	setHeadcount,
 	setSelectedLabel,
@@ -160,6 +161,11 @@ const EventModal = () => {
 	const handleAddGuest = () => {
 		const data = {
 			guest: invitedGuestInput,
+			eventId: selectedEvent?._id,
+			type: selectedEvent?.type,
+			date: selectedEvent?.date,
+			time: selectedEvent?.time,
+			creator: user?._id,
 		};
 
 		const { valid, errors } = validateInvitedGuest(invitedGuestInput);
@@ -167,7 +173,7 @@ const EventModal = () => {
 		if (!valid) {
 			dispatch(setErrors(errors));
 		} else {
-			dispatch(findGuest(data));
+			dispatch(findAndInvite(data));
 		}
 	};
 
