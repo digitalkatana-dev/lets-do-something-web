@@ -12,7 +12,9 @@ import {
 } from './eventSlice';
 import { getMonth, defaultTime } from '../../util/helpers';
 import dayjs from 'dayjs';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import doSomethingApi from '../../api/doSomethingApi';
+dayjs.extend(isSameOrAfter);
 
 export const setDaySelected = createAsyncThunk(
 	'calendar/set_selected_day',
@@ -157,9 +159,8 @@ const initialState = calendarAdapter.getInitialState({
 	monthIndexSmall: dayjs().month(),
 	daySelected: null,
 	selectedEvent: null,
-	savedEvents: null,
+	allEvents: null,
 	currentEvents: null,
-	memoryEvents: null,
 	guestList: null,
 	eventsAttending: null,
 	success: null,
@@ -234,9 +235,15 @@ export const calendarSlice = createSlice({
 			})
 			.addCase(getAllEvents.fulfilled, (state, action) => {
 				state.loading = false;
-				state.savedEvents = action.payload.events;
-				state.currentEvents = action.payload.current;
-				state.memoryEvents = action.payload.memories;
+				state.allEvents = action.payload;
+				state.currentEvents =
+					action.payload.filter((item) =>
+						dayjs(item.date).isSameOrAfter(new Date(), 'day')
+					) == []
+						? null
+						: action.payload.filter((item) =>
+								dayjs(item.date).isSameOrAfter(new Date(), 'day')
+						  );
 			})
 			.addCase(getAllEvents.rejected, (state, action) => {
 				state.loading = false;
@@ -248,9 +255,15 @@ export const calendarSlice = createSlice({
 			})
 			.addCase(getInvitedEvents.fulfilled, (state, action) => {
 				state.loading = false;
-				state.savedEvents = action.payload.events;
-				state.currentEvents = action.payload.current;
-				state.memoryEvents = action.payload.memories;
+				state.allEvents = action.payload;
+				state.currentEvents =
+					action.payload.filter((item) =>
+						dayjs(item.date).isSameOrAfter(new Date(), 'day')
+					) == []
+						? null
+						: action.payload.filter((item) =>
+								dayjs(item.date).isSameOrAfter(new Date(), 'day')
+						  );
 			})
 			.addCase(getInvitedEvents.rejected, (state, action) => {
 				state.loading = false;
@@ -262,7 +275,7 @@ export const calendarSlice = createSlice({
 			})
 			.addCase(updateEvent.fulfilled, (state, action) => {
 				state.loading = false;
-				state.savedEvents = action.payload.updatedAll;
+				state.allEvents = action.payload.updatedAll;
 				state.currentEvents = action.payload.current;
 				state.success = action.payload.success;
 				state.open = false;
@@ -278,7 +291,7 @@ export const calendarSlice = createSlice({
 			.addCase(attendEvent.fulfilled, (state, action) => {
 				state.loading = false;
 				state.success = action.payload.success;
-				state.savedEvents = action.payload.updatedAll;
+				state.allEvents = action.payload.updatedAll;
 				state.currentEvents = action.payload.current;
 				state.guestList = action.payload.updatedEvent.attendees;
 				state.eventsAttending = action.payload.updatedEventsAttending;
@@ -295,7 +308,7 @@ export const calendarSlice = createSlice({
 			.addCase(cancelRsvp.fulfilled, (state, action) => {
 				state.loading = false;
 				state.success = action.payload.success;
-				state.savedEvents = action.payload.updatedAll;
+				state.allEvents = action.payload.updatedAll;
 				state.currentEvents = action.payload.current;
 				state.guestList = action.payload.updatedEvent.attendees;
 				state.eventsAttending = action.payload.updatedEventsAttending;
@@ -311,7 +324,7 @@ export const calendarSlice = createSlice({
 			.addCase(deleteEvent.fulfilled, (state, action) => {
 				state.loading = false;
 				state.success = action.payload.success;
-				state.savedEvents = action.payload.updatedAll;
+				state.allEvents = action.payload.updatedAll;
 				state.currentEvents = action.payload.current;
 				state.memoryEvents = action.payload.memories;
 				state.open = false;
@@ -327,7 +340,7 @@ export const calendarSlice = createSlice({
 			.addCase(uploadMemory.fulfilled, (state, action) => {
 				state.loading = false;
 				state.success = action.payload.success;
-				state.savedEvents = action.payload.updatedAll;
+				state.allEvents = action.payload.updatedAll;
 				state.currentEvents = action.payload.current;
 				state.memoryEvents = action.payload.memories;
 			})

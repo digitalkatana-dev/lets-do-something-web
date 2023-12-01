@@ -20,12 +20,12 @@ export const thirdSunday = (year, month) => {
 	return date.setDate(date.getDate() - dayDiff);
 };
 
-export const guestListEvents = (savedEvents, errorHandler) => {
+export const guestListEvents = (allEvents, errorHandler) => {
 	let errors = {};
 	let formattedEvents = [];
 
 	try {
-		const monthEvents = savedEvents?.filter(
+		const monthEvents = allEvents?.filter(
 			(item) =>
 				dayjs(item.date).month() === dayjs().month() &&
 				dayjs(item.date).year() === dayjs().year()

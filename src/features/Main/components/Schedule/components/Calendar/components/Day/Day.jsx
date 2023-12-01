@@ -9,7 +9,7 @@ import TouchableOpacity from '../../../../../../../../components/TouchableOpacit
 import './day.scss';
 
 const Day = ({ day, rowIdx }) => {
-	const { savedEvents } = useSelector((state) => state.calendar);
+	const { allEvents } = useSelector((state) => state.calendar);
 	const [dayEvents, setDayEvents] = useState([]);
 	const dispatch = useDispatch();
 
@@ -18,12 +18,12 @@ const Day = ({ day, rowIdx }) => {
 	};
 
 	useEffect(() => {
-		const events = savedEvents?.filter(
+		const events = allEvents?.filter(
 			(event) =>
 				dayjs(event.date).format('MM-DD-YY') === dayjs(day).format('MM-DD-YY')
 		);
 		setDayEvents(events);
-	}, [savedEvents, day]);
+	}, [allEvents, day]);
 
 	return (
 		<TouchableOpacity

@@ -9,7 +9,7 @@ import { guestListEvents } from '../../../../../../util/helpers';
 import './guestList.scss';
 
 const GuestList = () => {
-	const { savedEvents, guestList } = useSelector((state) => state.calendar);
+	const { allEvents, guestList } = useSelector((state) => state.calendar);
 	const { selectedEvent } = useSelector((state) => state.event);
 	const dispatch = useDispatch();
 
@@ -54,8 +54,8 @@ const GuestList = () => {
 							))}
 						</div>
 					) : (
-						savedEvents &&
-						guestListEvents(savedEvents, errorHandler).map((event) => (
+						allEvents &&
+						guestListEvents(allEvents, errorHandler).map((event) => (
 							<div key={event._id} className='current-events'>
 								<span className='details'>{event.details}</span>
 								{event.confirmedGuests?.map((guest) => (
