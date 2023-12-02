@@ -1,0 +1,25 @@
+#profile-tabs {
+	height: 420px;
+	overflow: hidden;
+
+	.label-container {
+		border-bottom: 1px ridge var(--border);
+
+		.label {
+			width: 50%;
+
+			&.Mui-selected {
+				color: var(--brand);
+			}
+
+			&:hover {
+				color: var(--brand);
+				background-color: var(--brand-shadow);
+			}
+		}
+
+		.MuiTabs-indicator {
+			background-color: var(--brand);
+		}
+	}
+}

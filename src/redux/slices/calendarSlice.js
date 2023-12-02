@@ -72,14 +72,13 @@ export const getInvitedEvents = createAsyncThunk(
 
 export const updateEvent = createAsyncThunk(
 	'calendar/update_event',
-	async (eventInfo, { rejectWithValue, dispatch }) => {
+	async (data, { rejectWithValue, dispatch }) => {
+		const { user, ...others } = data;
 		try {
-			const res = await doSomethingApi.put(`/events/update`, eventInfo);
-			const creator = res.data.updatedEvent.createdBy;
-			if (creator) dispatch(getUser(creator));
-			dispatch(clearEvent());
-
-			return res.data;
+			const res = await doSomethingApi.put(`/events/update`, others);
+			const { success } = res.data;
+			if (success) dispatch(getUser(user));
+			return success;
 		} catch (err) {
 			return rejectWithValue(err.response.data);
 		}
@@ -275,9 +274,7 @@ export const calendarSlice = createSlice({
 			})
 			.addCase(updateEvent.fulfilled, (state, action) => {
 				state.loading = false;
-				state.allEvents = action.payload.updatedAll;
-				state.currentEvents = action.payload.current;
-				state.success = action.payload.success;
+				state.success = action.payload;
 				state.open = false;
 			})
 			.addCase(updateEvent.rejected, (state, action) => {

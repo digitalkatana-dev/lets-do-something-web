@@ -10,6 +10,7 @@ import {
 	REGISTER,
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
+import appReducer from './slices/appSlice';
 import userReducer from './slices/userSlice';
 import calendarReducer from './slices/calendarSlice';
 import eventReducer from './slices/eventSlice';
@@ -30,6 +31,7 @@ const calendarPersistConfig = {
 
 export const store = configureStore({
 	reducer: {
+		app: appReducer,
 		user: persistReducer(userPersistConfig, userReducer),
 		calendar: persistReducer(calendarPersistConfig, calendarReducer),
 		event: eventReducer,

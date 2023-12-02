@@ -41,7 +41,7 @@ export const getUser = createAsyncThunk(
 	'user/get_user',
 	async (data, { rejectWithValue }) => {
 		try {
-			const res = await doSomethingApi.get(`/users/${data}`);
+			const res = await doSomethingApi.get(`/users/?id=${data}`);
 			return res.data;
 		} catch (err) {
 			return rejectWithValue(err.response.data);
@@ -90,9 +90,9 @@ export const resetPasswordWithToken = createAsyncThunk(
 
 export const updateUser = createAsyncThunk(
 	'user/update_user',
-	async (data, { rejectWithValue }) => {
+	async (data, { rejectWithValue, dispatch }) => {
 		try {
-			const res = await doSomethingApi.put('/users/update', data);
+			const res = await doSomethingApi.put(`/users/${data?._id}/update`, data);
 			return res.data;
 		} catch (err) {
 			return rejectWithValue(err.response.data);

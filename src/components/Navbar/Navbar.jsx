@@ -2,7 +2,7 @@ import { AppBar, Avatar, IconButton, Toolbar } from '@mui/material';
 import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
-import { clearErrors, getUser, logout } from '../../redux/slices/userSlice';
+import { clearErrors, logout } from '../../redux/slices/userSlice';
 import { setMenuOpen, setMenuView } from '../../redux/slices/navSlice';
 import { persistor } from '../../redux/rootStore';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -23,10 +23,6 @@ const Navbar = () => {
 			dispatch(clearErrors());
 			dispatch(setMenuView('Login'));
 		}, 1000);
-	};
-
-	const handleProfile = () => {
-		dispatch(getUser(user?._id));
 	};
 
 	const handleLogout = () => {
@@ -51,7 +47,7 @@ const Navbar = () => {
 				{user ? (
 					<div className='user-area'>
 						<h3>Hello, {user.firstName}!</h3>
-						<Link to='/profile' onClick={handleProfile}>
+						<Link to='/profile'>
 							<IconButton
 								tooltip='Profile'
 								placement='right-end'

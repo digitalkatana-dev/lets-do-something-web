@@ -118,3 +118,16 @@ export const formattedTime = (data) => {
 
 	return formattedTime;
 };
+
+export const getBackgroundColor = (colorName) => {
+	const tempElement = document.createElement('div');
+	tempElement.style.color = colorName;
+	document.body.appendChild(tempElement);
+
+	const computedColor = window.getComputedStyle(tempElement).color;
+	const rgbaValues = computedColor.match(/\d+/g).map(Number);
+
+	document.body.removeChild(tempElement);
+
+	return `rgba(${rgbaValues[0]}, ${rgbaValues[1]}, ${rgbaValues[2]}, 0.2)`;
+};
