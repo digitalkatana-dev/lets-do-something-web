@@ -6,13 +6,13 @@ import TabPanel from './components/TabPanel';
 const ProfileTabs = ({ type, tab1data, tab2data }) => {
 	const [value, setValue] = useState(0);
 	const tab1label =
-		type === 'events' ? 'Attending' : type === 'friends' && 'Friends';
+		type === 'events' ? 'Hosting' : type === 'friends' && 'Friends';
 	const panel1type =
-		type === 'events' ? 'attend' : type === 'friends' && 'friend';
+		type === 'events' ? 'host' : type === 'friends' && 'friend';
 	const tab2label =
-		type === 'events' ? 'Hosting' : type === 'friends' && 'Search';
+		type === 'events' ? 'Attending' : type === 'friends' && 'Search';
 	const panel2type =
-		type === 'events' ? 'host' : type === 'friends' && 'search';
+		type === 'events' ? 'attend' : type === 'friends' && 'search';
 
 	const a11yProps = (index) => {
 		return {
@@ -28,6 +28,9 @@ const ProfileTabs = ({ type, tab1data, tab2data }) => {
 
 	return (
 		<div id='profile-tabs'>
+			<div className='heading-container'>
+				<h4>{type.charAt(0).toUpperCase() + type.slice(1)}</h4>
+			</div>
 			<Box className='label-container'>
 				<Tabs value={value} onChange={handleChange} centered>
 					<Tab label={tab1label} {...a11yProps(0)} className='label' />

@@ -9,7 +9,7 @@ const TabPanel = ({ children, index, value, type, ...other }) => {
 			id={`tabpanel-${index}`}
 			aria-labelledby={`tab-${index}`}
 			{...other}
-			style={{ height: 'calc(100% - 49px)', overflowY: 'auto' }}
+			style={{ height: 'calc(100% - 129px)', overflowY: 'auto' }}
 		>
 			{value === index && (
 				<Box>
