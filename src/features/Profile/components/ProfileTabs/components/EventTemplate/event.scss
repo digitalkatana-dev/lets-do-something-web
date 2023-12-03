@@ -1,0 +1,28 @@
+.event-template {
+	display: flex;
+	align-items: center;
+	padding: 20px;
+	border-bottom: 1px ridge var(--border);
+	margin-bottom: 5px;
+
+	.event-info-container,
+	.rsvp-container,
+	.host-action-container {
+		flex: 4;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.event-info-container {
+		gap: 8px;
+		text-align: start;
+	}
+
+	.rsvp-container {
+		align-items: center;
+	}
+
+	.host-action-container {
+		align-items: end;
+	}
+}

@@ -231,6 +231,7 @@ const EventModal = () => {
 					},
 					...invitedGuests,
 				],
+				createdBy: user?._id,
 			};
 			dispatch(createEvent(data));
 		} else if (selectedEvent && eventAuthor === currentUser) {

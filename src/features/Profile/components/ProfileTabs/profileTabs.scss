@@ -1,0 +1,41 @@
+#profile-tabs {
+	height: 530px;
+	overflow: hidden;
+	// margin: 20px 0;
+	position: relative;
+	// border: 1px solid red;
+
+	.heading-container {
+		width: 224.84px;
+		position: absolute;
+		top: 15px;
+		left: 15px;
+		z-index: 5;
+		background-color: rgba(0, 0, 0, 0.8);
+		color: whitesmoke;
+		padding: 10px;
+		border-radius: 10px;
+	}
+
+	.label-container {
+		margin-top: 70px;
+		border-bottom: 1px ridge var(--border);
+
+		.label {
+			width: 50%;
+
+			&.Mui-selected {
+				color: var(--brand);
+			}
+
+			&:hover {
+				color: var(--brand);
+				background-color: var(--brand-shadow);
+			}
+		}
+
+		.MuiTabs-indicator {
+			background-color: var(--brand);
+		}
+	}
+}

@@ -1,13 +1,29 @@
-.profile {
-	height: calc(100vh - 56px);
-	padding-top: 56px;
-	// border: 1px ridge crimson;
+#profile {
+	height: fit-content;
+	min-height: calc(100vh - 56px);
+	margin-top: 57px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	position: relative;
+	// border: 2px solid firebrick;
+
+	.greeting-container {
+		position: absolute;
+		top: 15px;
+		left: 15px;
+		z-index: 5;
+		background-color: rgba(0, 0, 0, 0.8);
+		color: whitesmoke;
+		padding: 10px;
+		border-radius: 10px;
+	}
 }
 
 @media only screen and (min-width: 600px) {
-	.profile {
-		height: calc(100vh - 64px);
-		padding-top: 64px;
+	#profile {
+		min-height: calc(100vh - 64px);
+		margin-top: 64px;
 	}
 }
 

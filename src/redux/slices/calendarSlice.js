@@ -12,7 +12,9 @@ import {
 } from './eventSlice';
 import { getMonth, defaultTime } from '../../util/helpers';
 import dayjs from 'dayjs';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import doSomethingApi from '../../api/doSomethingApi';
+dayjs.extend(isSameOrAfter);
 
 export const setDaySelected = createAsyncThunk(
 	'calendar/set_selected_day',
@@ -29,13 +31,14 @@ export const setDaySelected = createAsyncThunk(
 
 export const createEvent = createAsyncThunk(
 	'calendar/create_event',
-	async (eventInfo, { rejectWithValue, dispatch }) => {
+	async (data, { rejectWithValue, dispatch }) => {
 		try {
-			const res = await doSomethingApi.post('/events', eventInfo);
-			const creator = res.data.event.createdBy;
-			if (creator) dispatch(getUser(creator));
-			dispatch(clearEvent());
-
+			const res = await doSomethingApi.post('/events', data);
+			if (res.data.success) {
+				dispatch(getUser(data.createdBy));
+				dispatch(getInvitedEvents(data.createdBy));
+				dispatch(clearEvent());
+			}
 			return res.data;
 		} catch (err) {
 			return rejectWithValue(err.response.data);
@@ -57,9 +60,9 @@ export const getAllEvents = createAsyncThunk(
 
 export const getInvitedEvents = createAsyncThunk(
 	'calendar/get_invited_events',
-	async (eventInfo, { rejectWithValue }) => {
+	async (data, { rejectWithValue }) => {
 		try {
-			const res = await doSomethingApi.get('/events/invited');
+			const res = await doSomethingApi.get(`/events/?user=${data}`);
 			return res.data;
 		} catch (err) {
 			return rejectWithValue(err.response.data);
@@ -69,14 +72,13 @@ export const getInvitedEvents = createAsyncThunk(
 
 export const updateEvent = createAsyncThunk(
 	'calendar/update_event',
-	async (eventInfo, { rejectWithValue, dispatch }) => {
+	async (data, { rejectWithValue, dispatch }) => {
+		const { user, ...others } = data;
 		try {
-			const res = await doSomethingApi.put(`/events/update`, eventInfo);
-			const creator = res.data.updatedEvent.createdBy;
-			if (creator) dispatch(getUser(creator));
-			dispatch(clearEvent());
-
-			return res.data;
+			const res = await doSomethingApi.put(`/events/update`, others);
+			const { success } = res.data;
+			if (success) dispatch(getUser(user));
+			return success;
 		} catch (err) {
 			return rejectWithValue(err.response.data);
 		}
@@ -156,9 +158,8 @@ const initialState = calendarAdapter.getInitialState({
 	monthIndexSmall: dayjs().month(),
 	daySelected: null,
 	selectedEvent: null,
-	savedEvents: null,
+	allEvents: null,
 	currentEvents: null,
-	memoryEvents: null,
 	guestList: null,
 	eventsAttending: null,
 	success: null,
@@ -220,8 +221,6 @@ export const calendarSlice = createSlice({
 			})
 			.addCase(createEvent.fulfilled, (state, action) => {
 				state.loading = false;
-				state.savedEvents = action.payload.allEvents;
-				state.currentEvents = action.payload.current;
 				state.success = action.payload.success;
 				state.open = false;
 			})
@@ -235,9 +234,15 @@ export const calendarSlice = createSlice({
 			})
 			.addCase(getAllEvents.fulfilled, (state, action) => {
 				state.loading = false;
-				state.savedEvents = action.payload.all;
-				state.currentEvents = action.payload.current;
-				state.memoryEvents = action.payload.memories;
+				state.allEvents = action.payload;
+				state.currentEvents =
+					action.payload.filter((item) =>
+						dayjs(item.date).isSameOrAfter(new Date(), 'day')
+					) == []
+						? null
+						: action.payload.filter((item) =>
+								dayjs(item.date).isSameOrAfter(new Date(), 'day')
+						  );
 			})
 			.addCase(getAllEvents.rejected, (state, action) => {
 				state.loading = false;
@@ -249,9 +254,15 @@ export const calendarSlice = createSlice({
 			})
 			.addCase(getInvitedEvents.fulfilled, (state, action) => {
 				state.loading = false;
-				state.savedEvents = action.payload.invited;
-				state.currentEvents = action.payload.current;
-				state.memoryEvents = action.payload.memories;
+				state.allEvents = action.payload;
+				state.currentEvents =
+					action.payload.filter((item) =>
+						dayjs(item.date).isSameOrAfter(new Date(), 'day')
+					) == []
+						? null
+						: action.payload.filter((item) =>
+								dayjs(item.date).isSameOrAfter(new Date(), 'day')
+						  );
 			})
 			.addCase(getInvitedEvents.rejected, (state, action) => {
 				state.loading = false;
@@ -263,9 +274,7 @@ export const calendarSlice = createSlice({
 			})
 			.addCase(updateEvent.fulfilled, (state, action) => {
 				state.loading = false;
-				state.savedEvents = action.payload.updatedAll;
-				state.currentEvents = action.payload.current;
-				state.success = action.payload.success;
+				state.success = action.payload;
 				state.open = false;
 			})
 			.addCase(updateEvent.rejected, (state, action) => {
@@ -279,7 +288,7 @@ export const calendarSlice = createSlice({
 			.addCase(attendEvent.fulfilled, (state, action) => {
 				state.loading = false;
 				state.success = action.payload.success;
-				state.savedEvents = action.payload.updatedAll;
+				state.allEvents = action.payload.updatedAll;
 				state.currentEvents = action.payload.current;
 				state.guestList = action.payload.updatedEvent.attendees;
 				state.eventsAttending = action.payload.updatedEventsAttending;
@@ -296,7 +305,7 @@ export const calendarSlice = createSlice({
 			.addCase(cancelRsvp.fulfilled, (state, action) => {
 				state.loading = false;
 				state.success = action.payload.success;
-				state.savedEvents = action.payload.updatedAll;
+				state.allEvents = action.payload.updatedAll;
 				state.currentEvents = action.payload.current;
 				state.guestList = action.payload.updatedEvent.attendees;
 				state.eventsAttending = action.payload.updatedEventsAttending;
@@ -312,7 +321,7 @@ export const calendarSlice = createSlice({
 			.addCase(deleteEvent.fulfilled, (state, action) => {
 				state.loading = false;
 				state.success = action.payload.success;
-				state.savedEvents = action.payload.updatedAll;
+				state.allEvents = action.payload.updatedAll;
 				state.currentEvents = action.payload.current;
 				state.memoryEvents = action.payload.memories;
 				state.open = false;
@@ -328,7 +337,7 @@ export const calendarSlice = createSlice({
 			.addCase(uploadMemory.fulfilled, (state, action) => {
 				state.loading = false;
 				state.success = action.payload.success;
-				state.savedEvents = action.payload.updatedAll;
+				state.allEvents = action.payload.updatedAll;
 				state.currentEvents = action.payload.current;
 				state.memoryEvents = action.payload.memories;
 			})

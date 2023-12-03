@@ -20,12 +20,12 @@ export const thirdSunday = (year, month) => {
 	return date.setDate(date.getDate() - dayDiff);
 };
 
-export const guestListEvents = (savedEvents, errorHandler) => {
+export const guestListEvents = (allEvents, errorHandler) => {
 	let errors = {};
 	let formattedEvents = [];
 
 	try {
-		const monthEvents = savedEvents?.filter(
+		const monthEvents = allEvents?.filter(
 			(item) =>
 				dayjs(item.date).month() === dayjs().month() &&
 				dayjs(item.date).year() === dayjs().year()
@@ -117,4 +117,17 @@ export const formattedTime = (data) => {
 	formattedTime = `${date}T${displayHours}:${mins}`;
 
 	return formattedTime;
+};
+
+export const getBackgroundColor = (colorName) => {
+	const tempElement = document.createElement('div');
+	tempElement.style.color = colorName;
+	document.body.appendChild(tempElement);
+
+	const computedColor = window.getComputedStyle(tempElement).color;
+	const rgbaValues = computedColor.match(/\d+/g).map(Number);
+
+	document.body.removeChild(tempElement);
+
+	return `rgba(${rgbaValues[0]}, ${rgbaValues[1]}, ${rgbaValues[2]}, 0.2)`;
 };

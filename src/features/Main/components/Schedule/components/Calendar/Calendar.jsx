@@ -22,7 +22,9 @@ const Calendar = () => {
 	}, [user, dispatch]);
 
 	const handleGetEvents = useCallback(() => {
-		!user ? dispatch(getAllEvents()) : user && dispatch(getInvitedEvents());
+		!user
+			? dispatch(getAllEvents())
+			: user && dispatch(getInvitedEvents(user?._id));
 	}, [user, dispatch]);
 
 	const handleCurrentMonth = useCallback(() => {
