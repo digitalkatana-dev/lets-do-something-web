@@ -1,6 +1,4 @@
 import {
-	FormControl,
-	FormControlLabel,
 	IconButton,
 	MenuItem,
 	Paper,
@@ -18,7 +16,6 @@ import {
 import {
 	updateEvent,
 	deleteEvent,
-	clearSuccess,
 } from '../../../../../../redux/slices/calendarSlice';
 import { getBackgroundColor } from '../../../../../../util/helpers';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -81,9 +78,6 @@ const EventTemplate = ({ data, type }) => {
 
 	const handleSuccess = useCallback(() => {
 		if (success) {
-			setTimeout(() => {
-				dispatch(clearSuccess());
-			}, 7000);
 			dispatch(openDelete(false));
 		}
 	}, [success, dispatch]);

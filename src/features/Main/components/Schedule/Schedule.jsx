@@ -1,5 +1,5 @@
 import { Alert, Snackbar } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
 	clearSuccess,
@@ -29,9 +29,18 @@ const Schedule = () => {
 		setOpen(false);
 	};
 
+	const handleSuccess = useCallback(() => {
+		if (success) {
+			setOpen(true);
+			setTimeout(() => {
+				dispatch(clearSuccess());
+			}, 5000);
+		}
+	}, [dispatch, success]);
+
 	useEffect(() => {
-		success && setOpen(true);
-	}, [success]);
+		handleSuccess();
+	}, [handleSuccess]);
 
 	useEffect(() => {
 		errors?.message && setOpen(true);
@@ -43,7 +52,7 @@ const Schedule = () => {
 			<GuestList />
 			<Snackbar
 				open={open}
-				autoHideDuration={7000}
+				autoHideDuration={5000}
 				onClose={() =>
 					handleClose(success ? 'success' : errors?.message && 'error')
 				}

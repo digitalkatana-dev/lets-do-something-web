@@ -5,7 +5,6 @@ import { setMenuOpen, setMenuView } from '../../../../redux/slices/navSlice';
 import {
 	setEmail,
 	generatePasswordToken,
-	clearSuccess,
 	clearErrors,
 } from '../../../../redux/slices/userSlice';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
@@ -42,8 +41,7 @@ const Forgot = () => {
 			setTimeout(() => {
 				dispatch(setMenuOpen(false));
 				dispatch(setMenuView('Login'));
-				dispatch(clearSuccess());
-			}, 7000);
+			}, 5000);
 	}, [success, dispatch]);
 
 	const handleError = useCallback(() => {

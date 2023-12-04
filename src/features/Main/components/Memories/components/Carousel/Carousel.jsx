@@ -11,17 +11,20 @@ const Carousel = ({ memories }) => {
 
 	return (
 		<Slider {...settings} className='slide' autoplay>
-			{memories?.map((item) => (
-				<div className='pic-container' key={item.id}>
-					<div className='pic-wrapper'>
-						<img src={item.pic} alt='test' />
-						<div className='overlay'>
-							<h5>{item.location + ' ' + item.date}</h5>
-							<h5>Uploaded by: {item.user}</h5>
+			{memories?.map((item) => {
+				const displayName = `${item.uploadedBy.firstName} ${item.uploadedBy.lastName}`;
+				return (
+					<div className='pic-container' key={item._id}>
+						<div className='pic-wrapper'>
+							<img src={item.image} alt='test' />
+							<div className='overlay'>
+								<h5>{item.location + ' ' + item.date}</h5>
+								<h5>Uploaded by: {displayName}</h5>
+							</div>
 						</div>
 					</div>
-				</div>
-			))}
+				);
+			})}
 		</Slider>
 	);
 };

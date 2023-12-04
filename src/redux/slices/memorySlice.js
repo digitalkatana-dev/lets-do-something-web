@@ -94,7 +94,12 @@ export const memorySlice = createSlice({
 	},
 });
 
-export const { setMemoryDate, setMemoryLocation, setEventId } =
-	memorySlice.actions;
+export const {
+	setMemoryDate,
+	setMemoryLocation,
+	setEventId,
+	clearSuccess,
+	clearErrors,
+} = memorySlice.actions;
 
 export default memorySlice.reducer;

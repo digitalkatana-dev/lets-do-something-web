@@ -1,37 +1,48 @@
-import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useCallback, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+	getMemories,
+	clearSuccess,
+} from '../../../../redux/slices/memorySlice';
 import './memories.scss';
 import Carousel from './components/Carousel';
 
 const Memories = () => {
-	const { memoryEvents } = useSelector((state) => state.calendar);
-	const [memories, setMemories] = useState(null);
+	const { allMemories, success } = useSelector((state) => state.memory);
+	const dispatch = useDispatch();
+
+	const loadMemories = useCallback(() => {
+		dispatch(getMemories());
+	}, [dispatch]);
+
+	const handleSuccess = useCallback(() => {
+		if (success) {
+			setTimeout(() => {
+				dispatch(clearSuccess());
+			}, 5000);
+		}
+	}, [dispatch, success]);
 
 	useEffect(() => {
-		const pics = [];
-		memoryEvents?.forEach((item) => {
-			if (item.pics.length > 0) {
-				item.pics?.forEach((item) => {
-					pics.push({
-						id: item._id,
-						date: item.date,
-						location: item.location,
-						pic: item.pic,
-						user: item.user,
-					});
-				});
-			}
-		});
+		loadMemories();
+	}, [loadMemories]);
 
-		setMemories(pics.length > 0 ? pics : null);
-	}, [memoryEvents]);
+	useEffect(() => {
+		handleSuccess();
+	}, [handleSuccess]);
 
 	return (
 		<div className='memories'>
 			<h3>Memories</h3>
-			<div className={memories ? 'memory-container' : 'memory-container empty'}>
-				{memories ? (
-					<Carousel memories={memories} />
+			<div
+				className={
+					allMemories?.length > 0
+						? 'memory-container'
+						: 'memory-container empty'
+				}
+			>
+				{allMemories?.length > 0 ? (
+					<Carousel memories={allMemories} />
 				) : (
 					<h2>No memories yet, would you like to share?</h2>
 				)}

@@ -4,13 +4,8 @@ import {
 	createSlice,
 } from '@reduxjs/toolkit';
 import { getUser } from './userSlice';
-import {
-	setSelectedEvent,
-	setEventTime,
-	setHeadcount,
-	clearEvent,
-} from './eventSlice';
-import { getMonth, defaultTime } from '../../util/helpers';
+import { getMonth, defaultTime, reFormatTime } from '../../util/helpers';
+import { labelClasses, typeOptions } from '../../util/data';
 import dayjs from 'dayjs';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import doSomethingApi from '../../api/doSomethingApi';
@@ -18,11 +13,16 @@ dayjs.extend(isSameOrAfter);
 
 export const setDaySelected = createAsyncThunk(
 	'calendar/set_selected_day',
-	async (calendarInfo, { dispatch }) => {
+	async (data, { dispatch }) => {
+		const { day, eventTime } = data;
 		try {
-			dispatch(setEventTime(defaultTime(calendarInfo)));
+			dispatch(
+				setEventTime(
+					eventTime ? reFormatTime(eventTime, day) : defaultTime(day)
+				)
+			);
 			dispatch(toggleOpen(true));
-			return calendarInfo;
+			return day;
 		} catch (err) {
 			return { message: 'Error settng date' };
 		}
@@ -70,6 +70,70 @@ export const getInvitedEvents = createAsyncThunk(
 	}
 );
 
+export const getSingleEvent = createAsyncThunk(
+	'calendar/get_single_event',
+	async (eventInfo, { rejectWithValue }) => {
+		try {
+			const res = await doSomethingApi.get(`/events/${eventInfo}`);
+			return res.data;
+		} catch (err) {
+			return rejectWithValue(err.response.data);
+		}
+	}
+);
+
+export const sendReminders = createAsyncThunk(
+	'calendar/send_reminders',
+	async (eventInfo, { rejectWithValue }) => {
+		try {
+			const res = await doSomethingApi.post('/events/reminders', eventInfo);
+			return res.data;
+		} catch (err) {
+			return rejectWithValue(err.response.data);
+		}
+	}
+);
+
+export const inviteSingle = createAsyncThunk(
+	'calendar/send_invite',
+	async (eventInfo, { rejectWithValue }) => {
+		try {
+			const res = await doSomethingApi.post('/events/invite', eventInfo);
+			return res.data;
+		} catch (err) {
+			return rejectWithValue(err.response.data);
+		}
+	}
+);
+
+export const findGuest = createAsyncThunk(
+	'calendar/find_guest',
+	async (guestInfo, { rejectWithValue }) => {
+		try {
+			const res = await doSomethingApi.post('/users/check', guestInfo);
+			return res.data;
+		} catch (err) {
+			return rejectWithValue(err.response.data);
+		}
+	}
+);
+
+export const findAndInvite = createAsyncThunk(
+	'calendar/find_and_invite',
+	async (eventInfo, { rejectWithValue, dispatch }) => {
+		try {
+			const res = await doSomethingApi.post(
+				'/events/find-and-invite',
+				eventInfo
+			);
+			res.data.success && dispatch(getUser(eventInfo.creator));
+			return res.data;
+		} catch (err) {
+			return rejectWithValue(err.response.data);
+		}
+	}
+);
+
 export const updateEvent = createAsyncThunk(
 	'calendar/update_event',
 	async (data, { rejectWithValue, dispatch }) => {
@@ -78,21 +142,6 @@ export const updateEvent = createAsyncThunk(
 			const res = await doSomethingApi.put(`/events/update`, others);
 			const { success } = res.data;
 			if (success) dispatch(getUser(user));
-			return success;
-		} catch (err) {
-			return rejectWithValue(err.response.data);
-		}
-	}
-);
-
-export const attendEvent = createAsyncThunk(
-	'calendar/rsvp',
-	async (eventInfo, { rejectWithValue, dispatch }) => {
-		try {
-			const res = await doSomethingApi.put('/events/add-attendee', eventInfo);
-			dispatch(setHeadcount(''));
-			dispatch(getUser(eventInfo.user));
-
 			return res.data;
 		} catch (err) {
 			return rejectWithValue(err.response.data);
@@ -100,15 +149,13 @@ export const attendEvent = createAsyncThunk(
 	}
 );
 
-export const cancelRsvp = createAsyncThunk(
-	'calendar/cancel_rsvp',
-	async (eventInfo, { rejectWithValue, dispatch }) => {
+export const processRsvp = createAsyncThunk(
+	'calendar/rsvp',
+	async (data, { rejectWithValue, dispatch }) => {
 		try {
-			const res = await doSomethingApi.put(
-				'/events/remove-attendee',
-				eventInfo
-			);
-			dispatch(getUser(eventInfo.user));
+			const res = await doSomethingApi.put('/events/rsvp', data);
+			dispatch(setHeadcount(''));
+			dispatch(getUser(data.user));
 
 			return res.data;
 		} catch (err) {
@@ -133,21 +180,6 @@ export const deleteEvent = createAsyncThunk(
 	}
 );
 
-export const uploadMemory = createAsyncThunk(
-	'calendar/upload_memory',
-	async (eventInfo, { rejectWithValue, dispatch }) => {
-		try {
-			const res = await doSomethingApi.post('/events/photo-upload', eventInfo);
-			const creator = res.data.updatedEvent.createdBy;
-			if (creator) dispatch(getUser(creator));
-
-			return res.data;
-		} catch (err) {
-			return rejectWithValue(err.response.data);
-		}
-	}
-);
-
 export const calendarAdapter = createEntityAdapter();
 const initialState = calendarAdapter.getInitialState({
 	loading: false,
@@ -157,11 +189,21 @@ const initialState = calendarAdapter.getInitialState({
 	currentMonthSmall: getMonth(),
 	monthIndexSmall: dayjs().month(),
 	daySelected: null,
-	selectedEvent: null,
 	allEvents: null,
 	currentEvents: null,
+	selectedEvent: null,
 	guestList: null,
 	eventsAttending: null,
+	isPublic: false,
+	rsvpOpen: true,
+	eventType: '',
+	eventTypeInput: '',
+	eventTime: '',
+	eventLoc: '',
+	selectedLabel: labelClasses[0],
+	invitedGuestInput: '',
+	invitedGuests: [],
+	headcount: '',
 	success: null,
 	errors: null,
 });
@@ -191,8 +233,76 @@ export const calendarSlice = createSlice({
 		setEventsAttending: (state, action) => {
 			state.eventsAttending = action.payload;
 		},
+		setSelectedEvent: (state, action) => {
+			state.selectedEvent = action.payload;
+			if (action.payload === null) {
+				state.isPublic = false;
+				state.rsvpOpen = true;
+				state.eventType = '';
+				state.eventTypeInput = '';
+				state.eventTime = '';
+				state.eventLoc = '';
+				state.selectedLabel = labelClasses[0];
+				state.invitedGuestInput = '';
+				state.invitedGuests = [];
+			} else {
+				const optionMatch = typeOptions.find(
+					(item) => item === action.payload.type
+				);
+				state.isPublic = action.payload.isPublic;
+				state.rsvpOpen = action.payload.rsvpOpen;
+				state.eventType = optionMatch ? action.payload.type : 'other';
+				state.eventTypeInput = !optionMatch ? action.payload.type : '';
+				// state.eventTime = action.payload.time;
+				state.eventLoc = action.payload.location;
+				state.selectedLabel = action.payload.label;
+				state.invitedGuests = action.payload.invitedGuests;
+			}
+		},
+		setIsPublic: (state, action) => {
+			state.isPublic = action.payload;
+		},
+		setRSVPOpen: (state, action) => {
+			state.rsvpOpen = action.payload;
+		},
+		setEventType: (state, action) => {
+			state.eventType = action.payload;
+			if (action.payload !== 'other') state.eventTypeInput = '';
+		},
+		setEventTypeInput: (state, action) => {
+			state.eventTypeInput = action.payload;
+		},
+		setEventTime: (state, action) => {
+			state.eventTime = action.payload;
+		},
+		setEventLoc: (state, action) => {
+			state.eventLoc = action.payload;
+		},
+		setHeadcount: (state, action) => {
+			state.headcount = action.payload;
+		},
+		setSelectedLabel: (state, action) => {
+			state.selectedLabel = action.payload;
+		},
+		setInvitedGuestInput: (state, action) => {
+			state.invitedGuestInput = action.payload;
+		},
+		removeInvitedGuest: (state, action) => {
+			state.invitedGuests = action.payload;
+		},
 		setErrors: (state, action) => {
 			state.errors = action.payload;
+		},
+		clearEvent: (state) => {
+			state.isPublic = false;
+			state.rsvpOpen = true;
+			state.eventType = '';
+			state.eventTypeInput = '';
+			state.eventTime = '';
+			state.eventLoc = '';
+			state.selectedLabel = labelClasses[0];
+			state.invitedGuestInput = '';
+			state.invitedGuests = [];
 		},
 		clearSuccess: (state) => {
 			state.success = null;
@@ -268,49 +378,100 @@ export const calendarSlice = createSlice({
 				state.loading = false;
 				state.errors = action.payload;
 			})
+			.addCase(getSingleEvent.pending, (state) => {
+				state.loading = true;
+				state.errors = null;
+			})
+			.addCase(getSingleEvent.fulfilled, (state, action) => {
+				state.loading = false;
+				state.selectedEvent = action.payload;
+			})
+			.addCase(getSingleEvent.rejected, (state, action) => {
+				state.loading = false;
+				state.errors = action.payload;
+			})
+			.addCase(sendReminders.pending, (state) => {
+				state.loading = true;
+				state.errors = null;
+			})
+			.addCase(sendReminders.fulfilled, (state, action) => {
+				state.loading = false;
+				state.success = action.payload;
+			})
+			.addCase(sendReminders.rejected, (state, action) => {
+				state.loading = false;
+				state.errors = action.payload;
+			})
+			.addCase(inviteSingle.pending, (state) => {
+				state.loading = true;
+				state.errors = null;
+			})
+			.addCase(inviteSingle.fulfilled, (state, action) => {
+				state.loading = false;
+				state.success = action.payload;
+			})
+			.addCase(inviteSingle.rejected, (state, action) => {
+				state.loading = false;
+				state.errors = action.payload;
+			})
+			.addCase(findGuest.pending, (state) => {
+				state.loading = true;
+				state.errors = null;
+			})
+			.addCase(findGuest.fulfilled, (state, action) => {
+				const isInvited = state.invitedGuests.some(
+					(item) => item._id === action.payload._id
+				);
+				state.loading = false;
+				if (isInvited) {
+					state.errors = { guest: 'Guest already invited' };
+				} else {
+					state.invitedGuestInput = '';
+					state.invitedGuests = [...state.invitedGuests, action.payload];
+				}
+			})
+			.addCase(findGuest.rejected, (state, action) => {
+				state.loading = false;
+				state.errors = action.payload;
+			})
+			.addCase(findAndInvite.pending, (state) => {
+				state.loading = true;
+				state.errors = null;
+			})
+			.addCase(findAndInvite.fulfilled, (state, action) => {
+				state.loading = false;
+				state.success = action.payload.success;
+				state.selectedEvent = action.payload.updatedEvent;
+			})
+			.addCase(findAndInvite.rejected, (state, action) => {
+				state.loading = false;
+				state.errors = action.payload;
+			})
 			.addCase(updateEvent.pending, (state) => {
 				state.loading = true;
 				state.errors = null;
 			})
 			.addCase(updateEvent.fulfilled, (state, action) => {
 				state.loading = false;
-				state.success = action.payload;
-				state.open = false;
+				state.success = action.payload.success;
+				state.selectedEvent = action.payload.updated;
 			})
 			.addCase(updateEvent.rejected, (state, action) => {
 				state.loading = false;
 				state.errors = action.payload;
 			})
-			.addCase(attendEvent.pending, (state) => {
+			.addCase(processRsvp.pending, (state) => {
 				state.loading = true;
 				state.errors = null;
 			})
-			.addCase(attendEvent.fulfilled, (state, action) => {
+			.addCase(processRsvp.fulfilled, (state, action) => {
 				state.loading = false;
 				state.success = action.payload.success;
-				state.allEvents = action.payload.updatedAll;
-				state.currentEvents = action.payload.current;
-				state.guestList = action.payload.updatedEvent.attendees;
-				state.eventsAttending = action.payload.updatedEventsAttending;
+				state.selectedEvent = action.payload.updated;
+				state.guestList = action.payload.updated.attendees;
 				state.open = false;
 			})
-			.addCase(attendEvent.rejected, (state, action) => {
-				state.loading = false;
-				state.errors = action.payload;
-			})
-			.addCase(cancelRsvp.pending, (state) => {
-				state.loading = true;
-				state.errors = null;
-			})
-			.addCase(cancelRsvp.fulfilled, (state, action) => {
-				state.loading = false;
-				state.success = action.payload.success;
-				state.allEvents = action.payload.updatedAll;
-				state.currentEvents = action.payload.current;
-				state.guestList = action.payload.updatedEvent.attendees;
-				state.eventsAttending = action.payload.updatedEventsAttending;
-			})
-			.addCase(cancelRsvp.rejected, (state, action) => {
+			.addCase(processRsvp.rejected, (state, action) => {
 				state.loading = false;
 				state.errors = action.payload;
 			})
@@ -329,21 +490,6 @@ export const calendarSlice = createSlice({
 			.addCase(deleteEvent.rejected, (state, action) => {
 				state.loading = false;
 				state.errors = action.payload;
-			})
-			.addCase(uploadMemory.pending, (state) => {
-				state.loading = true;
-				state.errors = null;
-			})
-			.addCase(uploadMemory.fulfilled, (state, action) => {
-				state.loading = false;
-				state.success = action.payload.success;
-				state.allEvents = action.payload.updatedAll;
-				state.currentEvents = action.payload.current;
-				state.memoryEvents = action.payload.memories;
-			})
-			.addCase(uploadMemory.rejected, (state, action) => {
-				state.loading = false;
-				state.errors = action.payload;
 			});
 	},
 });
@@ -356,7 +502,19 @@ export const {
 	setMonthIndexSmall,
 	setGuestList,
 	setEventsAttending,
+	setSelectedEvent,
+	setIsPublic,
+	setRSVPOpen,
+	setEventType,
+	setEventTypeInput,
+	setEventTime,
+	setEventLoc,
+	setHeadcount,
+	setSelectedLabel,
+	setInvitedGuestInput,
+	removeInvitedGuest,
 	setErrors,
+	clearEvent,
 	clearSuccess,
 	clearErrors,
 } = calendarSlice.actions;

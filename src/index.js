@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { store, persistor } from './redux/rootStore';
 import './index.scss';
+import 'cropperjs/dist/cropper.css';
 import App from './App';
 
 const container = document.getElementById('root');

@@ -11,6 +11,7 @@ const initialState = appAdapter.getInitialState({
 	isMobile: false,
 	deleteOpen: false,
 	deleteData: null,
+	memoryOpen: false,
 	errors: null,
 });
 
@@ -27,9 +28,13 @@ export const appSlice = createSlice({
 		setDeleteData: (state, action) => {
 			state.deleteData = action.payload;
 		},
+		setMemoryOpen: (state, action) => {
+			state.memoryOpen = action.payload;
+		},
 	},
 });
 
-export const { setIsMobile, openDelete, setDeleteData } = appSlice.actions;
+export const { setIsMobile, openDelete, setDeleteData, setMemoryOpen } =
+	appSlice.actions;
 
 export default appSlice.reducer;

@@ -1,8 +1,10 @@
 import { Grid } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setDaySelected } from '../../../../../../../../redux/slices/calendarSlice';
-import { setSelectedEvent } from '../../../../../../../../redux/slices/eventSlice';
+import {
+	setDaySelected,
+	setSelectedEvent,
+} from '../../../../../../../../redux/slices/calendarSlice';
 import { getCurrentDayClass } from '../../../../../../../../util/helpers';
 import dayjs from 'dayjs';
 import TouchableOpacity from '../../../../../../../../components/TouchableOpacity';
@@ -14,7 +16,23 @@ const Day = ({ day, rowIdx }) => {
 	const dispatch = useDispatch();
 
 	const handleClick = () => {
-		dispatch(setDaySelected(day));
+		const data = {
+			day,
+		};
+		dispatch(setDaySelected(data));
+	};
+
+	const handleSelectedEvent = (e, item) => {
+		const itemDay = `${dayjs(item.date).format(
+			'ddd, DD MMM YYYY'
+		)} 08:00:00 GMT`;
+		const data = {
+			day: itemDay,
+			eventTime: item.time,
+		};
+		e.stopPropagation();
+		dispatch(setSelectedEvent(item));
+		dispatch(setDaySelected(data));
 	};
 
 	useEffect(() => {
@@ -40,7 +58,7 @@ const Day = ({ day, rowIdx }) => {
 				{dayEvents?.map((item) => (
 					<button
 						key={item._id}
-						onClick={() => dispatch(setSelectedEvent(item))}
+						onClick={(e) => handleSelectedEvent(e, item)}
 						style={{ backgroundColor: `${item.label}` }}
 						className={'day-event'}
 					>
