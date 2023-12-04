@@ -13,7 +13,6 @@ import {
 	findGuest,
 	findAndInvite,
 	removeInvitedGuest,
-	removeSubmittedGuest,
 } from '../../../../../../../../../../redux/slices/calendarSlice';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import AddBoxIcon from '@mui/icons-material/AddBox';
@@ -59,17 +58,8 @@ const InviteTab = () => {
 	};
 
 	const handleRemoveGuest = (guest) => {
-		if (selectedEvent) {
-			const data = {
-				guest,
-				eventId: selectedEvent?._id,
-				user: user?._id,
-			};
-			dispatch(removeSubmittedGuest(data));
-		} else {
-			const updated = invitedGuests?.filter((item) => item?._id !== guest?._id);
-			dispatch(removeInvitedGuest(updated));
-		}
+		const updated = invitedGuests?.filter((item) => item?._id !== guest?._id);
+		dispatch(removeInvitedGuest(updated));
 	};
 
 	// const handleReminders = () => {
@@ -136,7 +126,9 @@ const InviteTab = () => {
 						<IconBtn
 							tooltip='Delete Guest'
 							placement='top'
-							onClick={() => handleRemoveGuest(item)}
+							onClick={
+								selectedEvent ? handleAddGuest : () => handleRemoveGuest(item)
+							}
 						>
 							<DeleteIcon htmlColor='red' />
 						</IconBtn>
