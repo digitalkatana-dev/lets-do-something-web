@@ -12,7 +12,6 @@ import {
 	setPassword,
 	setShow,
 	resetPasswordWithToken,
-	clearSuccess,
 	clearErrors,
 } from '../../../../redux/slices/userSlice';
 import LockResetIcon from '@mui/icons-material/LockReset';
@@ -51,13 +50,14 @@ const Reset = () => {
 	};
 
 	const handleSuccess = useCallback(() => {
-		setTimeout(() => {
-			dispatch(setMenuOpen(false));
-			dispatch(setMenuView('Login'));
-			dispatch(clearSuccess());
-			navigate('/');
-		}, 7000);
-	}, [navigate, dispatch]);
+		if (success) {
+			setTimeout(() => {
+				dispatch(setMenuOpen(false));
+				dispatch(setMenuView('Login'));
+				navigate('/');
+			}, 5000);
+		}
+	}, [success, navigate, dispatch]);
 
 	const handleErrors = useCallback(() => {
 		setTimeout(() => {
@@ -66,8 +66,8 @@ const Reset = () => {
 	}, [dispatch]);
 
 	useEffect(() => {
-		success && handleSuccess();
-	}, [success, handleSuccess]);
+		handleSuccess();
+	}, [handleSuccess]);
 
 	useEffect(() => {
 		errors?.message && handleErrors();

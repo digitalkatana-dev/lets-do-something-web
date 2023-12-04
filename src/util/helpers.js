@@ -114,7 +114,7 @@ export const formattedTime = (data) => {
 		milHours === 24 ? (displayHours = 0) : (displayHours = hours);
 	}
 
-	formattedTime = `${date}T${displayHours}:${mins}`;
+	formattedTime = `${date}T${displayHours}:${mins}:00`;
 
 	return formattedTime;
 };
@@ -130,4 +130,75 @@ export const getBackgroundColor = (colorName) => {
 	document.body.removeChild(tempElement);
 
 	return `rgba(${rgbaValues[0]}, ${rgbaValues[1]}, ${rgbaValues[2]}, 0.2)`;
+};
+
+export const arrayMatch = (arr1, arr2) => {
+	if (arr1.length !== arr2.length) {
+		return false;
+	}
+
+	for (let i = 0; i < arr1.length; i++) {
+		if (arr1[i] !== arr2[i]) {
+			return false;
+		}
+	}
+
+	return true;
+};
+
+export const objectMatch = (obj1, obj2) => {
+	const sortedKeys1 = Object.keys(obj1).sort();
+	const sortedKeys2 = Object.keys(obj2).sort();
+
+	if (sortedKeys1.length !== sortedKeys2.length) {
+		return false;
+	}
+
+	for (let i = 0; i < sortedKeys1.length; i++) {
+		const key1 = sortedKeys1[i];
+		const key2 = sortedKeys2[i];
+
+		if (key1 !== key2) {
+			return false;
+		}
+
+		const val1 = obj1[key1];
+		const val2 = obj2[key2];
+
+		if (val1 && typeof val1 === 'object' && val2 && typeof val2 === 'object') {
+			if (!objectMatch(val1, val2)) {
+				return false;
+			}
+		} else if (val1 !== val2) {
+			return false;
+		}
+	}
+
+	return true;
+};
+
+export const reFormatTime = (time, day) => {
+	const desiredDate = new Date(day);
+
+	const timeComponents = time?.match(/(\d+):(\d+)(\w+)/);
+
+	if (desiredDate && timeComponents) {
+		let hours = parseInt(timeComponents[1]);
+		const minutes = parseInt(timeComponents[2]);
+		const period = timeComponents[3];
+
+		if (period.toLowerCase() === 'pm' && hours < 12) {
+			hours += 12;
+		}
+
+		desiredDate.setHours(hours);
+		desiredDate.setMinutes(minutes);
+
+		const formattedDateTime =
+			desiredDate.toISOString().split('T')[0] +
+			'T' +
+			desiredDate.toTimeString().split(' ')[0];
+
+		return formattedDateTime;
+	}
 };

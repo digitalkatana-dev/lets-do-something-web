@@ -2,7 +2,11 @@ import { AppBar, Avatar, IconButton, Toolbar } from '@mui/material';
 import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
-import { clearErrors, logout } from '../../redux/slices/userSlice';
+import {
+	clearErrors,
+	clearSuccess,
+	logout,
+} from '../../redux/slices/userSlice';
 import { setMenuOpen, setMenuView } from '../../redux/slices/navSlice';
 import { persistor } from '../../redux/rootStore';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -12,7 +16,7 @@ import './navbar.scss';
 
 const Navbar = () => {
 	const { menuOpen } = useSelector((state) => state.nav);
-	const { user } = useSelector((state) => state.user);
+	const { user, success } = useSelector((state) => state.user);
 	const dispatch = useDispatch();
 	const location = useLocation();
 	const path = location.pathname.split('/')[2];
@@ -30,6 +34,14 @@ const Navbar = () => {
 		persistor.purge();
 	};
 
+	const handleSuccess = useCallback(() => {
+		if (success) {
+			setTimeout(() => {
+				dispatch(clearSuccess());
+			}, 5000);
+		}
+	}, [dispatch, success]);
+
 	const handleResetPreload = useCallback(() => {
 		if (path) {
 			dispatch(setMenuView('Reset'));
@@ -40,6 +52,10 @@ const Navbar = () => {
 	useEffect(() => {
 		handleResetPreload();
 	}, [handleResetPreload]);
+
+	useEffect(() => {
+		handleSuccess();
+	}, [handleSuccess]);
 
 	return (
 		<AppBar>

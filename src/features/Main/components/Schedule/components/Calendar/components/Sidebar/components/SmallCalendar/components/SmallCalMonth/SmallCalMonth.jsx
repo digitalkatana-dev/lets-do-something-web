@@ -29,8 +29,11 @@ const SmallCalMonth = () => {
 	};
 
 	const handleClick = (day) => {
+		const data = {
+			day,
+		};
 		dispatch(setMonthIndex(monthIndexSmall));
-		dispatch(setDaySelected(day));
+		dispatch(setDaySelected(data));
 	};
 
 	return (

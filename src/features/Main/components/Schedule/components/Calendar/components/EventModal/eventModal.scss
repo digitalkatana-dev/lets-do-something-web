@@ -11,8 +11,12 @@
 
 .modal-content {
 	height: fit-content;
-	min-height: 464px;
-	max-width: 530px;
+	min-height: 350px;
+
+	.sign-in-btn {
+		margin: 0 auto;
+		color: rgba(0, 0, 0, 0.38);
+	}
 
 	.event-section {
 		min-height: 54px;
@@ -59,10 +63,31 @@
 			}
 		}
 
+		.no-user {
+			width: 100%;
+			display: flex;
+			align-items: end;
+			border-bottom: 1px dotted rgba(0, 0, 0, 0.42);
+
+			.icon-container {
+				.icon-label {
+					font-size: small; //12px
+					color: rgba(0, 0, 0, 0.38);
+					margin-bottom: 6px;
+				}
+			}
+		}
+
 		.tag-swatch {
 			width: 100%;
 			display: flex;
 			justify-content: space-between;
+		}
+
+		.image-preview-container {
+			width: 100%;
+			max-width: 100%;
+			display: block;
 		}
 	}
 
@@ -84,4 +109,9 @@
 
 .delete {
 	color: red;
+}
+
+.action-container {
+	display: flex;
+	gap: 5px;
 }

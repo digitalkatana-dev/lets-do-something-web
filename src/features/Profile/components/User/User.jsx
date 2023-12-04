@@ -1,7 +1,7 @@
 import { IconButton } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateUser, clearSuccess } from '../../../../redux/slices/userSlice';
+import { updateUser } from '../../../../redux/slices/userSlice';
 import PhotoCameraOutlinedIcon from '@mui/icons-material/PhotoCameraOutlined';
 import './user.scss';
 import ProfileImageDialog from '../../../../components/ProfileImageDialog';
@@ -28,12 +28,9 @@ const User = () => {
 
 	const handleSuccess = useCallback(() => {
 		if (success) {
-			setTimeout(() => {
-				dispatch(clearSuccess());
-			}, 7000);
 			setDialogOpen(false);
 		}
-	}, [success, dispatch]);
+	}, [success]);
 
 	useEffect(() => {
 		handleSuccess();

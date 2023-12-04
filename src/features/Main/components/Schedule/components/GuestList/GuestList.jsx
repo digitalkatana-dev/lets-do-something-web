@@ -9,8 +9,9 @@ import { guestListEvents } from '../../../../../../util/helpers';
 import './guestList.scss';
 
 const GuestList = () => {
-	const { allEvents, guestList } = useSelector((state) => state.calendar);
-	const { selectedEvent } = useSelector((state) => state.event);
+	const { allEvents, selectedEvent, guestList } = useSelector(
+		(state) => state.calendar
+	);
 	const dispatch = useDispatch();
 
 	const errorHandler = (data) => {

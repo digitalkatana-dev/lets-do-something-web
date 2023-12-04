@@ -13,7 +13,6 @@ import storage from 'redux-persist/lib/storage';
 import appReducer from './slices/appSlice';
 import userReducer from './slices/userSlice';
 import calendarReducer from './slices/calendarSlice';
-import eventReducer from './slices/eventSlice';
 import navReducer from './slices/navSlice';
 import memoryReducer from './slices/memorySlice';
 
@@ -34,7 +33,6 @@ export const store = configureStore({
 		app: appReducer,
 		user: persistReducer(userPersistConfig, userReducer),
 		calendar: persistReducer(calendarPersistConfig, calendarReducer),
-		event: eventReducer,
 		nav: navReducer,
 		memory: memoryReducer,
 	},

@@ -1,6 +1,5 @@
 import {
 	Alert,
-	Box,
 	Button,
 	Dialog,
 	DialogActions,
@@ -10,91 +9,57 @@ import {
 	FormControl,
 	InputAdornment,
 	InputLabel,
-	List,
-	ListItem,
-	ListItemText,
 	MenuItem,
 	Select,
-	Snackbar,
-	Stack,
-	Switch,
-	Tabs,
-	Tab,
 	TextField,
-	Typography,
 } from '@mui/material';
-import { TimeField } from '@mui/x-date-pickers';
 import { MuiFileInput } from 'mui-file-input';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { setMenuOpen } from '../../../../../../../../redux/slices/navSlice';
 import {
 	toggleOpen,
 	createEvent,
 	updateEvent,
-	attendEvent,
-	cancelRsvp,
-	deleteEvent,
-	uploadMemory,
-} from '../../../../../../../../redux/slices/calendarSlice';
-import {
+	processRsvp,
 	setSelectedEvent,
-	setIsPublic,
-	setRSVPOpen,
-	setEventType,
-	setEventTypeInput,
-	setEventTime,
-	setEventLoc,
-	setInvitedGuestInput,
-	findGuest,
-	findAndInvite,
-	removeInvitedGuest,
 	setHeadcount,
-	setSelectedLabel,
-	sendReminders,
-	inviteSingle,
-	setErrors,
-	clearEvent,
 	clearErrors,
-} from '../../../../../../../../redux/slices/eventSlice';
-import { labelClasses } from '../../../../../../../../util/data';
-import { validateInvitedGuest } from '../../../../../../../../util/validators';
+} from '../../../../../../../../redux/slices/calendarSlice';
+import { createMemory } from '../../../../../../../../redux/slices/memorySlice';
 import {
-	formattedTime,
-	alreadyAttending,
 	tagStyle,
-	base64Encode,
+	arrayMatch,
+	objectMatch,
 } from '../../../../../../../../util/helpers';
+import { labelClasses } from '../../../../../../../../util/data';
+import Cropper from 'react-cropper';
 import dayjs from 'dayjs';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import DragHandleIcon from '@mui/icons-material/DragHandle';
-import SendToMobileIcon from '@mui/icons-material/SendToMobile';
 import CloseIcon from '@mui/icons-material/Close';
-import DetailsIcon from '@mui/icons-material/Details';
 import EventIcon from '@mui/icons-material/Event';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import MyLocationIcon from '@mui/icons-material/MyLocation';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import CheckIcon from '@mui/icons-material/Check';
-import GroupAddIcon from '@mui/icons-material/GroupAdd';
-import DeleteIcon from '@mui/icons-material/Delete';
-import UndoIcon from '@mui/icons-material/Undo';
-import LocalActivityIcon from '@mui/icons-material/LocalActivity';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import AddBoxIcon from '@mui/icons-material/AddBox';
-import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
+import LocalActivityIcon from '@mui/icons-material/LocalActivity';
+import UndoIcon from '@mui/icons-material/Undo';
 import './eventModal.scss';
-import TabPanel from './components/TabPanel';
 import IconBtn from '../../../../../../../../components/IconBtn';
+import ModalTabs from './components/ModalTabs';
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isSameOrAfter);
 
 const EventModal = () => {
-	const { user } = useSelector((state) => state.user);
-	const { open, daySelected, eventsAttending } = useSelector(
-		(state) => state.calendar
-	);
 	const {
+		open,
+		daySelected,
+		eventsAttending,
 		selectedEvent,
 		isPublic,
 		rsvpOpen,
@@ -102,25 +67,54 @@ const EventModal = () => {
 		eventTypeInput,
 		eventTime,
 		eventLoc,
-		invitedGuestInput,
 		invitedGuests,
 		headcount,
 		selectedLabel,
-		success,
 		errors,
-	} = useSelector((state) => state.event);
-	const [value, setValue] = useState(0);
+	} = useSelector((state) => state.calendar);
+	const { success } = useSelector((state) => state.memory);
+	const { user } = useSelector((state) => state.user);
 	const [file, setFile] = useState(null);
-	const [base64File, setBase64File] = useState('');
+	const [preview, setPreview] = useState(null);
+	const [cropped, setCropped] = useState(null);
+	const [warning, setWarning] = useState(false);
+	const cropperRef = useRef(null);
 	const eventAuthor = selectedEvent?.createdBy;
 	const currentUser = user?._id;
+	const isAttending = eventsAttending?.some(
+		(event) => event._id === selectedEvent?._id
+	);
+	const attendees = selectedEvent?.attendees;
+	const rsvp = attendees?.find((item) => item?._id === user?._id);
 	const dispatch = useDispatch();
 
-	const a11yProps = (index) => {
-		return {
-			id: `simple-tab-${index}`,
-			'aria-controls': `simple-tabpanel-${index}`,
+	const handleDisabled = () => {
+		let data = {
+			isPublic: isPublic,
+			rsvpOpen: rsvpOpen,
+			type: eventType,
+			time: eventTime,
+			location: eventLoc,
+			label: selectedLabel,
 		};
+		let check = {
+			isPublic: selectedEvent?.isPublic,
+			rsvpOpen: selectedEvent?.rsvpOpen,
+			type: selectedEvent?.type,
+			time: selectedEvent?.time,
+			location: selectedEvent?.location,
+			label: selectedEvent?.label,
+		};
+
+		if (!selectedEvent) {
+			if (!eventType || !eventTime || !eventLoc) return true;
+		} else if (selectedEvent && eventAuthor === currentUser) {
+			if (objectMatch(data, check)) return true;
+		} else if (selectedEvent && eventAuthor !== currentUser) {
+			if (!headcount) return true;
+		}
+
+		return false;
 	};
 
 	const handleClose = () => {
@@ -130,110 +124,76 @@ const EventModal = () => {
 		}, 1000);
 	};
 
-	const handleTabs = (e, newVal) => {
-		setValue(newVal);
+	const handleSignIn = () => {
+		dispatch(setMenuOpen(true));
+		dispatch(toggleOpen(false));
 	};
 
 	const handleFocus = () => {
 		dispatch(clearErrors());
 	};
 
-	const handleChange = (input, value) => {
-		const actionMap = {
-			public: setIsPublic,
-			available: setRSVPOpen,
-			type: setEventType,
-			other: setEventTypeInput,
-			time: (v) => setEventTime(formattedTime(v)),
-			loc: setEventLoc,
-			label: setSelectedLabel,
-			guest: setInvitedGuestInput,
-			count: setHeadcount,
-		};
-
-		const action = actionMap[input];
-
-		if (action) {
-			dispatch(action(value));
-		}
+	const handleChange = (e) => {
+		dispatch(setHeadcount(e.target.value));
 	};
 
-	const handleAddGuest = () => {
-		const data = {
-			guest: invitedGuestInput,
-			eventId: selectedEvent?._id,
-			type: selectedEvent?.type,
-			date: selectedEvent?.date,
-			time: selectedEvent?.time,
-			creator: user?._id,
-		};
+	const onCrop = () => {
+		const cropper = cropperRef.current?.cropper;
+		// console.log(cropper.getCroppedCanvas().toDataURL());
+		setCropped(cropper.getCroppedCanvas());
+	};
 
-		const { valid, errors } = validateInvitedGuest(invitedGuestInput);
+	const handleFileChange = (selectedFile) => {
+		setFile(selectedFile);
 
-		if (!valid) {
-			dispatch(setErrors(errors));
+		if (selectedFile) {
+			const reader = new FileReader();
+			reader.onload = () => {
+				setPreview(reader.result);
+			};
+			reader.readAsDataURL(selectedFile);
 		} else {
-			dispatch(findAndInvite(data));
+			setPreview(null);
+			setCropped(null);
 		}
 	};
 
 	const handleAddMemory = () => {
-		const memory = new FormData();
-		const filename = file.name;
-		memory.append('name', filename);
-		memory.append('file', file);
-		memory.append('b64str', base64File);
-		memory.append('date', selectedEvent?.date);
-		memory.append('location', selectedEvent?.location);
-		memory.append('eventId', selectedEvent._id);
-		// for (var pair of memory.entries()) {
-		// 	console.log('Memory', pair[1]);
-		// }
-		dispatch(uploadMemory(memory));
-		setFile(null);
-	};
+		const fileName = `${file.name.split('.')[0]}--${
+			new Date().toISOString().split('T')[0]
+		}`;
 
-	const handleReminders = () => {
-		const data = {
-			eventId: selectedEvent?._id,
-		};
-		dispatch(sendReminders(data));
-	};
-
-	const handleInvite = (item) => {
-		const data = {
-			type: selectedEvent?.type,
-			date: selectedEvent?.date,
-			time: selectedEvent?.time,
-			guest: item,
-		};
-
-		dispatch(inviteSingle(data));
+		cropped.toBlob((blob) => {
+			let memory = new FormData();
+			memory.append('memory', blob, fileName);
+			memory.append('date', selectedEvent?.date);
+			memory.append('location', selectedEvent?.location);
+			memory.append('eventId', selectedEvent._id);
+			dispatch(createMemory(memory));
+		});
 	};
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		let data;
 		if (!selectedEvent) {
-			data = {
-				date: dayjs(daySelected).format('M/DD/YYYY'),
-				isPublic,
-				...(isPublic && { rsvpOpen }),
-				type: eventType === 'other' ? eventTypeInput : eventType,
-				time: eventTime,
-				location: eventLoc,
-				label: selectedLabel,
-				invitedGuests: [
-					{
-						_id: user?._id,
-						firstName: user?.firstName,
-						lastName: user?.lastName,
-					},
-					...invitedGuests,
-				],
-				createdBy: user?._id,
-			};
-			dispatch(createEvent(data));
+			if (invitedGuests.length === 0 && !warning) {
+				setWarning(true);
+			} else {
+				data = {
+					date: dayjs(daySelected).format('M/DD/YYYY'),
+					isPublic,
+					...(isPublic && { rsvpOpen }),
+					type: eventType === 'other' ? eventTypeInput : eventType,
+					time: eventTime,
+					location: eventLoc,
+					label: selectedLabel,
+					invitedGuests,
+					createdBy: user?._id,
+				};
+				dispatch(createEvent(data));
+				setWarning(false);
+			}
 		} else if (selectedEvent && eventAuthor === currentUser) {
 			data = {
 				_id: selectedEvent?._id,
@@ -247,46 +207,42 @@ const EventModal = () => {
 				...(selectedLabel !== selectedEvent?.label && {
 					label: selectedLabel,
 				}),
-				...(invitedGuests !== selectedEvent?.invitedGuests && {
+				...(!arrayMatch(invitedGuests, selectedEvent?.invitedGuests) && {
 					invitedGuests,
 				}),
+				user: user?._id,
 			};
 			dispatch(updateEvent(data));
-		} else if (selectedEvent) {
+		} else {
 			data = {
 				eventId: selectedEvent?._id,
 				headcount,
 				user: user?._id,
 			};
-			dispatch(attendEvent(data));
+			dispatch(processRsvp(data));
 		}
 	};
 
-	const handleUndo = () => {
+	const handleCancel = () => {
 		const data = {
 			eventId: selectedEvent?._id,
+			headcount: rsvp?.headcount,
 			user: user?._id,
 		};
-		dispatch(cancelRsvp(data));
+		dispatch(processRsvp(data));
 	};
 
-	const handleDelete = () => {
-		const data = {
-			event: selectedEvent?._id,
-			user: user?._id,
-		};
-		dispatch(deleteEvent(data));
+	const handleClearWarning = () => {
+		setWarning(false);
 	};
-
-	const handleSetEventTime = useCallback(() => {
-		selectedEvent && dispatch(setEventTime(selectedEvent?.time));
-	}, [selectedEvent, dispatch]);
 
 	useEffect(() => {
-		handleSetEventTime();
-	}, [handleSetEventTime]);
-
-	base64Encode(file, setBase64File);
+		if (success) {
+			setFile(null);
+			setPreview(null);
+			setCropped(null);
+		}
+	}, [success]);
 
 	return (
 		<Dialog open={open} onClose={handleClose} maxWidth='xs' fullWidth>
@@ -306,855 +262,295 @@ const EventModal = () => {
 						</>
 					)}
 				</span>
-				<IconBtn tooltip='Close' onClick={handleClose}>
+				<IconBtn onClick={handleClose}>
 					<CloseIcon />
 				</IconBtn>
 			</DialogTitle>
-			<DialogContent className='modal-content'>
-				<FormControl variant='standard' size='small' fullWidth>
-					{!user && (
-						<>
-							{!selectedEvent ? (
-								<>
-									<div className='event-section alt'>
+			<DialogContent className='modal-content' dividers>
+				{!user && (
+					<>
+						{!selectedEvent ? (
+							<>
+								<div className='event-section alt'>
+									<FormControl variant='standard' size='small' fullWidth>
 										<InputLabel id='event-type'>Event Type</InputLabel>
-										<Select labelId='event-type' disabled value='' fullWidth>
+										<Select labelId='event-type' disabled value=''>
 											<MenuItem value=''>
 												<em>Sign in to create an event!</em>
 											</MenuItem>
 										</Select>
-									</div>
-									<div className='event-section'>
-										<EventIcon className='icon space' />
-										<h5>
-											{selectedEvent ? (
-												<>{dayjs(selectedEvent.date).format('dddd, MMMM DD')}</>
-											) : (
-												<>{dayjs(daySelected)?.format('dddd, MMMM DD')}</>
-											)}
-										</h5>
-									</div>
-									<div className='event-section'>
-										<TextField
-											disabled
-											label='Time'
-											variant='standard'
-											value='Sign in to create an event!'
-											fullWidth
-											size='small'
-											InputProps={{
-												startAdornment: (
-													<InputAdornment position='start'>
-														<ScheduleIcon className='icon' />
-													</InputAdornment>
-												),
-											}}
-										/>
-									</div>
-									<div className='event-section'>
-										<TextField
-											disabled
-											label='Location'
-											variant='standard'
-											value='Sign in to create an event!'
-											fullWidth
-											size='small'
-											InputProps={{
-												startAdornment: (
-													<InputAdornment position='start'>
-														<MyLocationIcon className='icon' />
-													</InputAdornment>
-												),
-											}}
-										/>
-									</div>
-									<div className='event-section'>
-										<BookmarkBorderIcon className='icon space' />
-										<div className='tag-swatch'>
-											{labelClasses.map((item, i) => (
-												<span key={i} style={tagStyle(item)}>
-													{selectedLabel === item && <CheckIcon fontSize='4' />}
-												</span>
-											))}
+									</FormControl>
+								</div>
+								<div className='event-section'>
+									<EventIcon className='icon space' />
+									<h5>{dayjs(daySelected)?.format('dddd, MMMM DD')}</h5>
+								</div>
+								<div className='event-section'>
+									<div className='no-user'>
+										<div className='icon-container'>
+											<p className='icon-label'>Time</p>
+											<ScheduleIcon className='icon' />
 										</div>
+										<Button
+											variant='text'
+											className='sign-in-btn'
+											onClick={handleSignIn}
+										>
+											Sign in to create an event!
+										</Button>
 									</div>
-									<div className='event-section alt'>
-										<div className='input-btn-row'>
-											<TextField
-												disabled
-												label='Invite Guests'
-												variant='standard'
-												value='Sign in to create an event!'
-												fullWidth
-												size='small'
-												InputProps={{
-													startAdornment: (
-														<InputAdornment position='start'>
-															<PersonAddIcon className='icon' />
-														</InputAdornment>
-													),
-												}}
-											/>
-											<IconBtn disabled>
-												<AddBoxIcon className='add-icon' />
-											</IconBtn>
+								</div>
+								<div className='event-section'>
+									<div className='no-user'>
+										<div className='icon-container'>
+											<p className='icon-label'>Location</p>
+											<MyLocationIcon className='icon' />
 										</div>
+										<Button
+											variant='text'
+											className='sign-in-btn'
+											onClick={handleSignIn}
+										>
+											Sign in to create an event!
+										</Button>
 									</div>
-								</>
-							) : (
-								<>
-									<DialogContentText className='rsvp-details'>
-										{selectedEvent?.type} @ {selectedEvent?.location}
-									</DialogContentText>
-									<DialogContentText className='rsvp-details'>
-										Hosted by:{' '}
-										{selectedEvent?.invitedGuests[0].firstName +
-											' ' +
-											selectedEvent?.invitedGuests[0].lastName}
-									</DialogContentText>
-									<div className='event-section'>
-										<EventIcon className='icon space' />
-										<h5>
-											{dayjs(selectedEvent?.date).format('dddd, MMMM DD')}
-										</h5>
+								</div>
+								<div className='event-section'>
+									<BookmarkBorderIcon className='icon space' />
+									<div className='tag-swatch'>
+										{labelClasses.map((item, i) => (
+											<span key={i} style={tagStyle(item)}>
+												{selectedLabel === item && <CheckIcon fontSize='4' />}
+											</span>
+										))}
 									</div>
-									<div className='event-section'>
-										<ScheduleIcon className='icon space' />
-										<h5>{dayjs(selectedEvent?.time).format('LT')}</h5>
+								</div>
+								<div
+									className='event-section alt'
+									style={{
+										flexDirection: 'row',
+										justifyContent: 'space-between',
+									}}
+								>
+									<div className='no-user'>
+										<div className='icon-container'>
+											<p className='icon-label'>Invite Guests</p>
+											<PersonAddIcon className='icon' />
+										</div>
+										<Button
+											variant='text'
+											className='sign-in-btn'
+											onClick={handleSignIn}
+										>
+											Sign in to create an event!
+										</Button>
 									</div>
-									<div className='event-section'>
-										<MyLocationIcon className='icon space' />
-										<h5>{selectedEvent?.location}</h5>
-									</div>
-									<DialogContentText className='rsvp-details sign-in-warning'>
-										{' '}
+									<IconBtn disabled>
+										<AddBoxIcon className='add-icon' htmlColor='green' />
+									</IconBtn>
+								</div>
+							</>
+						) : (
+							<>
+								<DialogContentText className='rsvp-details'>
+									{selectedEvent?.type} @ {selectedEvent?.location}
+								</DialogContentText>
+								<DialogContentText className='rsvp-details'>
+									Hosted by:{' '}
+									{selectedEvent?.invitedGuests[0].firstName +
+										' ' +
+										selectedEvent?.invitedGuests[0].lastName}
+								</DialogContentText>
+								<div className='event-section'>
+									<EventIcon className='icon space' />
+									<h5>{dayjs(selectedEvent?.date).format('dddd, MMMM DD')}</h5>
+								</div>
+								<div className='event-section'>
+									<ScheduleIcon className='icon space' />
+									<h5>{dayjs(selectedEvent?.time).format('LT')}</h5>
+								</div>
+								<div className='event-section'>
+									<MyLocationIcon className='icon space' />
+									<h5>{selectedEvent?.location}</h5>
+								</div>
+								<DialogContentText className='rsvp-details sign-in-warning'>
+									<Button
+										variant='text'
+										className='sign-in-btn'
+										onClick={handleSignIn}
+									>
 										Sign in to RSVP!
-									</DialogContentText>
-									<TextField
-										disabled
-										label='Headcount'
-										variant='standard'
-										size='small'
-										InputProps={{
-											startAdornment: (
-												<InputAdornment position='start'>
-													<GroupAddIcon className='icon' />
-												</InputAdornment>
-											),
-										}}
-									/>
-								</>
-							)}
-						</>
-					)}
-					{user && (
-						<>
-							{!selectedEvent ||
-							(selectedEvent && eventAuthor === currentUser) ? (
-								<>
-									<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-										<Tabs value={value} onChange={handleTabs}>
-											<Tab label='Create/Modify' {...a11yProps(0)} />
-											<Tab label='Invite' {...a11yProps(1)} />
-										</Tabs>
-									</Box>
-									<TabPanel value={value} index={0}>
-										<div className='event-section alt'>
-											<Stack direction='row' spacing={1} alignItems='center'>
-												<Typography>Private</Typography>
-												<Switch
-													checked={isPublic}
-													onChange={() => handleChange('public', !isPublic)}
-													color='secondary'
-												/>
-												<Typography>Public</Typography>
-											</Stack>
+									</Button>
+								</DialogContentText>
+								<div className='event-section'>
+									<div className='no-user'>
+										<div className='icon-container'>
+											<p className='icon-label'>Headcount</p>
+											<GroupAddIcon className='icon' />
 										</div>
-										{isPublic && (
-											<div className='event-section alt'>
-												<Stack direction='row' spacing={1} alignItems='center'>
-													<Typography>RSVP Closed</Typography>
-													<Switch
-														checked={rsvpOpen}
-														onChange={() =>
-															handleChange('available', !rsvpOpen)
-														}
-														color='secondary'
-													/>
-													<Typography>RSVP Open</Typography>
-												</Stack>
-											</div>
+									</div>
+								</div>
+							</>
+						)}
+					</>
+				)}
+				{user && (
+					<>
+						{!selectedEvent ||
+						(selectedEvent && eventAuthor === currentUser) ? (
+							<>
+								<ModalTabs />
+							</>
+						) : (
+							<>
+								<div className='event-section'>
+									<LocalActivityIcon className='icon space' />
+									<h5>{selectedEvent?.type}</h5>
+								</div>
+								<div className='event-section'>
+									<EventIcon className='icon space' />
+									<h5>
+										{selectedEvent ? (
+											<>{dayjs(selectedEvent.date).format('dddd, MMMM DD')}</>
+										) : (
+											<>{dayjs(daySelected)?.format('dddd, MMMM DD')}</>
 										)}
-										<div className='event-section alt'>
-											<FormControl variant='standard' size='small' fullWidth>
-												<InputLabel id='event-type'>Event Type</InputLabel>
-												<Select
-													labelId='event-type'
-													value={eventType}
-													onChange={(e) => handleChange('type', e.target.value)}
-													fullWidth
-												>
-													<MenuItem value=''>
-														<em>None</em>
-													</MenuItem>
-													<MenuItem value='Brunch'>Brunch</MenuItem>
-													<MenuItem value='Dinner'>Dinner</MenuItem>
-													<MenuItem value='Movies'>Movies</MenuItem>
-													<MenuItem value='Game Night'>Game Night</MenuItem>
-													<MenuItem value='Party'>Party</MenuItem>
-													<MenuItem value='other'>Other</MenuItem>
-												</Select>
-											</FormControl>
-											{eventType === 'other' && (
-												<TextField
-													label='Go on...'
-													variant='standard'
-													value={eventTypeInput}
-													onChange={(e) =>
-														handleChange('other', e.target.value)
-													}
-													fullWidth
-													sx={{ mt: '15px' }}
-													InputProps={{
-														startAdornment: (
-															<InputAdornment position='start'>
-																<DetailsIcon className='icon' />
-															</InputAdornment>
-														),
-													}}
-												/>
-											)}
-										</div>
-										<div className='event-section'>
-											<EventIcon className='icon space' />
-											<h5>
-												{selectedEvent ? (
-													<>
-														{dayjs(selectedEvent.date).format('dddd, MMMM DD')}
-													</>
-												) : (
-													<>{dayjs(daySelected)?.format('dddd, MMMM DD')}</>
-												)}
-											</h5>
-										</div>
-										<div className='event-section'>
-											<TimeField
-												label='Time'
-												variant='standard'
-												value={dayjs(eventTime)}
-												onChange={(value) => handleChange('time', value)}
-												fullWidth
-												size='small'
-												InputProps={{
-													startAdornment: (
-														<InputAdornment position='start'>
-															<ScheduleIcon className='icon' />
-														</InputAdornment>
-													),
-												}}
-											/>
-											{errors?.time && (
-												<h6 className='error'>{errors?.time}</h6>
-											)}
-										</div>
-										<div className='event-section'>
-											<TextField
-												label='Location'
-												variant='standard'
-												value={eventLoc}
-												onChange={(e) => handleChange('loc', e.target.value)}
-												fullWidth
-												size='small'
-												InputProps={{
-													startAdornment: (
-														<InputAdornment position='start'>
-															<MyLocationIcon className='icon' />
-														</InputAdornment>
-													),
-												}}
-											/>
-											{errors?.location && (
-												<h6 className='error'>{errors?.location}</h6>
-											)}
-										</div>
-										<div className='event-section'>
-											<BookmarkBorderIcon className='icon space' />
-											<div className='tag-swatch'>
-												{labelClasses.map((item, i) => (
-													<span
-														key={i}
-														onClick={() => handleChange('label', item)}
-														style={tagStyle(item)}
-													>
-														{selectedLabel === item && (
-															<CheckIcon fontSize='4' />
-														)}
-													</span>
-												))}
-											</div>
-										</div>
+									</h5>
+								</div>
+								<div className='event-section'>
+									<ScheduleIcon className='icon space' />
+									<h5>
+										{selectedEvent ? (
+											<>{dayjs(selectedEvent.time).format('LT')}</>
+										) : (
+											<>TBD</>
+										)}
+									</h5>
+								</div>
+								<div className='event-section'>
+									<MyLocationIcon className='icon space' />
+									<h5>
+										{selectedEvent ? <>{selectedEvent.location}</> : 'TBD'}
+									</h5>
+								</div>
+								{isAttending ? (
+									<DialogContentText textAlign='center'>
+										{`${
+											user?.firstName
+										}, you're all set! We have received your RSVP and can't wait to meet your ${
+											rsvp?.headcount - 1
+										} guests!`}
+									</DialogContentText>
+								) : (
+									<>
 										{selectedEvent &&
-											dayjs(selectedEvent?.date).isSameOrBefore(
-												new Date(),
-												'day'
-											) && (
+										dayjs(selectedEvent?.date).isSameOrBefore(
+											new Date(),
+											'day'
+										) ? (
+											<>
+												<DialogContentText>
+													Hello, {user.firstName}!
+												</DialogContentText>
 												<div className='event-section alt'>
-													<div className='input-btn-row'>
-														<MuiFileInput
-															label='Upload Pic'
-															placeholder='Click to choose file'
-															variant='standard'
-															value={file}
-															onChange={(file) => setFile(file)}
-															fullWidth
-															size='small'
-														/>
-														<IconBtn disabled={!file} onClick={handleAddMemory}>
-															<AddAPhotoIcon className='add-icon' />
-														</IconBtn>
+													<MuiFileInput
+														placeholder='Click to Upload Memory'
+														size='small'
+														margin='dense'
+														variant='standard'
+														fullWidth
+														value={file}
+														onChange={handleFileChange}
+													/>
+													<div className='image-preview-container'>
+														{preview && (
+															<Cropper
+																src={preview}
+																initialAspectRatio={16 / 9}
+																guides={false}
+																background={false}
+																crop={onCrop}
+																ref={cropperRef}
+															/>
+														)}
 													</div>
+													<Button disabled={!cropped} onClick={handleAddMemory}>
+														Create Memory
+													</Button>
 												</div>
-											)}
-									</TabPanel>
-									<TabPanel value={value} index={1}>
-										<div className='event-section alt'>
-											<div className='input-btn-row'>
+											</>
+										) : (
+											<>
+												<DialogContentText>
+													Hello, {user.firstName}! How many in your party?
+												</DialogContentText>
 												<TextField
-													label='Invite Guests'
-													placeholder='Email Or Phone'
-													variant='standard'
-													value={invitedGuestInput}
-													onChange={(e) =>
-														handleChange('guest', e.target.value)
+													disabled={
+														!selectedEvent ||
+														(selectedEvent?.isPublic &&
+															!selectedEvent?.rsvpOpen)
 													}
-													fullWidth
+													label='Headcount'
+													placeholder={
+														!selectedEvent?.rsvpOpen
+															? 'RSVP Currently Closed'
+															: ''
+													}
 													size='small'
+													margin='dense'
+													variant='standard'
+													fullWidth
+													value={headcount}
+													onChange={handleChange}
+													sx={{ marginTop: '15px' }}
+													onFocus={handleFocus}
 													InputProps={{
 														startAdornment: (
 															<InputAdornment position='start'>
-																<PersonAddIcon className='icon' />
+																<GroupAddIcon className='icon' />
 															</InputAdornment>
 														),
 													}}
-													onFocus={handleFocus}
 												/>
-												<IconBtn
-													tooltip='Add Guest'
-													placement='top'
-													disabled={!invitedGuestInput}
-													onClick={handleAddGuest}
-												>
-													<AddBoxIcon className='add-icon' />
-												</IconBtn>
-											</div>
-											{errors?.guest && (
-												<h6 className='error'>{errors?.guest}</h6>
-											)}
-											{invitedGuests.length > 0 && (
-												<List className='list'>
-													<ListItem disablePadding className='invited-guests'>
-														<ListItemText secondary='Invited Guests' />
-														{selectedEvent && eventAuthor === currentUser && (
-															<IconBtn
-																tooltip='Send Reminders'
-																placement='top'
-																onClick={handleReminders}
-															>
-																<SendToMobileIcon htmlColor='steelblue' />
-															</IconBtn>
-														)}
-													</ListItem>
-													{invitedGuests
-														?.filter((item) => item._id !== user._id)
-														.map((item) => {
-															if (item?.firstName) {
-																return (
-																	<ListItem
-																		disablePadding
-																		className='list-item'
-																		key={item._id}
-																	>
-																		<ListItemText
-																			primary={`${item.firstName} ${item.lastName}`}
-																		/>
-																		{selectedEvent &&
-																			eventAuthor === currentUser && (
-																				<IconBtn
-																					tooltip='Send Invite'
-																					placement='top'
-																					onClick={() => handleInvite(item)}
-																				>
-																					<SendToMobileIcon htmlColor='steelblue' />
-																				</IconBtn>
-																			)}
-																		<IconBtn
-																			tooltip='Delete Guest'
-																			placement='top'
-																			onClick={() =>
-																				dispatch(removeInvitedGuest(item))
-																			}
-																		>
-																			<DeleteIcon htmlColor='red' />
-																		</IconBtn>
-																	</ListItem>
-																);
-															} else {
-																return (
-																	<ListItem
-																		disablePadding
-																		className='list-item'
-																		key={item._id}
-																	>
-																		<ListItemText
-																			primary={
-																				item?.phone ? item?.phone : item?.email
-																			}
-																		/>
-																		{selectedEvent &&
-																			eventAuthor === currentUser && (
-																				<IconBtn
-																					tooltip='Send Invite'
-																					placement='top'
-																					onClick={() => handleInvite(item)}
-																				>
-																					<SendToMobileIcon htmlColor='steelblue' />
-																				</IconBtn>
-																			)}
-																		<IconBtn
-																			tooltip='Delete Guest'
-																			placement='top'
-																			onClick={() =>
-																				dispatch(removeInvitedGuest(item))
-																			}
-																		>
-																			<DeleteIcon htmlColor='red' />
-																		</IconBtn>
-																	</ListItem>
-																);
-															}
-														})}
-												</List>
-											)}
-										</div>
-									</TabPanel>
-								</>
-							) : (
-								// <>
-								// 	<div className='event-section alt'>
-								// 		<Stack direction='row' spacing={1} alignItems='center'>
-								// 			<Typography>Private</Typography>
-								// 			<Switch
-								// 				checked={isPublic}
-								// 				onChange={() => handleChange('public', !isPublic)}
-								// 				color='secondary'
-								// 			/>
-								// 			<Typography>Public</Typography>
-								// 		</Stack>
-								// 	</div>
-								// 	{isPublic && (
-								// 		<div className='event-section alt'>
-								// 			<Stack direction='row' spacing={1} alignItems='center'>
-								// 				<Typography>RSVP Closed</Typography>
-								// 				<Switch
-								// 					checked={rsvpOpen}
-								// 					onChange={() => handleChange('available', !rsvpOpen)}
-								// 					color='secondary'
-								// 				/>
-								// 				<Typography>RSVP Open</Typography>
-								// 			</Stack>
-								// 		</div>
-								// 	)}
-								// 	<div className='event-section alt'>
-								// 		<FormControl variant='standard' size='small' fullWidth>
-								// 			<InputLabel id='event-type'>Event Type</InputLabel>
-								// 			<Select
-								// 				labelId='event-type'
-								// 				value={eventType}
-								// 				onChange={(e) => handleChange('type', e.target.value)}
-								// 				fullWidth
-								// 			>
-								// 				<MenuItem value=''>
-								// 					<em>None</em>
-								// 				</MenuItem>
-								// 				<MenuItem value='Brunch'>Brunch</MenuItem>
-								// 				<MenuItem value='Dinner'>Dinner</MenuItem>
-								// 				<MenuItem value='Movies'>Movies</MenuItem>
-								// 				<MenuItem value='Game Night'>Game Night</MenuItem>
-								// 				<MenuItem value='Party'>Party</MenuItem>
-								// 				<MenuItem value='other'>Other</MenuItem>
-								// 			</Select>
-								// 		</FormControl>
-								// 		{eventType === 'other' && (
-								// 			<TextField
-								// 				label='Go on...'
-								// 				variant='standard'
-								// 				value={eventTypeInput}
-								// 				onChange={(e) => handleChange('other', e.target.value)}
-								// 				fullWidth
-								// 				sx={{ mt: '15px' }}
-								// 				InputProps={{
-								// 					startAdornment: (
-								// 						<InputAdornment position='start'>
-								// 							<DetailsIcon className='icon' />
-								// 						</InputAdornment>
-								// 					),
-								// 				}}
-								// 			/>
-								// 		)}
-								// 	</div>
-								// 	<div className='event-section'>
-								// 		<EventIcon className='icon space' />
-								// 		<h5>
-								// 			{selectedEvent ? (
-								// 				<>{dayjs(selectedEvent.date).format('dddd, MMMM DD')}</>
-								// 			) : (
-								// 				<>{dayjs(daySelected)?.format('dddd, MMMM DD')}</>
-								// 			)}
-								// 		</h5>
-								// 	</div>
-								// 	<div className='event-section'>
-								// 		<TimeField
-								// 			label='Time'
-								// 			variant='standard'
-								// 			value={dayjs(eventTime)}
-								// 			onChange={(value) => handleChange('time', value)}
-								// 			fullWidth
-								// 			size='small'
-								// 			InputProps={{
-								// 				startAdornment: (
-								// 					<InputAdornment position='start'>
-								// 						<ScheduleIcon className='icon' />
-								// 					</InputAdornment>
-								// 				),
-								// 			}}
-								// 		/>
-								// 		{errors && errors.time && (
-								// 			<h6 className='error'>{errors.time}</h6>
-								// 		)}
-								// 	</div>
-								// 	<div className='event-section'>
-								// 		<TextField
-								// 			label='Location'
-								// 			variant='standard'
-								// 			value={eventLoc}
-								// 			onChange={(e) => handleChange('loc', e.target.value)}
-								// 			fullWidth
-								// 			size='small'
-								// 			InputProps={{
-								// 				startAdornment: (
-								// 					<InputAdornment position='start'>
-								// 						<MyLocationIcon className='icon' />
-								// 					</InputAdornment>
-								// 				),
-								// 			}}
-								// 		/>
-								// 		{errors && errors.location && (
-								// 			<h6 className='error'>{errors.location}</h6>
-								// 		)}
-								// 	</div>
-								// 	<div className='event-section'>
-								// 		<BookmarkBorderIcon className='icon space' />
-								// 		<div className='tag-swatch'>
-								// 			{labelClasses.map((item, i) => (
-								// 				<span
-								// 					key={i}
-								// 					onClick={() => handleChange('label', item)}
-								// 					style={tagStyle(item)}
-								// 				>
-								// 					{selectedLabel === item && <CheckIcon fontSize='4' />}
-								// 				</span>
-								// 			))}
-								// 		</div>
-								// 	</div>
-								// 	{selectedEvent &&
-								// 	dayjs(selectedEvent?.date).isSameOrBefore(
-								// 		new Date(),
-								// 		'day'
-								// 	) ? (
-								// 		<div className='event-section alt'>
-								// 			<div className='input-btn-row'>
-								// 				<MuiFileInput
-								// 					label='Upload Pic'
-								// 					placeholder='Click to choose file'
-								// 					variant='standard'
-								// 					value={file}
-								// 					onChange={(file) => handleChange('pic', file)}
-								// 					fullWidth
-								// 					size='small'
-								// 				/>
-								// 				<IconBtn disabled={!file} onClick={handleAddMemory}>
-								// 					<AddAPhotoIcon className='add-icon' />
-								// 				</IconBtn>
-								// 			</div>
-								// 		</div>
-								// 	) : (
-								// 		<div className='event-section alt'>
-								// 			<div className='input-btn-row'>
-								// 				<TextField
-								// 					label='Invite Guests'
-								// 					placeholder='Email Or Phone'
-								// 					variant='standard'
-								// 					value={invitedGuestInput}
-								// 					onChange={(e) =>
-								// 						handleChange('guest', e.target.value)
-								// 					}
-								// 					fullWidth
-								// 					size='small'
-								// 					InputProps={{
-								// 						startAdornment: (
-								// 							<InputAdornment position='start'>
-								// 								<PersonAddIcon className='icon' />
-								// 							</InputAdornment>
-								// 						),
-								// 					}}
-								// 					onFocus={() => dispatch(clearErrors())}
-								// 				/>
-								// 				<IconBtn
-								// 					tooltip='Add Guest'
-								// 					placement='top'
-								// 					disabled={!invitedGuestInput}
-								// 					onClick={handleAddGuest}
-								// 				>
-								// 					<AddBoxIcon className='add-icon' />
-								// 				</IconBtn>
-								// 			</div>
-								// 			{errors && errors.guest && (
-								// 				<h6 className='error'>{errors.guest}</h6>
-								// 			)}
-								// 			{invitedGuests.length > 0 && (
-								// 				<List className='list'>
-								// 					<ListItem disablePadding className='invited-guests'>
-								// 						<ListItemText secondary='Invited Guests' />
-								// 						{selectedEvent && eventAuthor === currentUser && (
-								// 							<IconBtn
-								// 								tooltip='Send Reminders'
-								// 								placement='top'
-								// 								onClick={handleReminders}
-								// 							>
-								// 								<SendToMobileIcon htmlColor='steelblue' />
-								// 							</IconBtn>
-								// 						)}
-								// 					</ListItem>
-								// 					{invitedGuests
-								// 						?.filter((item) => item._id !== user._id)
-								// 						.map((item) => {
-								// 							if (item?.firstName) {
-								// 								return (
-								// 									<ListItem
-								// 										disablePadding
-								// 										className='list-item'
-								// 										key={item._id}
-								// 									>
-								// 										<ListItemText
-								// 											primary={`${item.firstName} ${item.lastName}`}
-								// 										/>
-								// 										{selectedEvent &&
-								// 											eventAuthor === currentUser && (
-								// 												<IconBtn
-								// 													tooltip='Send Invite'
-								// 													placement='top'
-								// 													onClick={() => handleInvite(item)}
-								// 												>
-								// 													<SendToMobileIcon htmlColor='steelblue' />
-								// 												</IconBtn>
-								// 											)}
-								// 										<IconBtn
-								// 											tooltip='Delete Guest'
-								// 											placement='top'
-								// 											onClick={() =>
-								// 												dispatch(removeInvitedGuest(item))
-								// 											}
-								// 										>
-								// 											<DeleteIcon htmlColor='red' />
-								// 										</IconBtn>
-								// 									</ListItem>
-								// 								);
-								// 							} else {
-								// 								return (
-								// 									<ListItem
-								// 										disablePadding
-								// 										className='list-item'
-								// 										key={item._id}
-								// 									>
-								// 										<ListItemText
-								// 											primary={
-								// 												item?.phone ? item?.phone : item?.email
-								// 											}
-								// 										/>
-								// 										{selectedEvent &&
-								// 											eventAuthor === currentUser && (
-								// 												<IconBtn
-								// 													tooltip='Send Invite'
-								// 													placement='top'
-								// 													onClick={() => handleInvite(item)}
-								// 												>
-								// 													<SendToMobileIcon htmlColor='steelblue' />
-								// 												</IconBtn>
-								// 											)}
-								// 										<IconBtn
-								// 											tooltip='Delete Guest'
-								// 											placement='top'
-								// 											onClick={() =>
-								// 												dispatch(removeInvitedGuest(item))
-								// 											}
-								// 										>
-								// 											<DeleteIcon htmlColor='red' />
-								// 										</IconBtn>
-								// 									</ListItem>
-								// 								);
-								// 							}
-								// 						})}
-								// 				</List>
-								// 			)}
-								// 		</div>
-								// 	)}
-								// </>
-								<>
-									<div className='event-section'>
-										<LocalActivityIcon className='icon space' />
-										<h5>{selectedEvent?.type}</h5>
-									</div>
-									<div className='event-section'>
-										<EventIcon className='icon space' />
-										<h5>
-											{selectedEvent ? (
-												<>{dayjs(selectedEvent.date).format('dddd, MMMM DD')}</>
-											) : (
-												<>{dayjs(daySelected)?.format('dddd, MMMM DD')}</>
-											)}
-										</h5>
-									</div>
-									<div className='event-section'>
-										<ScheduleIcon className='icon space' />
-										<h5>
-											{selectedEvent ? (
-												<>{dayjs(selectedEvent.time).format('LT')}</>
-											) : (
-												<>TBD</>
-											)}
-										</h5>
-									</div>
-									<div className='event-section'>
-										<MyLocationIcon className='icon space' />
-										<h5>
-											{selectedEvent ? <>{selectedEvent.location}</> : 'TBD'}
-										</h5>
-									</div>
-									{alreadyAttending(eventsAttending, selectedEvent) ? (
-										<>
-											<DialogContentText>
-												RSVP received, you're all set!
-											</DialogContentText>
-										</>
-									) : (
-										<>
-											{selectedEvent &&
-											dayjs(selectedEvent?.date).isSameOrBefore(
-												new Date(),
-												'day'
-											) ? (
-												<>
-													<DialogContentText>
-														Hello, {user.firstName}!
-													</DialogContentText>
-													<div className='event-section alt'>
-														<div className='input-btn-row'>
-															<MuiFileInput
-																label='Upload Pic'
-																placeholder='Click to choose file'
-																variant='standard'
-																value={file}
-																onChange={(file) => handleChange('pic', file)}
-																fullWidth
-																size='small'
-															/>
-															<IconBtn
-																disabled={!file}
-																onClick={handleAddMemory}
-															>
-																<AddAPhotoIcon className='add-icon' />
-															</IconBtn>
-														</div>
-													</div>
-												</>
-											) : (
-												<>
-													<DialogContentText>
-														Hello, {user.firstName}! How many in your party?
-													</DialogContentText>
-													<TextField
-														disabled={
-															!selectedEvent ||
-															(selectedEvent?.isPublic &&
-																!selectedEvent?.rsvpOpen)
-														}
-														label='Headcount'
-														placeholder={
-															selectedEvent?.isPublic &&
-															!selectedEvent?.rsvpOpen &&
-															'RSVP Currently Closed'
-														}
-														variant='standard'
-														value={headcount}
-														onChange={(e) =>
-															handleChange('count', e.target.value)
-														}
-														fullWidth
-														size='small'
-														sx={{ marginTop: '15px' }}
-														onFocus={handleFocus}
-														InputProps={{
-															startAdornment: (
-																<InputAdornment position='start'>
-																	<GroupAddIcon className='icon' />
-																</InputAdornment>
-															),
-														}}
-													/>
-													{errors?.headcount && (
-														<h6 className='error'>{errors?.headcount}</h6>
-													)}
-												</>
-											)}
-										</>
-									)}
-								</>
-							)}
-						</>
-					)}
-				</FormControl>
+												{errors?.headcount && (
+													<h6 className='error'>{errors?.headcount}</h6>
+												)}
+											</>
+										)}
+									</>
+								)}
+							</>
+						)}
+					</>
+				)}
 			</DialogContent>
 			{user && dayjs(daySelected).isSameOrAfter(new Date(), 'day') && (
-				<DialogActions
-					sx={{
-						justifyContent:
-							selectedEvent && eventAuthor === currentUser
-								? 'space-between'
-								: 'flex-end',
-					}}
-				>
-					{selectedEvent &&
-						alreadyAttending(eventsAttending, selectedEvent) && (
-							<IconBtn tooltip='Undo' onClick={handleUndo}>
-								<UndoIcon className='undo' />
-							</IconBtn>
-						)}
-					{selectedEvent &&
-						!alreadyAttending(eventsAttending, selectedEvent) && (
-							<Button onClick={handleSubmit}>Submit</Button>
-						)}
-					{selectedEvent && eventAuthor === currentUser && (
-						<IconBtn tooltip='Delete' placement='top' onClick={handleDelete}>
-							<DeleteIcon className='delete' />
+				<DialogActions>
+					{selectedEvent && isAttending ? (
+						<IconBtn tooltip='Undo' onClick={handleCancel}>
+							<UndoIcon className='undo' />
 						</IconBtn>
-					)}
-					{!selectedEvent && (
-						<Button
-							disabled={!eventType || !eventTime || !eventLoc}
-							onClick={handleSubmit}
-						>
-							Submit
-						</Button>
+					) : (
+						<>
+							{warning ? (
+								<Alert
+									severity='warning'
+									action={
+										<div className='action-container'>
+											<Button onClick={handleClearWarning}>Cancel</Button>
+											<Button onClick={handleSubmit}>Proceed</Button>
+										</div>
+									}
+									style={{ width: '100%' }}
+								>
+									Don't forget to invite friends!
+								</Alert>
+							) : (
+								<Button disabled={handleDisabled()} onClick={handleSubmit}>
+									Submit
+								</Button>
+							)}
+						</>
 					)}
 				</DialogActions>
 			)}
