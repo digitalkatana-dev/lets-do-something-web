@@ -7,7 +7,6 @@ import {
 } from '../../../../../../../../redux/slices/calendarSlice';
 import { getCurrentDayClass } from '../../../../../../../../util/helpers';
 import dayjs from 'dayjs';
-import TouchableOpacity from '../../../../../../../../components/TouchableOpacity';
 import './day.scss';
 
 const Day = ({ day, rowIdx }) => {
@@ -44,10 +43,7 @@ const Day = ({ day, rowIdx }) => {
 	}, [allEvents, day]);
 
 	return (
-		<TouchableOpacity
-			onClick={handleClick}
-			inlineStyle={{ border: '1px solid lightgrey', zIndex: 1 }}
-		>
+		<div className='day-container' onClick={handleClick}>
 			<Grid item xs={1} className='cell'>
 				<header>
 					{rowIdx === 0 && <p className='abv'>{dayjs(day).format('ddd')}</p>}
@@ -72,7 +68,7 @@ const Day = ({ day, rowIdx }) => {
 					</button>
 				))}
 			</Grid>
-		</TouchableOpacity>
+		</div>
 	);
 };
 

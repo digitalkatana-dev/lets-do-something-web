@@ -67,7 +67,7 @@ export const tagStyle = (item) => {
 };
 
 export const getCurrentDayClass = (day) => {
-	return dayjs(day).format('MM-DD-YY') === dayjs().format('MM-DD-YY')
+	return dayjs(day).format('MM-DD-YY') === dayjs(new Date()).format('MM-DD-YY')
 		? 'today'
 		: '';
 };
@@ -97,7 +97,7 @@ export const formattedTime = (data) => {
 	let formattedTime;
 	let displayHours;
 	const rawDate = new Date(data).toISOString();
-	const formattedDateTime = dayjs(rawDate).format('YYYY-MM-DDTh:mm A');
+	const formattedDateTime = dayjs(rawDate).format('YYYY-MM-DDThh:mm A');
 	const date = formattedDateTime.split('T')[0];
 	const fullTime = formattedDateTime.split('T')[1];
 	const time = fullTime.split(' ')[0];
@@ -114,7 +114,7 @@ export const formattedTime = (data) => {
 		milHours === 24 ? (displayHours = 0) : (displayHours = hours);
 	}
 
-	formattedTime = `${date}T${displayHours}:${mins}:00`;
+	formattedTime = `${date}T${displayHours}:${mins}`;
 
 	return formattedTime;
 };
@@ -197,7 +197,9 @@ export const reFormatTime = (time, day) => {
 		const formattedDateTime =
 			desiredDate.toISOString().split('T')[0] +
 			'T' +
-			desiredDate.toTimeString().split(' ')[0];
+			('0' + desiredDate.getHours()).slice(-2) +
+			':' +
+			('0' + desiredDate.getMinutes()).slice(-2);
 
 		return formattedDateTime;
 	}

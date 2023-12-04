@@ -1,0 +1,19 @@
+.today,
+.selected-day {
+	width: 16px;
+	height: 16px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: whitesmoke;
+	border-radius: 100%;
+	padding: 5px;
+}
+
+.today {
+	background-color: steelblue;
+}
+
+.selected-day {
+	background-color: rgba(128, 0, 128, 0.5);
+}

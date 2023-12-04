@@ -1,68 +1,74 @@
-.abv,
-.date {
-	font-size: x-small;
-	font-family: 'Open Sans', sans-serif;
-}
-
-.unavailable {
-	border: 1px solid lightgrey;
+.day-container {
 	z-index: 1;
-	cursor: not-allowed;
-}
+	border: 1px ridge lightgrey;
+	cursor: pointer;
 
-.cell {
-	height: 54px;
-	width: 54px;
-
-	header {
-		margin-top: 5px;
-		margin-left: 5px;
+	.abv,
+	.date {
+		font-size: x-small;
+		font-family: 'Open Sans', sans-serif;
 	}
 
-	.abv {
-		margin-bottom: 1px;
+	.unavailable {
+		border: 1px solid lightgrey;
+		z-index: 1;
+		cursor: not-allowed;
 	}
 
-	.today,
-	.selected-day {
-		width: 16px;
-		height: 16px;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		color: whitesmoke;
-		border-radius: 100%;
-		padding: 5px;
-	}
+	.cell {
+		height: 54px;
+		width: 54px;
 
-	.today {
-		background-color: steelblue;
-	}
+		header {
+			margin-top: 5px;
+			margin-left: 5px;
+		}
 
-	.selected-day {
-		background-color: rgba(128, 0, 128, 0.5);
-	}
+		.abv {
+			margin-bottom: 1px;
+		}
 
-	.day-event {
-		width: inherit;
-		outline: none;
-		border: none;
-		border-radius: 30px;
-		margin-bottom: 2px;
-		padding: 2px 5px;
-		z-index: 5;
-		cursor: pointer;
-
-		.btn-txt {
-			font-size: xx-small;
+		.today,
+		.selected-day {
+			width: 16px;
+			height: 16px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
 			color: whitesmoke;
-			overflow-x: hidden;
-			white-space: nowrap;
-			text-overflow: ellipsis;
+			border-radius: 100%;
+			padding: 5px;
+		}
 
-			&.scrolled:hover {
-				text-indent: -54px;
-				transition: text-indent 5s linear;
+		.today {
+			background-color: steelblue;
+		}
+
+		.selected-day {
+			background-color: rgba(128, 0, 128, 0.5);
+		}
+
+		.day-event {
+			width: inherit;
+			outline: none;
+			border: none;
+			border-radius: 30px;
+			margin-bottom: 2px;
+			padding: 2px 5px;
+			z-index: 5;
+			cursor: pointer;
+
+			.btn-txt {
+				font-size: xx-small;
+				color: whitesmoke;
+				overflow-x: hidden;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+
+				&.scrolled:hover {
+					text-indent: -54px;
+					transition: text-indent 5s linear;
+				}
 			}
 		}
 	}

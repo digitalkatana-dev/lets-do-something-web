@@ -15,7 +15,6 @@ import { TimeField } from '@mui/x-date-pickers';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-	setSelectedEvent,
 	setIsPublic,
 	setRSVPOpen,
 	setEventType,
@@ -23,18 +22,9 @@ import {
 	setEventTime,
 	setEventLoc,
 	setInvitedGuestInput,
-	findGuest,
-	findAndInvite,
-	removeInvitedGuest,
 	setHeadcount,
 	setSelectedLabel,
-	sendReminders,
-	inviteSingle,
-	setErrors,
-	clearEvent,
-	clearErrors,
 } from '../../../../../../../../../../redux/slices/calendarSlice';
-import { setMemoryOpen } from '../../../../../../../../../../redux/slices/appSlice';
 import { createMemory } from '../../../../../../../../../../redux/slices/memorySlice';
 import {
 	formattedTime,
@@ -49,17 +39,10 @@ import ScheduleIcon from '@mui/icons-material/Schedule';
 import MyLocationIcon from '@mui/icons-material/MyLocation';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import CheckIcon from '@mui/icons-material/Check';
-import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
-import AttachFileIcon from '@mui/icons-material/AttachFile';
-import AddBoxIcon from '@mui/icons-material/AddBox';
-import IconBtn from '../../../../../../../../../../components/IconBtn';
-// import 'cropperjs/dist/cropper.css';
 
 const EventTab = () => {
 	const {
-		open,
 		daySelected,
-		eventsAttending,
 		selectedEvent,
 		isPublic,
 		rsvpOpen,
@@ -67,13 +50,9 @@ const EventTab = () => {
 		eventTypeInput,
 		eventTime,
 		eventLoc,
-		invitedGuestInput,
-		invitedGuests,
-		headcount,
 		selectedLabel,
 		errors,
 	} = useSelector((state) => state.calendar);
-	const { user } = useSelector((state) => state.user);
 	const { success } = useSelector((state) => state.memory);
 	const [file, setFile] = useState(null);
 	const [preview, setPreview] = useState(null);
