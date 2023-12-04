@@ -120,13 +120,12 @@ export const findGuest = createAsyncThunk(
 
 export const findAndInvite = createAsyncThunk(
 	'calendar/find_and_invite',
-	async (eventInfo, { rejectWithValue, dispatch }) => {
+	async (data, { rejectWithValue, dispatch }) => {
+		const { creator, ...others } = data;
 		try {
-			const res = await doSomethingApi.post(
-				'/events/find-and-invite',
-				eventInfo
-			);
-			res.data.success && dispatch(getUser(eventInfo.creator));
+			const res = await doSomethingApi.post('/events/find-and-invite', others);
+			const { success } = res.data;
+			success && dispatch(getUser(creator));
 			return res.data;
 		} catch (err) {
 			return rejectWithValue(err.response.data);
@@ -344,15 +343,16 @@ export const calendarSlice = createSlice({
 			})
 			.addCase(getAllEvents.fulfilled, (state, action) => {
 				state.loading = false;
-				state.allEvents = action.payload;
-				state.currentEvents =
-					action.payload.filter((item) =>
-						dayjs(item.date).isSameOrAfter(new Date(), 'day')
-					) == []
-						? null
-						: action.payload.filter((item) =>
-								dayjs(item.date).isSameOrAfter(new Date(), 'day')
-						  );
+				state.allEvents = action.payload.events;
+				state.currentEvents = action.payload.current;
+				// state.currentEvents =
+				// 	action.payload.filter((item) =>
+				// 		dayjs(item.date).isSameOrAfter(new Date(), 'day')
+				// 	) == []
+				// 		? null
+				// 		: action.payload.filter((item) =>
+				// 				dayjs(item.date).isSameOrAfter(new Date(), 'day')
+				// 		  );
 			})
 			.addCase(getAllEvents.rejected, (state, action) => {
 				state.loading = false;
@@ -364,15 +364,16 @@ export const calendarSlice = createSlice({
 			})
 			.addCase(getInvitedEvents.fulfilled, (state, action) => {
 				state.loading = false;
-				state.allEvents = action.payload;
-				state.currentEvents =
-					action.payload.filter((item) =>
-						dayjs(item.date).isSameOrAfter(new Date(), 'day')
-					) == []
-						? null
-						: action.payload.filter((item) =>
-								dayjs(item.date).isSameOrAfter(new Date(), 'day')
-						  );
+				state.allEvents = action.payload.events;
+				state.currentEvents = action.payload.current;
+				// state.currentEvents =
+				// 	action.payload.filter((item) =>
+				// 		dayjs(item.date).isSameOrAfter(new Date(), 'day')
+				// 	) == []
+				// 		? null
+				// 		: action.payload.filter((item) =>
+				// 				dayjs(item.date).isSameOrAfter(new Date(), 'day')
+				// 		  );
 			})
 			.addCase(getInvitedEvents.rejected, (state, action) => {
 				state.loading = false;

@@ -23,7 +23,7 @@ const DeleteDialog = ({ open }) => {
 	};
 
 	return (
-		<Dialog open={open} onClose={handleClose}>
+		<Dialog open={open} onClose={handleClose} maxWidth='xs' fullWidth>
 			<DialogTitle>Delete?</DialogTitle>
 			<DialogContent>
 				<DialogContentText>

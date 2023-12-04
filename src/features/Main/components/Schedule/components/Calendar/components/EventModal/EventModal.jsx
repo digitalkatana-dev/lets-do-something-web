@@ -121,7 +121,7 @@ const EventModal = () => {
 		dispatch(toggleOpen(false));
 		setTimeout(() => {
 			dispatch(setSelectedEvent(null));
-		}, 1000);
+		}, 500);
 	};
 
 	const handleSignIn = () => {
