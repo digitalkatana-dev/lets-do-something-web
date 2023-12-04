@@ -67,7 +67,7 @@ export const tagStyle = (item) => {
 };
 
 export const getCurrentDayClass = (day) => {
-	return dayjs(day).format('MM-DD-YY') === dayjs().format('MM-DD-YY')
+	return dayjs(day).format('MM-DD-YY') === dayjs(new Date()).format('MM-DD-YY')
 		? 'today'
 		: '';
 };

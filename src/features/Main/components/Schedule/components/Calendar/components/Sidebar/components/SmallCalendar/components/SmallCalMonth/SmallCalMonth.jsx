@@ -6,6 +6,7 @@ import {
 	setDaySelected,
 } from '../../../../../../../../../../../../redux/slices/calendarSlice';
 import dayjs from 'dayjs';
+import './smallMonth.scss';
 import TouchableOpacity from '../../../../../../../../../../../../components/TouchableOpacity';
 
 const SmallCalMonth = () => {
@@ -16,7 +17,7 @@ const SmallCalMonth = () => {
 
 	const getDayClass = (day) => {
 		const format = 'MM-DD-YY';
-		const nowDay = dayjs().format(format);
+		const nowDay = dayjs(new Date()).format(format);
 		const currDay = dayjs(day).format(format);
 		const slcDay = daySelected && dayjs(daySelected).format(format);
 		if (nowDay === currDay) {

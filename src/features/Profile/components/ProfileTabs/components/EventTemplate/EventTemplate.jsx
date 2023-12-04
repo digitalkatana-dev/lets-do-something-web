@@ -18,6 +18,7 @@ import {
 	deleteEvent,
 } from '../../../../../../redux/slices/calendarSlice';
 import { getBackgroundColor } from '../../../../../../util/helpers';
+import dayjs from 'dayjs';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -105,7 +106,7 @@ const EventTemplate = ({ data, type }) => {
 						{data.type} @ {data.location}
 					</p>
 					<p>
-						{data.date} @ {data.time}
+						{data.date} @ {dayjs(data.time).format('LT')}
 					</p>
 				</div>
 				{isHost && (

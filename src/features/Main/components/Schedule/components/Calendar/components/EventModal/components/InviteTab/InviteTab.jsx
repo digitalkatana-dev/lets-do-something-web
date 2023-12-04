@@ -13,6 +13,7 @@ import {
 	findGuest,
 	findAndInvite,
 	removeInvitedGuest,
+	removeSubmittedGuest,
 } from '../../../../../../../../../../redux/slices/calendarSlice';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import AddBoxIcon from '@mui/icons-material/AddBox';
@@ -27,7 +28,6 @@ const InviteTab = () => {
 	const filteredGuests = invitedGuests?.filter(
 		(item) => item?._id !== user?._id
 	);
-	console.log(filteredGuests);
 	const dispatch = useDispatch();
 
 	const handleFocus = () => {
@@ -59,8 +59,17 @@ const InviteTab = () => {
 	};
 
 	const handleRemoveGuest = (guest) => {
-		const updated = invitedGuests?.filter((item) => item?._id !== guest?._id);
-		dispatch(removeInvitedGuest(updated));
+		if (selectedEvent) {
+			const data = {
+				guest,
+				eventId: selectedEvent?._id,
+				user: user?._id,
+			};
+			dispatch(removeSubmittedGuest(data));
+		} else {
+			const updated = invitedGuests?.filter((item) => item?._id !== guest?._id);
+			dispatch(removeInvitedGuest(updated));
+		}
 	};
 
 	// const handleReminders = () => {
@@ -108,6 +117,7 @@ const InviteTab = () => {
 					<ListItem disablePadding className='invited-guests'>
 						<ListItemText secondary='Invited Guests' />
 						<IconBtn
+							disabled={invitedGuests.length <= 1}
 							tooltip='Send Reminders'
 							placement='top'
 							// onClick={handleReminders}

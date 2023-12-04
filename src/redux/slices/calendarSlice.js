@@ -124,8 +124,12 @@ export const findAndInvite = createAsyncThunk(
 		const { creator, ...others } = data;
 		try {
 			const res = await doSomethingApi.post('/events/find-and-invite', others);
-			const { success } = res.data;
-			success && dispatch(getUser(creator));
+			const { success, updatedEvent } = res.data;
+			if (success) {
+				dispatch(getUser(creator));
+				dispatch(getInvitedEvents(creator));
+				dispatch(setSelectedEvent(updatedEvent));
+			}
 			return res.data;
 		} catch (err) {
 			return rejectWithValue(err.response.data);
@@ -139,8 +143,12 @@ export const updateEvent = createAsyncThunk(
 		const { user, ...others } = data;
 		try {
 			const res = await doSomethingApi.put(`/events/update`, others);
-			const { success } = res.data;
-			if (success) dispatch(getUser(user));
+			const { success, updated } = res.data;
+			if (success) {
+				dispatch(getUser(user));
+				dispatch(getInvitedEvents(user));
+				dispatch(setSelectedEvent(updated));
+			}
 			return res.data;
 		} catch (err) {
 			return rejectWithValue(err.response.data);
@@ -153,9 +161,13 @@ export const processRsvp = createAsyncThunk(
 	async (data, { rejectWithValue, dispatch }) => {
 		try {
 			const res = await doSomethingApi.put('/events/rsvp', data);
-			dispatch(setHeadcount(''));
-			dispatch(getUser(data.user));
-
+			const { success, updated } = res.data;
+			if (success) {
+				dispatch(setHeadcount(''));
+				dispatch(getUser(data.user));
+				dispatch(getInvitedEvents(data.user));
+				dispatch(setSelectedEvent(updated));
+			}
 			return res.data;
 		} catch (err) {
 			return rejectWithValue(err.response.data);
@@ -442,7 +454,6 @@ export const calendarSlice = createSlice({
 			.addCase(findAndInvite.fulfilled, (state, action) => {
 				state.loading = false;
 				state.success = action.payload.success;
-				state.selectedEvent = action.payload.updatedEvent;
 			})
 			.addCase(findAndInvite.rejected, (state, action) => {
 				state.loading = false;
@@ -455,7 +466,6 @@ export const calendarSlice = createSlice({
 			.addCase(updateEvent.fulfilled, (state, action) => {
 				state.loading = false;
 				state.success = action.payload.success;
-				state.selectedEvent = action.payload.updated;
 			})
 			.addCase(updateEvent.rejected, (state, action) => {
 				state.loading = false;
@@ -468,7 +478,6 @@ export const calendarSlice = createSlice({
 			.addCase(processRsvp.fulfilled, (state, action) => {
 				state.loading = false;
 				state.success = action.payload.success;
-				state.selectedEvent = action.payload.updated;
 				state.guestList = action.payload.updated.attendees;
 				state.open = false;
 			})
@@ -485,7 +494,6 @@ export const calendarSlice = createSlice({
 				state.success = action.payload.success;
 				state.allEvents = action.payload.updatedAll;
 				state.currentEvents = action.payload.current;
-				state.memoryEvents = action.payload.memories;
 				state.open = false;
 			})
 			.addCase(deleteEvent.rejected, (state, action) => {
