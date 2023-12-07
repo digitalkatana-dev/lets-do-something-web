@@ -1,7 +1,7 @@
 import io from 'socket.io-client';
 let connected = false;
 
-export const socket = io.connect('http://localhost:3005');
+export const socket = io.connect('https://dosomething-backend.onrender.com');
 
 socket.on('connected', () => {
 	connected = true;
