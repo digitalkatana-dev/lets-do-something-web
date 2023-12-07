@@ -18,7 +18,7 @@ function App() {
 
 	useEffect(() => {
 		user &&
-			setTimeout(() => {
+			setInterval(() => {
 				socket.emit('setup', user);
 			}, 45000);
 	}, [user]);
