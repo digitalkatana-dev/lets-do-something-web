@@ -211,6 +211,7 @@ const initialState = calendarAdapter.getInitialState({
 	eventTypeInput: '',
 	eventTime: '',
 	eventLoc: '',
+	eventNote: '',
 	selectedLabel: labelClasses[0],
 	invitedGuestInput: '',
 	invitedGuests: [],
@@ -253,6 +254,7 @@ export const calendarSlice = createSlice({
 				state.eventTypeInput = '';
 				state.eventTime = '';
 				state.eventLoc = '';
+				state.eventNote = '';
 				state.selectedLabel = labelClasses[0];
 				state.invitedGuestInput = '';
 				state.invitedGuests = [];
@@ -266,6 +268,7 @@ export const calendarSlice = createSlice({
 				state.eventTypeInput = !optionMatch ? action.payload.type : '';
 				// state.eventTime = action.payload.time;
 				state.eventLoc = action.payload.location;
+				state.eventNote = action.payload.notes;
 				state.selectedLabel = action.payload.label;
 				state.invitedGuests = action.payload.invitedGuests;
 			}
@@ -289,6 +292,9 @@ export const calendarSlice = createSlice({
 		setEventLoc: (state, action) => {
 			state.eventLoc = action.payload;
 		},
+		setEventNote: (state, action) => {
+			state.eventNote = action.payload;
+		},
 		setHeadcount: (state, action) => {
 			state.headcount = action.payload;
 		},
@@ -311,6 +317,7 @@ export const calendarSlice = createSlice({
 			state.eventTypeInput = '';
 			state.eventTime = '';
 			state.eventLoc = '';
+			state.eventNote = '';
 			state.selectedLabel = labelClasses[0];
 			state.invitedGuestInput = '';
 			state.invitedGuests = [];
@@ -518,6 +525,7 @@ export const {
 	setEventTypeInput,
 	setEventTime,
 	setEventLoc,
+	setEventNote,
 	setHeadcount,
 	setSelectedLabel,
 	setInvitedGuestInput,

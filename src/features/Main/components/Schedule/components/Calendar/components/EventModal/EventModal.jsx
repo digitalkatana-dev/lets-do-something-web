@@ -44,10 +44,8 @@ import ScheduleIcon from '@mui/icons-material/Schedule';
 import MyLocationIcon from '@mui/icons-material/MyLocation';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import CheckIcon from '@mui/icons-material/Check';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import AddBoxIcon from '@mui/icons-material/AddBox';
+import NotesIcon from '@mui/icons-material/Notes';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
-import LocalActivityIcon from '@mui/icons-material/LocalActivity';
 import UndoIcon from '@mui/icons-material/Undo';
 import './eventModal.scss';
 import IconBtn from '../../../../../../../../components/IconBtn';
@@ -67,6 +65,7 @@ const EventModal = () => {
 		eventTypeInput,
 		eventTime,
 		eventLoc,
+		eventNote,
 		invitedGuests,
 		headcount,
 		selectedLabel,
@@ -93,16 +92,18 @@ const EventModal = () => {
 			isPublic: isPublic,
 			rsvpOpen: rsvpOpen,
 			type: eventType,
-			time: eventTime,
+			time: eventTime.split('T')[1],
 			location: eventLoc,
+			notes: eventNote,
 			label: selectedLabel,
 		};
 		let check = {
 			isPublic: selectedEvent?.isPublic,
 			rsvpOpen: selectedEvent?.rsvpOpen,
 			type: selectedEvent?.type,
-			time: selectedEvent?.time,
+			time: selectedEvent?.time.split('T')[1],
 			location: selectedEvent?.location,
+			notes: selectedEvent?.notes,
 			label: selectedEvent?.label,
 		};
 
@@ -187,6 +188,7 @@ const EventModal = () => {
 					type: eventType === 'other' ? eventTypeInput : eventType,
 					time: eventTime,
 					location: eventLoc,
+					notes: eventNote,
 					label: selectedLabel,
 					invitedGuests,
 					createdBy: user?._id,
@@ -204,6 +206,7 @@ const EventModal = () => {
 				}),
 				...(eventTime !== selectedEvent?.time && { time: eventTime }),
 				...(eventLoc !== selectedEvent?.location && { location: eventLoc }),
+				...(eventNote !== selectedEvent?.notes && { notes: eventNote }),
 				...(selectedLabel !== selectedEvent?.label && {
 					label: selectedLabel,
 				}),
@@ -316,26 +319,10 @@ const EventModal = () => {
 									</div>
 								</div>
 								<div className='event-section'>
-									<BookmarkBorderIcon className='icon space' />
-									<div className='tag-swatch'>
-										{labelClasses.map((item, i) => (
-											<span key={i} style={tagStyle(item)}>
-												{selectedLabel === item && <CheckIcon fontSize='4' />}
-											</span>
-										))}
-									</div>
-								</div>
-								<div
-									className='event-section alt'
-									style={{
-										flexDirection: 'row',
-										justifyContent: 'space-between',
-									}}
-								>
 									<div className='no-user'>
 										<div className='icon-container'>
-											<p className='icon-label'>Invite Guests</p>
-											<PersonAddIcon className='icon' />
+											<p className='icon-label'>Notes</p>
+											<NotesIcon className='icon' />
 										</div>
 										<Button
 											variant='text'
@@ -345,9 +332,16 @@ const EventModal = () => {
 											Sign in to create an event!
 										</Button>
 									</div>
-									<IconBtn disabled>
-										<AddBoxIcon className='add-icon' htmlColor='green' />
-									</IconBtn>
+								</div>
+								<div className='event-section'>
+									<BookmarkBorderIcon className='icon space' />
+									<div className='tag-swatch'>
+										{labelClasses.map((item, i) => (
+											<span key={i} style={tagStyle(item)}>
+												{selectedLabel === item && <CheckIcon fontSize='4' />}
+											</span>
+										))}
+									</div>
 								</div>
 							</>
 						) : (
@@ -373,7 +367,10 @@ const EventModal = () => {
 									<MyLocationIcon className='icon space' />
 									<h5>{selectedEvent?.location}</h5>
 								</div>
-								<DialogContentText className='rsvp-details sign-in-warning'>
+								<div className='event-section'>
+									<div className='icon-container'>
+										<NotesIcon className='icon' />
+									</div>
 									<Button
 										variant='text'
 										className='sign-in-btn'
@@ -381,7 +378,7 @@ const EventModal = () => {
 									>
 										Sign in to RSVP!
 									</Button>
-								</DialogContentText>
+								</div>
 								<div className='event-section'>
 									<div className='no-user'>
 										<div className='icon-container'>
@@ -403,10 +400,15 @@ const EventModal = () => {
 							</>
 						) : (
 							<>
-								<div className='event-section'>
-									<LocalActivityIcon className='icon space' />
-									<h5>{selectedEvent?.type}</h5>
-								</div>
+								<DialogContentText className='rsvp-details'>
+									{selectedEvent?.type} @ {selectedEvent?.location}
+								</DialogContentText>
+								<DialogContentText className='rsvp-details'>
+									Hosted by:{' '}
+									{selectedEvent?.invitedGuests[0].firstName +
+										' ' +
+										selectedEvent?.invitedGuests[0].lastName}
+								</DialogContentText>
 								<div className='event-section'>
 									<EventIcon className='icon space' />
 									<h5>
@@ -429,9 +431,13 @@ const EventModal = () => {
 								</div>
 								<div className='event-section'>
 									<MyLocationIcon className='icon space' />
-									<h5>
-										{selectedEvent ? <>{selectedEvent.location}</> : 'TBD'}
-									</h5>
+									<h5>{selectedEvent ? selectedEvent.location : 'TBD'}</h5>
+								</div>
+								<div className='event-section'>
+									<NotesIcon className='icon space' />
+									<h6>
+										{selectedEvent?.notes ? selectedEvent?.notes : 'No notes!'}
+									</h6>
 								</div>
 								{isAttending ? (
 									<DialogContentText textAlign='center'>
@@ -481,7 +487,7 @@ const EventModal = () => {
 											</>
 										) : (
 											<>
-												<DialogContentText>
+												<DialogContentText textAlign='center'>
 													Hello, {user.firstName}! How many in your party?
 												</DialogContentText>
 												<TextField

@@ -21,6 +21,7 @@ import {
 	setEventTypeInput,
 	setEventTime,
 	setEventLoc,
+	setEventNote,
 	setInvitedGuestInput,
 	setHeadcount,
 	setSelectedLabel,
@@ -37,6 +38,7 @@ import DetailsIcon from '@mui/icons-material/Details';
 import EventIcon from '@mui/icons-material/Event';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import MyLocationIcon from '@mui/icons-material/MyLocation';
+import EditNoteIcon from '@mui/icons-material/EditNote';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import CheckIcon from '@mui/icons-material/Check';
 
@@ -50,6 +52,7 @@ const EventTab = () => {
 		eventTypeInput,
 		eventTime,
 		eventLoc,
+		eventNote,
 		selectedLabel,
 		errors,
 	} = useSelector((state) => state.calendar);
@@ -74,6 +77,7 @@ const EventTab = () => {
 			other: setEventTypeInput,
 			time: (v) => setEventTime(formattedTime(v)),
 			loc: setEventLoc,
+			notes: setEventNote,
 			label: setSelectedLabel,
 			guest: setInvitedGuestInput,
 			count: setHeadcount,
@@ -239,6 +243,24 @@ const EventTab = () => {
 					}}
 				/>
 				{errors?.location && <h6 className='error'>{errors?.location}</h6>}
+			</div>
+			<div className='event-section'>
+				<TextField
+					label='Notes'
+					margin='dense'
+					variant='standard'
+					fullWidth
+					multiline
+					value={eventNote}
+					onChange={(e) => handleChange('notes', e.target.value)}
+					InputProps={{
+						startAdornment: (
+							<InputAdornment position='start'>
+								<EditNoteIcon className='icon' />
+							</InputAdornment>
+						),
+					}}
+				/>
 			</div>
 			<div className='event-section'>
 				<BookmarkBorderIcon className='icon space' />
