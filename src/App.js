@@ -21,7 +21,7 @@ function App() {
 		if (user !== null) {
 			setupInterval = setInterval(() => {
 				socket.emit('setup', user);
-			}, 15000);
+			}, 45000);
 		} else {
 			if (setupInterval) {
 				clearInterval(setupInterval);
