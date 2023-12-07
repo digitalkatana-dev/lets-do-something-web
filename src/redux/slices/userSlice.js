@@ -5,6 +5,7 @@ import {
 } from '@reduxjs/toolkit';
 import { PURGE } from 'redux-persist';
 import { setMenuView } from './navSlice';
+import { socket } from '../../util/socket';
 import doSomethingApi from '../../api/doSomethingApi';
 
 export const register = createAsyncThunk(
@@ -192,6 +193,7 @@ export const userSlice = createSlice({
 				state.password = '';
 				state.notify = 'sms';
 				state.user = action.payload;
+				socket.emit('setup', action.payload);
 				state.errors = false;
 			})
 			.addCase(register.rejected, (state, action) => {
@@ -207,6 +209,7 @@ export const userSlice = createSlice({
 				state.login = '';
 				state.password = '';
 				state.user = action.payload;
+				socket.emit('setup', action.payload);
 				state.errors = false;
 			})
 			.addCase(userLogin.rejected, (state, action) => {

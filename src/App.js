@@ -1,5 +1,7 @@
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { socket } from './util/socket';
 import './App.scss';
 import Navbar from './components/Navbar';
 import NavMenu from './components/NavMenu';
@@ -12,6 +14,14 @@ import 'slick-carousel/slick/slick-theme.css';
 
 function App() {
 	const { deleteOpen } = useSelector((state) => state.app);
+	const { user } = useSelector((state) => state.user);
+
+	useEffect(() => {
+		user &&
+			setTimeout(() => {
+				socket.emit('setup', user);
+			}, 45000);
+	}, [user]);
 
 	return (
 		<div className='App'>
