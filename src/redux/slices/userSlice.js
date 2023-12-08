@@ -101,6 +101,30 @@ export const updateUser = createAsyncThunk(
 	}
 );
 
+export const userSearch = createAsyncThunk(
+	'user/search',
+	async (data, { rejectWithValue }) => {
+		try {
+			const res = await doSomethingApi.get(`/users/?search=${data}`);
+			return res.data;
+		} catch (err) {
+			return rejectWithValue(err.response.data);
+		}
+	}
+);
+
+export const processFriend = createAsyncThunk(
+	'user/add_remove_friend',
+	async (data, { rejectWithValue, dispatch }) => {
+		try {
+			const res = await doSomethingApi.put(`/users/${data}/friends`);
+			return res.data;
+		} catch (err) {
+			return rejectWithValue(err.response.data);
+		}
+	}
+);
+
 export const userAdapter = createEntityAdapter();
 const initialState = userAdapter.getInitialState({
 	loading: false,
@@ -113,6 +137,7 @@ const initialState = userAdapter.getInitialState({
 	notify: 'sms',
 	show: false,
 	user: null,
+	searchResults: [],
 	success: null,
 	errors: null,
 });
@@ -157,6 +182,9 @@ export const userSlice = createSlice({
 			state.password = '';
 			state.notify = 'sms';
 		},
+		clearSearchResults: (state) => {
+			state.searchResults = [];
+		},
 		clearSuccess: (state) => {
 			state.success = null;
 		},
@@ -173,6 +201,7 @@ export const userSlice = createSlice({
 			state.password = '';
 			state.notify = 'sms';
 			state.user = null;
+			state.searchResults = [];
 			state.success = null;
 			state.errors = null;
 			localStorage.removeItem('token');
@@ -279,6 +308,31 @@ export const userSlice = createSlice({
 				state.loading = false;
 				state.errors = action.payload;
 			})
+			.addCase(userSearch.pending, (state) => {
+				state.loading = true;
+				state.errors = null;
+			})
+			.addCase(userSearch.fulfilled, (state, action) => {
+				state.loading = false;
+				state.searchResults = action.payload;
+			})
+			.addCase(userSearch.rejected, (state, action) => {
+				state.loading = false;
+				state.errors = action.payload;
+			})
+			.addCase(processFriend.pending, (state) => {
+				state.loading = true;
+				state.errors = null;
+			})
+			.addCase(processFriend.fulfilled, (state, action) => {
+				state.loading = false;
+				state.success = action.payload.success;
+				state.user = action.payload.userData;
+			})
+			.addCase(processFriend.rejected, (state, action) => {
+				state.loading = false;
+				state.errors = action.payload;
+			})
 			.addCase(logout, (state) => {
 				userAdapter.removeAll(state);
 			})
@@ -299,6 +353,7 @@ export const {
 	setShow,
 	setErrors,
 	clearForm,
+	clearSearchResults,
 	clearSuccess,
 	clearErrors,
 	logout,

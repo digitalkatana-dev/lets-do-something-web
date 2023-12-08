@@ -1,5 +1,7 @@
 import { Box, Typography } from '@mui/material';
 import EventTemplate from '../EventTemplate';
+import SearchTab from '../SearchTab';
+import UserTemplate from '../../../../../../components/UserTemplate';
 
 const TabPanel = ({ children, index, value, type, ...other }) => {
 	return (
@@ -12,15 +14,27 @@ const TabPanel = ({ children, index, value, type, ...other }) => {
 			style={{ height: 'calc(100% - 129px)', overflowY: 'auto' }}
 		>
 			{value === index && (
-				<Box>
-					{children?.length > 0 ? (
-						children?.map((item) => (
-							<EventTemplate key={item._id} data={item} type={type} />
-						))
+				<>
+					{type === 'search' ? (
+						<SearchTab />
 					) : (
-						<Typography>Nothing to Show!</Typography>
+						<Box>
+							{children?.length > 0 ? (
+								children?.map((item) => (
+									<>
+										{type === 'friend' ? (
+											<UserTemplate key={item._id} data={item} />
+										) : (
+											<EventTemplate key={item._id} data={item} type={type} />
+										)}
+									</>
+								))
+							) : (
+								<Typography>Nothing to Show!</Typography>
+							)}
+						</Box>
 					)}
-				</Box>
+				</>
 			)}
 		</div>
 	);
