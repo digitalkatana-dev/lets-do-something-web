@@ -1,0 +1,15 @@
+#search {
+	.search-bar-container {
+		width: 80%;
+		margin: 0 auto;
+
+		.MuiInputBase-root {
+			border-radius: 50px;
+		}
+	}
+
+	.search-results-container {
+		padding: 10px;
+		padding-bottom: 0;
+	}
+}

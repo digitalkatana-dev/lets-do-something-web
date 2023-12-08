@@ -1,4 +1,17 @@
-.welcome {
+#welcome {
 	padding: 30px;
 	text-align: center;
+
+	.alternate {
+		font-family: 'Rubik Bubbles';
+		font-size: 72px;
+
+		.red {
+			color: red;
+		}
+
+		.green {
+			color: green;
+		}
+	}
 }

@@ -1,3 +1,4 @@
+import { Paper } from '@mui/material';
 import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUser } from '../../redux/slices/userSlice';
@@ -21,16 +22,18 @@ const Profile = () => {
 
 	return (
 		<div id='profile'>
-			<div className='greeting-container'>
-				<h4>Hi {user?.firstName}, Welcome back 👋</h4>
-			</div>
-			<User />
-			<Events
-				tab1data={user?.myEvents}
-				tab2data={user?.eventsAttending}
-				type='events'
-			/>
-			<Friends tab1data={user?.friends} type='friends' />
+			<Paper id='profile-container' elevation={10}>
+				<div className='greeting-container'>
+					<h4>Hi {user?.firstName}, Welcome back 👋</h4>
+				</div>
+				<User />
+				<Events
+					tab1data={user?.myEvents}
+					tab2data={user?.eventsAttending}
+					type='events'
+				/>
+				<Friends tab1data={user?.friends} type='friends' />
+			</Paper>
 			<Footer />
 		</div>
 	);

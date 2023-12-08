@@ -91,7 +91,7 @@ const EventModal = () => {
 		let data = {
 			isPublic: isPublic,
 			rsvpOpen: rsvpOpen,
-			type: eventType,
+			type: eventType === 'other' ? eventTypeInput : eventType,
 			time: eventTime.split('T')[1],
 			location: eventLoc,
 			notes: eventNote,
