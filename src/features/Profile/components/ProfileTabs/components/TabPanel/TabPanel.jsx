@@ -18,7 +18,7 @@ const TabPanel = ({ children, index, value, type, ...other }) => {
 					{type === 'search' ? (
 						<SearchTab />
 					) : (
-						<Box>
+						<Box sx={{ padding: '10px 10px 0 10px' }}>
 							{children?.length > 0 ? (
 								children?.map((item) => (
 									<>

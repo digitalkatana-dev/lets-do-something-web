@@ -38,10 +38,11 @@ const SearchTab = () => {
 						id='search-box'
 						type='text'
 						placeholder='Search for your friends!'
-						onFocus={handleFocus}
-						onChange={handleChange}
 						size='small'
 						margin='dense'
+						fullWidth
+						onFocus={handleFocus}
+						onChange={handleChange}
 						InputProps={{
 							startAdornment: (
 								<InputAdornment position='start'>
