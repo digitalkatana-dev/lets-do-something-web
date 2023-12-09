@@ -1,10 +1,10 @@
 export const labelClasses = [
-	'violet',
-	'grey',
+	'tomato',
+	'gold',
 	'teal',
 	'dodgerblue',
-	'tomato',
-	'mediumpurple',
+	'darkmagenta',
+	'violet',
 ];
 
 export const typeOptions = [
