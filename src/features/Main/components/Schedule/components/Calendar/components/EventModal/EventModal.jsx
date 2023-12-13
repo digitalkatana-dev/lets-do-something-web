@@ -351,9 +351,9 @@ const EventModal = () => {
 								</DialogContentText>
 								<DialogContentText className='rsvp-details'>
 									Hosted by:{' '}
-									{selectedEvent?.invitedGuests[0].firstName +
+									{selectedEvent?.createdBy?.firstName +
 										' ' +
-										selectedEvent?.invitedGuests[0].lastName}
+										selectedEvent?.createdBy?.lastName}
 								</DialogContentText>
 								<div className='event-section'>
 									<EventIcon className='icon space' />
