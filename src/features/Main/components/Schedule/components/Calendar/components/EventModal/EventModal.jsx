@@ -78,7 +78,7 @@ const EventModal = () => {
 	const [cropped, setCropped] = useState(null);
 	const [warning, setWarning] = useState(false);
 	const cropperRef = useRef(null);
-	const eventAuthor = selectedEvent?.createdBy;
+	const eventAuthor = selectedEvent?.createdBy?._id;
 	const currentUser = user?._id;
 	const isAttending = eventsAttending?.some(
 		(event) => event._id === selectedEvent?._id
