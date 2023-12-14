@@ -3,6 +3,7 @@ import {
 	createAsyncThunk,
 	createSlice,
 } from '@reduxjs/toolkit';
+import { setDeleteData } from './appSlice';
 import { getUser } from './userSlice';
 import { getMonth, defaultTime, reFormatTime } from '../../util/helpers';
 import { labelClasses, typeOptions } from '../../util/data';
@@ -180,11 +181,13 @@ export const deleteEvent = createAsyncThunk(
 	async (eventInfo, { rejectWithValue, dispatch }) => {
 		try {
 			const res = await doSomethingApi.delete(`/events/${eventInfo.event}`);
-			dispatch(getUser(eventInfo.user));
-			dispatch(toggleOpen(false));
-			dispatch(setSelectedEvent(null));
-
-			return res.data;
+			const { success } = res.data;
+			if (success) {
+				dispatch(getUser(eventInfo.user));
+				dispatch(setSelectedEvent(null));
+				dispatch(setDeleteData(null));
+			}
+			return success;
 		} catch (err) {
 			return rejectWithValue(err.response.data);
 		}
@@ -498,9 +501,7 @@ export const calendarSlice = createSlice({
 			})
 			.addCase(deleteEvent.fulfilled, (state, action) => {
 				state.loading = false;
-				state.success = action.payload.success;
-				state.allEvents = action.payload.updatedAll;
-				state.currentEvents = action.payload.current;
+				state.success = action.payload;
 				state.open = false;
 			})
 			.addCase(deleteEvent.rejected, (state, action) => {

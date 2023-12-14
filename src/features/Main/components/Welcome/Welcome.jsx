@@ -4,7 +4,7 @@ import './welcome.scss';
 const Welcome = () => {
 	return (
 		<div id='welcome'>
-			<h2 className='alternate'>
+			<h1 className='alternate'>
 				<span className='red'>H</span>
 				<span className='green'>a</span>
 				<span className='red'>p</span>
@@ -18,7 +18,7 @@ const Welcome = () => {
 				<span className='green'>y</span>
 				<span className='red'>s</span>
 				<span className='green'>!</span>
-			</h2>
+			</h1>
 		</div>
 	);
 };

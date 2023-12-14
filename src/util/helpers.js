@@ -204,3 +204,23 @@ export const reFormatTime = (time, day) => {
 		return formattedDateTime;
 	}
 };
+
+export const handleDateSort = (array) => {
+	let newArray = [];
+
+	array?.forEach((item) => {
+		newArray.push({
+			...item,
+			date: new Date(item.date),
+		});
+	});
+
+	let sorted = newArray.sort((a, b) => a.date - b.date);
+
+	sorted.forEach((item) => {
+		item.date = dayjs(item.date).format('MM/DD/YYYY');
+		return item;
+	});
+
+	return sorted;
+};
