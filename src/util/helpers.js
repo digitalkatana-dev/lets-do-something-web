@@ -3,8 +3,10 @@ import dayjs from 'dayjs';
 export const getMonth = (month = dayjs().month()) => {
 	const year = dayjs().year();
 	const firstDayOfTheMonth = dayjs(new Date(year, month, 1)).day();
+	const totalDaysInMonth = dayjs(new Date(year, month + 1, 0)).date();
 	let currentMonthCount = 0 - firstDayOfTheMonth;
-	const daysMatrix = new Array(6).fill([]).map(() => {
+	const numRows = Math.ceil((totalDaysInMonth + firstDayOfTheMonth) / 7); // Calculate the number of rows needed
+	const daysMatrix = new Array(numRows).fill([]).map(() => {
 		return new Array(7).fill(null).map(() => {
 			currentMonthCount++;
 			return dayjs(new Date(year, month, currentMonthCount)).toString();
