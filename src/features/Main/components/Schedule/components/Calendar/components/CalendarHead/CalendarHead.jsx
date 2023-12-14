@@ -29,7 +29,7 @@ const CalendarHead = () => {
 	return (
 		<header className='head'>
 			<img src='calendar-logo.png' alt='' className='icon' />
-			<h3>Event Calendar</h3>
+			<h4>Event Calendar</h4>
 			<Button variant='outlined' className='today-btn' onClick={handleToday}>
 				Today
 			</Button>
@@ -39,7 +39,7 @@ const CalendarHead = () => {
 			<IconButton className='icon-btn' onClick={handleNxt}>
 				<ChevronRightIcon />
 			</IconButton>
-			<h4>{dayjs(new Date(dayjs().year(), monthIndex)).format('MMMM YYYY')}</h4>
+			<h5>{dayjs(new Date(dayjs().year(), monthIndex)).format('MMMM YYYY')}</h5>
 		</header>
 	);
 };

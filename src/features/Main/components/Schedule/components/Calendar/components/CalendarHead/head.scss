@@ -1,23 +1,24 @@
 .head {
+	max-width: 256.2px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	padding: 2px 4px;
+	margin-bottom: 10px;
 
-	h3,
-	h4 {
+	h4,
+	h5 {
 		color: grey;
 		font-weight: 200;
-	}
-
-	h3 {
-		font-size: 12px;
-		margin-right: 15px;
+		margin-right: 5px;
 	}
 
 	h4 {
-		font-size: 11px;
-		margin-left: 15px;
+		font-size: 12px;
+	}
+
+	h5 {
+		font-size: 9px;
 	}
 
 	.icon {
@@ -27,8 +28,8 @@
 	}
 
 	.today-btn {
-		padding: 2px 4px;
-		margin-right: 10px;
+		padding: 1px 2px;
+		margin-right: 5px;
 		color: grey;
 		border-color: lightgrey;
 	}
@@ -37,19 +38,74 @@
 		margin-left: 5px;
 	}
 }
-@media only screen and (min-width: 600px) {
-}
-@media only screen and (min-width: 700px) {
-}
-@media only screen and (min-width: 970px) {
+
+@media only screen and (min-width: 350px) {
 	.head {
-		h3,
+		max-width: 347.2px;
+
 		h4 {
-			font-size: initial;
+			font-size: 13px;
+		}
+
+		h5 {
+			font-size: 10px;
 		}
 	}
 }
+
+@media only screen and (min-width: 400px) {
+	.head {
+		max-width: 361.2px;
+
+		h4 {
+			font-size: 14px;
+		}
+
+		h5 {
+			font-size: 11px;
+		}
+	}
+}
+
+@media only screen and (min-width: 500px) {
+	.head {
+		max-width: 389.2px;
+
+		h4 {
+			font-size: 15px;
+		}
+
+		h5 {
+			font-size: 13px;
+		}
+	}
+}
+
+@media only screen and (min-width: 600px) {
+}
+
+@media only screen and (min-width: 700px) {
+}
+
+@media only screen and (min-width: 970px) {
+	.head {
+		max-width: 611.5px;
+
+		h4,
+		h5 {
+			font-size: initial;
+			margin-right: 15px;
+		}
+
+		.today-btn {
+			padding: 2px 4px;
+			margin-right: 10px;
+		}
+	}
+}
+
 @media only screen and (min-width: 1200px) {
 }
+
 @media only screen and (min-width: 1536px) {
 }

@@ -4,7 +4,7 @@
 
 	.alternate {
 		font-family: 'Rubik Bubbles';
-		font-size: 72px;
+		font-size: 3rem;
 
 		.red {
 			color: red;
@@ -12,6 +12,30 @@
 
 		.green {
 			color: green;
+		}
+	}
+}
+
+@media only screen and (min-width: 400px) {
+	#welcome {
+		.alternate {
+			font-size: 4rem;
+		}
+	}
+}
+
+@media only screen and (min-width: 800px) {
+	#welcome {
+		.alternate {
+			font-size: 5rem;
+		}
+	}
+}
+
+@media only screen and (min-width: 1000px) {
+	#welcome {
+		.alternate {
+			font-size: 6rem;
 		}
 	}
 }
