@@ -5,6 +5,7 @@ import {
 } from '@reduxjs/toolkit';
 import { setDeleteData } from './appSlice';
 import { getUser } from './userSlice';
+import { socket } from '../../util/socket';
 import { getMonth, defaultTime, reFormatTime } from '../../util/helpers';
 import { labelClasses, typeOptions } from '../../util/data';
 import dayjs from 'dayjs';
@@ -124,7 +125,7 @@ export const findAndInvite = createAsyncThunk(
 	async (data, { rejectWithValue, dispatch }) => {
 		const { creator, ...others } = data;
 		try {
-			const res = await doSomethingApi.post('/events/find-and-invite', others);
+			const res = await doSomethingApi.post('/users/find-and-invite', others);
 			const { success, updatedEvent } = res.data;
 			if (success) {
 				dispatch(getUser(creator));
@@ -160,14 +161,19 @@ export const updateEvent = createAsyncThunk(
 export const processRsvp = createAsyncThunk(
 	'calendar/rsvp',
 	async (data, { rejectWithValue, dispatch }) => {
+		const { isAttending, ...others } = data;
 		try {
-			const res = await doSomethingApi.put('/events/rsvp', data);
+			const res = await doSomethingApi.put('/events/rsvp', others);
 			const { success, updated } = res.data;
 			if (success) {
 				dispatch(setHeadcount(''));
 				dispatch(getUser(data.user));
 				dispatch(getInvitedEvents(data.user));
 				dispatch(setSelectedEvent(updated));
+				if (isAttending === false) {
+					console.log('I am attending', isAttending);
+					socket.emit('rsvp', updated.createdBy);
+				}
 			}
 			return res.data;
 		} catch (err) {

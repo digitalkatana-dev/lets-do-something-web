@@ -1,0 +1,24 @@
+.MuiPaper-root.notification {
+	width: fit-content;
+	max-width: 350px;
+	position: fixed;
+	top: 5px;
+	left: 0;
+	right: 0;
+	margin: 0 auto;
+	z-index: 6;
+	transition: all 1s ease;
+
+	&.active {
+		top: 66px;
+	}
+
+	.content-container {
+		padding: 7px;
+		border-radius: 4px;
+
+		span {
+			color: var(--heading);
+		}
+	}
+}

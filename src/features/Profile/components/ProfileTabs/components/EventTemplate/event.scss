@@ -8,21 +8,26 @@
 	.event-info-container,
 	.rsvp-container,
 	.host-action-container {
-		flex: 4;
 		display: flex;
 		flex-direction: column;
 	}
 
 	.event-info-container {
+		flex: 4;
 		gap: 8px;
-		text-align: start;
+
+		p {
+			font-size: 0.8rem;
+		}
 	}
 
 	.rsvp-container {
+		flex: 5;
 		align-items: center;
 	}
 
 	.host-action-container {
+		flex: 1;
 		align-items: end;
 	}
 }

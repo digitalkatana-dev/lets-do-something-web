@@ -221,6 +221,7 @@ const EventModal = () => {
 				eventId: selectedEvent?._id,
 				headcount,
 				user: user?._id,
+				isAttending,
 			};
 			dispatch(processRsvp(data));
 		}
