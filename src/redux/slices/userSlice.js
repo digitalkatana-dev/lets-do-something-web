@@ -205,6 +205,7 @@ export const userSlice = createSlice({
 			state.success = null;
 			state.errors = null;
 			localStorage.removeItem('token');
+			socket.emit('logout');
 		},
 	},
 	extraReducers: (builder) => {
@@ -222,7 +223,7 @@ export const userSlice = createSlice({
 				state.password = '';
 				state.notify = 'sms';
 				state.user = action.payload;
-				socket.emit('setup', action.payload);
+				socket.emit('setup', action.payload._id);
 				state.errors = false;
 			})
 			.addCase(register.rejected, (state, action) => {
@@ -238,7 +239,7 @@ export const userSlice = createSlice({
 				state.login = '';
 				state.password = '';
 				state.user = action.payload;
-				socket.emit('setup', action.payload);
+				socket.emit('setup', action.payload._id);
 				state.errors = false;
 			})
 			.addCase(userLogin.rejected, (state, action) => {

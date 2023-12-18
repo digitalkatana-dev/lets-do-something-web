@@ -121,7 +121,7 @@ export const formattedTime = (data) => {
 	return formattedTime;
 };
 
-export const getBackgroundColor = (colorName) => {
+export const getBackgroundColor = (colorName, opacity) => {
 	const tempElement = document.createElement('div');
 	tempElement.style.color = colorName;
 	document.body.appendChild(tempElement);
@@ -131,7 +131,14 @@ export const getBackgroundColor = (colorName) => {
 
 	document.body.removeChild(tempElement);
 
-	return `rgba(${rgbaValues[0]}, ${rgbaValues[1]}, ${rgbaValues[2]}, 0.2)`;
+	let background;
+	if (opacity) {
+		background = `rgba(${rgbaValues[0]}, ${rgbaValues[1]}, ${rgbaValues[2]}, ${opacity})`;
+	} else {
+		background = `rgba(${rgbaValues[0]}, ${rgbaValues[1]}, ${rgbaValues[2]}, 0.2)`;
+	}
+
+	return background;
 };
 
 export const arrayMatch = (arr1, arr2) => {

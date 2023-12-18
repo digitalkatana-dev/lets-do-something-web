@@ -15,6 +15,7 @@ import userReducer from './slices/userSlice';
 import calendarReducer from './slices/calendarSlice';
 import navReducer from './slices/navSlice';
 import memoryReducer from './slices/memorySlice';
+import notificationReducer from './slices/notificationSlice';
 
 const userPersistConfig = {
 	key: 'user',
@@ -35,6 +36,7 @@ export const store = configureStore({
 		calendar: persistReducer(calendarPersistConfig, calendarReducer),
 		nav: navReducer,
 		memory: memoryReducer,
+		notification: notificationReducer,
 	},
 	middleware: (getDefaultMiddleware) =>
 		getDefaultMiddleware({
