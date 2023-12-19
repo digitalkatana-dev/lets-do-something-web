@@ -139,6 +139,18 @@ export const findAndInvite = createAsyncThunk(
 	}
 );
 
+export const removeInvitedGuest = createAsyncThunk(
+	'calendar/remove_invited',
+	async (data, { rejectWithValue }) => {
+		try {
+			const res = await doSomethingApi.put('/events/guests', data);
+			return res.data;
+		} catch (err) {
+			return rejectWithValue(err.response.data);
+		}
+	}
+);
+
 export const updateEvent = createAsyncThunk(
 	'calendar/update_event',
 	async (data, { rejectWithValue, dispatch }) => {
@@ -313,7 +325,7 @@ export const calendarSlice = createSlice({
 		setInvitedGuestInput: (state, action) => {
 			state.invitedGuestInput = action.payload;
 		},
-		removeInvitedGuest: (state, action) => {
+		removeGuest: (state, action) => {
 			state.invitedGuests = action.payload;
 		},
 		setErrors: (state, action) => {
@@ -475,6 +487,19 @@ export const calendarSlice = createSlice({
 				state.loading = false;
 				state.errors = action.payload;
 			})
+			.addCase(removeInvitedGuest.pending, (state) => {
+				state.loading = true;
+				state.errors = null;
+			})
+			.addCase(removeInvitedGuest.fulfilled, (state, action) => {
+				state.loading = false;
+				state.selectedEvent = action.payload.updated;
+				state.success = action.payload.success;
+			})
+			.addCase(removeInvitedGuest.rejected, (state, action) => {
+				state.loading = false;
+				state.errors = action.payload;
+			})
 			.addCase(updateEvent.pending, (state) => {
 				state.loading = true;
 				state.errors = null;
@@ -536,7 +561,7 @@ export const {
 	setHeadcount,
 	setSelectedLabel,
 	setInvitedGuestInput,
-	removeInvitedGuest,
+	removeGuest,
 	setErrors,
 	clearEvent,
 	clearSuccess,
