@@ -62,7 +62,8 @@ const InviteTab = () => {
 		if (selectedEvent) {
 			const data = {
 				eventId: selectedEvent._id,
-				guest,
+				guest: guest._id,
+				user: user?._id,
 			};
 			dispatch(removeInvitedGuest(data));
 		} else {

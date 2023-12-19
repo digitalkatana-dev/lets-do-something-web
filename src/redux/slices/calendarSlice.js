@@ -141,10 +141,16 @@ export const findAndInvite = createAsyncThunk(
 
 export const removeInvitedGuest = createAsyncThunk(
 	'calendar/remove_invited',
-	async (data, { rejectWithValue }) => {
+	async (data, { rejectWithValue, dispatch }) => {
+		const { user, ...others } = data;
 		try {
-			const res = await doSomethingApi.put('/events/guests', data);
-			return res.data;
+			const res = await doSomethingApi.put('/events/guests', others);
+			const { success, updated } = res.data;
+			if (success) {
+				dispatch(getInvitedEvents(user));
+				dispatch(setSelectedEvent(updated));
+			}
+			return success;
 		} catch (err) {
 			return rejectWithValue(err.response.data);
 		}
@@ -183,7 +189,6 @@ export const processRsvp = createAsyncThunk(
 				dispatch(getInvitedEvents(data.user));
 				dispatch(setSelectedEvent(updated));
 				if (isAttending === false) {
-					console.log('I am attending', isAttending);
 					socket.emit('rsvp', updated.createdBy);
 				}
 			}
@@ -493,8 +498,7 @@ export const calendarSlice = createSlice({
 			})
 			.addCase(removeInvitedGuest.fulfilled, (state, action) => {
 				state.loading = false;
-				state.selectedEvent = action.payload.updated;
-				state.success = action.payload.success;
+				state.success = action.payload;
 			})
 			.addCase(removeInvitedGuest.rejected, (state, action) => {
 				state.loading = false;
