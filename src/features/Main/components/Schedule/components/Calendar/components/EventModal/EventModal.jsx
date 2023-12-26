@@ -23,6 +23,7 @@ import {
 	updateEvent,
 	processRsvp,
 	setSelectedEvent,
+	setSelectedFriend,
 	setHeadcount,
 	clearErrors,
 } from '../../../../../../../../redux/slices/calendarSlice';
@@ -122,6 +123,7 @@ const EventModal = () => {
 		dispatch(toggleOpen(false));
 		setTimeout(() => {
 			dispatch(setSelectedEvent(null));
+			dispatch(setSelectedFriend(null));
 		}, 500);
 	};
 

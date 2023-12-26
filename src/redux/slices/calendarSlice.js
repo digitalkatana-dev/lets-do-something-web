@@ -239,6 +239,7 @@ const initialState = calendarAdapter.getInitialState({
 	eventLoc: '',
 	eventNote: '',
 	selectedLabel: labelClasses[0],
+	selectedFriend: null,
 	invitedGuestInput: '',
 	invitedGuests: [],
 	headcount: '',
@@ -326,6 +327,13 @@ export const calendarSlice = createSlice({
 		},
 		setSelectedLabel: (state, action) => {
 			state.selectedLabel = action.payload;
+		},
+		setSelectedFriend: (state, action) => {
+			state.selectedFriend = action.payload === '' ? null : action.payload;
+		},
+		addFriendToGuestList: (state, action) => {
+			state.invitedGuests = [...state.invitedGuests, action.payload];
+			state.selectedFriend = null;
 		},
 		setInvitedGuestInput: (state, action) => {
 			state.invitedGuestInput = action.payload;
@@ -564,6 +572,8 @@ export const {
 	setEventNote,
 	setHeadcount,
 	setSelectedLabel,
+	setSelectedFriend,
+	addFriendToGuestList,
 	setInvitedGuestInput,
 	removeGuest,
 	setErrors,
