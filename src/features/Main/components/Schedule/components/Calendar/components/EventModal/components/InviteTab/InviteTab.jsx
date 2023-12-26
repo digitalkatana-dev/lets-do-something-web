@@ -1,14 +1,22 @@
 import {
+	Avatar,
 	FormControl,
 	InputAdornment,
+	InputLabel,
 	List,
 	ListItem,
+	ListItemAvatar,
 	ListItemText,
+	MenuItem,
+	Select,
+	Stack,
 	TextField,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import {
 	clearErrors,
+	setSelectedFriend,
+	addFriendToGuestList,
 	setInvitedGuestInput,
 	findGuest,
 	findAndInvite,
@@ -22,8 +30,13 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import IconBtn from '../../../../../../../../../../components/IconBtn';
 
 const InviteTab = () => {
-	const { selectedEvent, invitedGuestInput, invitedGuests, errors } =
-		useSelector((state) => state.calendar);
+	const {
+		selectedEvent,
+		selectedFriend,
+		invitedGuestInput,
+		invitedGuests,
+		errors,
+	} = useSelector((state) => state.calendar);
 	const { user } = useSelector((state) => state.user);
 	const filteredGuests = invitedGuests?.filter(
 		(item) => item?._id !== user?._id
@@ -34,8 +47,17 @@ const InviteTab = () => {
 		dispatch(clearErrors());
 	};
 
-	const handleChange = (e) => {
-		dispatch(setInvitedGuestInput(e.target.value));
+	const handleChange = (input, value) => {
+		const actionMap = {
+			select: setSelectedFriend,
+			input: setInvitedGuestInput,
+		};
+
+		const action = actionMap[input];
+
+		if (action) {
+			dispatch(action(value));
+		}
 	};
 
 	const handleAddGuest = () => {
@@ -55,6 +77,22 @@ const InviteTab = () => {
 				guest: invitedGuestInput,
 			};
 			dispatch(findGuest(data));
+		}
+	};
+
+	const handleInviteFriend = () => {
+		if (selectedEvent) {
+			let data = {
+				guest: selectedFriend?._id,
+				eventId: selectedEvent?._id,
+				type: selectedEvent?.type,
+				date: selectedEvent?.date,
+				time: selectedEvent?.time,
+				creator: user?._id,
+			};
+			dispatch(findAndInvite(data));
+		} else {
+			dispatch(addFriendToGuestList(selectedFriend));
 		}
 	};
 
@@ -80,70 +118,138 @@ const InviteTab = () => {
 	// };
 
 	return (
-		<div className='event-section alt'>
-			<FormControl fullWidth>
-				<div className='input-btn-row'>
-					<TextField
-						label='Invite Guests'
-						placeholder='Email Or Phone'
-						size='small'
-						margin='dense'
-						variant='standard'
-						fullWidth
-						value={invitedGuestInput}
-						onChange={handleChange}
-						InputProps={{
-							startAdornment: (
-								<InputAdornment position='start'>
-									<PersonAddIcon className='icon' />
-								</InputAdornment>
-							),
-						}}
-						onFocus={handleFocus}
-					/>
-					<IconBtn
-						tooltip='Add Guest'
-						placement='top'
-						disabled={!invitedGuestInput}
-						onClick={handleAddGuest}
-					>
-						<AddBoxIcon className='add-icon' />
-					</IconBtn>
+		<>
+			{user?.friends.length > 0 && (
+				<div className='event-section alt'>
+					<FormControl fullWidth>
+						<div className='input-btn-row'>
+							<InputLabel id='friends-select'>Friends</InputLabel>
+							<Select
+								labelId='friends-select'
+								label='Firends'
+								size='small'
+								margin='dense'
+								variant='standard'
+								fullWidth
+								value={selectedFriend ? selectedFriend : ''}
+								onChange={(e) => handleChange('select', e.target.value)}
+							>
+								<MenuItem value=''>Choose..</MenuItem>
+								{user?.friends.map((item) => (
+									<MenuItem key={item._id} value={item}>
+										<Stack direction='row' alignItems='center'>
+											<ListItemAvatar>
+												<Avatar
+													src={
+														item.profilePic
+															? item.profilePic
+															: 'https://dosomething-backend.onrender.com/uploads/avatars/avatar_26.jpg'
+													}
+													alt='guest'
+												/>
+											</ListItemAvatar>
+											<ListItemText>
+												{item.firstName + ' ' + item.lastName}
+											</ListItemText>
+										</Stack>
+									</MenuItem>
+								))}
+							</Select>
+							<IconBtn
+								tooltip='Invite Friend'
+								placement='top'
+								disabled={!selectedFriend}
+								onClick={handleInviteFriend}
+							>
+								<AddBoxIcon className='add-icon' />
+							</IconBtn>
+						</div>
+					</FormControl>
 				</div>
-				{errors?.guest && <h6 className='error'>{errors?.guest}</h6>}
-			</FormControl>
-			<List className='list'>
-				{selectedEvent && (
-					<ListItem disablePadding className='invited-guests'>
-						<ListItemText secondary='Invited Guests' />
+			)}
+			<div className='event-section alt'>
+				<FormControl fullWidth>
+					<div className='input-btn-row'>
+						<TextField
+							label='Invite Guests'
+							placeholder='Email Or Phone'
+							size='small'
+							margin='dense'
+							variant='standard'
+							fullWidth
+							value={invitedGuestInput}
+							onChange={(e) => handleChange('input', e.target.value)}
+							InputProps={{
+								startAdornment: (
+									<InputAdornment position='start'>
+										<PersonAddIcon className='icon' />
+									</InputAdornment>
+								),
+							}}
+							onFocus={handleFocus}
+						/>
 						<IconBtn
-							disabled={invitedGuests.length <= 1}
-							tooltip='Send Reminders'
+							tooltip='Add Guest'
 							placement='top'
-							// onClick={handleReminders}
+							disabled={!invitedGuestInput}
+							onClick={handleAddGuest}
 						>
-							<SendToMobileIcon htmlColor='steelblue' />
+							<AddBoxIcon className='add-icon' />
 						</IconBtn>
-					</ListItem>
-				)}
-				{filteredGuests.map((item) => (
-					<ListItem disablePadding className='list-item' key={item._id}>
-						{item?.firstName ? (
-							<ListItemText primary={`${item.firstName} ${item.lastName}`} />
-						) : (
-							<ListItemText primary={item?.phone ? item?.phone : item?.email} />
-						)}
-						<IconBtn
-							tooltip='Delete Guest'
-							placement='top'
-							onClick={() => handleRemoveGuest(item)}
+					</div>
+					{errors?.guest && <h6 className='error'>{errors?.guest}</h6>}
+				</FormControl>
+				<List className='list'>
+					{selectedEvent && (
+						<ListItem disablePadding className='invited-guests'>
+							<ListItemText secondary='Invited Guests' />
+							<IconBtn
+								disabled={invitedGuests.length <= 1}
+								tooltip='Send Reminders'
+								placement='top'
+								// onClick={handleReminders}
+							>
+								<SendToMobileIcon htmlColor='steelblue' />
+							</IconBtn>
+						</ListItem>
+					)}
+					{filteredGuests.map((item) => (
+						<ListItem
+							disablePadding
+							className='list-item'
+							key={item._id}
+							secondaryAction={
+								<IconBtn
+									tooltip='Delete Guest'
+									placement='top'
+									onClick={() => handleRemoveGuest(item)}
+								>
+									<DeleteIcon htmlColor='red' />
+								</IconBtn>
+							}
 						>
-							<DeleteIcon htmlColor='red' />
-						</IconBtn>
-					</ListItem>
-				))}
-			</List>
-		</div>
+							<ListItemAvatar>
+								<Avatar
+									src={
+										item.profilePic
+											? item.profilePic
+											: 'https://dosomething-backend.onrender.com/uploads/avatars/avatar_26.jpg'
+									}
+									alt='guest'
+								/>
+							</ListItemAvatar>
+							{item?.firstName ? (
+								<ListItemText primary={`${item.firstName} ${item.lastName}`} />
+							) : (
+								<ListItemText
+									primary={item?.phone ? item?.phone : item?.email}
+								/>
+							)}
+						</ListItem>
+					))}
+				</List>
+			</div>
+		</>
 	);
 };
 
