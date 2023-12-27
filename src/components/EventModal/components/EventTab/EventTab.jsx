@@ -25,13 +25,10 @@ import {
 	setInvitedGuestInput,
 	setHeadcount,
 	setSelectedLabel,
-} from '../../../../../../../../../../redux/slices/calendarSlice';
-import { createMemory } from '../../../../../../../../../../redux/slices/memorySlice';
-import {
-	formattedTime,
-	tagStyle,
-} from '../../../../../../../../../../util/helpers';
-import { labelClasses } from '../../../../../../../../../../util/data';
+} from '../../../../redux/slices/calendarSlice';
+import { createMemory } from '../../../../redux/slices/memorySlice';
+import { formattedTime, tagStyle } from '../../../../util/helpers';
+import { labelClasses } from '../../../../util/data';
 import Cropper from 'react-cropper';
 import dayjs from 'dayjs';
 import DetailsIcon from '@mui/icons-material/Details';
