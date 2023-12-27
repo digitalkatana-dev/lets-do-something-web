@@ -184,10 +184,22 @@ const EventTemplate = ({ data, type }) => {
 			>
 				{isHost && (
 					<>
-						<MenuItem onClick={() => handleEditClick(data)}>
+						<MenuItem
+							onClick={() => handleEditClick(data)}
+							sx={{ color: 'steelblue' }}
+						>
 							<Stack direction='row' gap={1}>
-								<EditIcon />
-								Edit
+								{currentDate.isBefore(dayjs(data?.date)) ? (
+									<>
+										<EditIcon />
+										Edit
+									</>
+								) : (
+									<>
+										<AddAPhotoIcon />
+										Upload
+									</>
+								)}
 							</Stack>
 						</MenuItem>
 
@@ -202,17 +214,20 @@ const EventTemplate = ({ data, type }) => {
 				{isAttend && (
 					<>
 						{currentDate.isBefore(dayjs(data?.date)) && (
-							<MenuItem onClick={handleCancel}>
+							<MenuItem onClick={handleCancel} sx={{ color: 'error.main' }}>
 								<Stack direction='row' gap={1}>
-									<UndoIcon htmlColor='green' />
+									<UndoIcon />
 									Cancel
 								</Stack>
 							</MenuItem>
 						)}
 						{currentDate.isAfter(dayjs(data?.date)) && (
-							<MenuItem onClick={() => handleEditClick(data)}>
+							<MenuItem
+								onClick={() => handleEditClick(data)}
+								sx={{ color: 'steelblue' }}
+							>
 								<Stack direction='row' gap={1}>
-									<AddAPhotoIcon htmlColor='steelblue' />
+									<AddAPhotoIcon />
 									Upload
 								</Stack>
 							</MenuItem>

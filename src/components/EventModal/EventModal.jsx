@@ -527,10 +527,10 @@ const EventModal = () => {
 					</>
 				)}
 			</DialogContent>
-			{user && dayjs(daySelected).isSameOrAfter(new Date(), 'day') && (
+			{user && dayjs(daySelected).isSameOrAfter(currentDate, 'day') && (
 				<DialogActions>
 					{selectedEvent && isAttending ? (
-						<IconBtn tooltip='Undo' onClick={handleCancel}>
+						<IconBtn tooltip='Undo' placement='left' onClick={handleCancel}>
 							<UndoIcon className='undo' />
 						</IconBtn>
 					) : (
