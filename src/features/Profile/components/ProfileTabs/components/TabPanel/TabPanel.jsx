@@ -19,17 +19,15 @@ const TabPanel = ({ children, index, value, type, ...other }) => {
 						<SearchTab />
 					) : (
 						<Box sx={{ padding: '10px 10px 0 10px' }}>
-							{children?.length > 0 ? (
-								children?.map((item) => (
-									<>
-										{type === 'friend' ? (
-											<UserTemplate key={item._id} data={item} />
-										) : (
-											<EventTemplate key={item._id} data={item} type={type} />
-										)}
-									</>
-								))
-							) : (
+							{type === 'friend'
+								? children?.map((item) => (
+										<UserTemplate key={item._id} data={item} />
+								  ))
+								: (type === 'host' || type === 'attend') &&
+								  children.map((item) => (
+										<EventTemplate key={item._id} data={item} type={type} />
+								  ))}
+							{children.length === 0 && (
 								<Typography>Nothing to Show!</Typography>
 							)}
 						</Box>

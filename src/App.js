@@ -10,6 +10,7 @@ import NavMenu from './components/NavMenu';
 import ProtectedRoute from './components/ProtectedRoute';
 import Main from './features/Main';
 import Profile from './features/Profile';
+import EventModal from './components/EventModal';
 import DeleteDialog from './components/DeleteDialog';
 import NotificationPopup from './components/NotificationPopup';
 import 'slick-carousel/slick/slick.css';
@@ -61,6 +62,7 @@ function App() {
 					/>
 				</Routes>
 			</Router>
+			<EventModal />
 			<DeleteDialog open={deleteOpen} />
 			<NotificationPopup />
 		</div>

@@ -14,15 +14,24 @@ import {
 	openDelete,
 } from '../../../../../../redux/slices/appSlice';
 import {
+	setDaySelected,
+	setSelectedEvent,
+	processRsvp,
 	updateEvent,
 	deleteEvent,
 } from '../../../../../../redux/slices/calendarSlice';
 import { getBackgroundColor } from '../../../../../../util/helpers';
 import dayjs from 'dayjs';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import UndoIcon from '@mui/icons-material/Undo';
+import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import './event.scss';
+dayjs.extend(isSameOrBefore);
+dayjs.extend(isSameOrAfter);
 
 const EventTemplate = ({ data, type }) => {
 	const { user } = useSelector((state) => state.user);
@@ -33,6 +42,9 @@ const EventTemplate = ({ data, type }) => {
 	const background = getBackgroundColor(data?.label);
 	const isAttend = type === 'attend' ? true : false;
 	const isHost = type === 'host' ? true : false;
+	const currentDate = dayjs();
+	const attendees = data?.attendees;
+	const rsvp = attendees?.find((item) => item?._id === user?._id);
 
 	const handleRsvp = () => {
 		let rsvpData = {
@@ -55,6 +67,30 @@ const EventTemplate = ({ data, type }) => {
 
 	const handleCloseMenu = () => {
 		setOpen(null);
+		dispatch(setDaySelected(null));
+		dispatch(setSelectedEvent(null));
+	};
+
+	const handleCancel = () => {
+		const rsvpData = {
+			eventId: data?._id,
+			headcount: rsvp?.headcount,
+			user: user?._id,
+		};
+		dispatch(processRsvp(rsvpData));
+	};
+
+	const handleEditClick = (item) => {
+		const itemDay = `${dayjs(item.date).format(
+			'ddd, DD MMM YYYY'
+		)} 08:00:00 GMT`;
+		const data = {
+			day: itemDay,
+			eventTime: item.time,
+		};
+		dispatch(setDaySelected(data));
+		dispatch(setSelectedEvent(item));
+		setOpen(false);
 	};
 
 	const handleDeleteClick = () => {
@@ -130,6 +166,13 @@ const EventTemplate = ({ data, type }) => {
 						</div>
 					</>
 				)}
+				{isAttend && (
+					<div className='guest-action-container'>
+						<IconButton edge='end' onClick={handleOpenMenu}>
+							<MoreVertIcon />
+						</IconButton>
+					</div>
+				)}
 			</Paper>
 			<Popover
 				open={!!open}
@@ -139,15 +182,43 @@ const EventTemplate = ({ data, type }) => {
 				transformOrigin={{ vertical: 'top', horizontal: 'right' }}
 				slotProps={{ paper: { sx: { width: 140 } } }}
 			>
-				<MenuItem onClick={handleCloseMenu}>
-					<EditIcon />
-					Edit
-				</MenuItem>
+				{isHost && (
+					<>
+						<MenuItem onClick={() => handleEditClick(data)}>
+							<Stack direction='row' gap={1}>
+								<EditIcon />
+								Edit
+							</Stack>
+						</MenuItem>
 
-				<MenuItem onClick={handleDeleteClick} sx={{ color: 'error.main' }}>
-					<DeleteForeverIcon />
-					Delete
-				</MenuItem>
+						<MenuItem onClick={handleDeleteClick} sx={{ color: 'error.main' }}>
+							<Stack direction='row' gap={1}>
+								<DeleteForeverIcon />
+								Delete
+							</Stack>
+						</MenuItem>
+					</>
+				)}
+				{isAttend && (
+					<>
+						{currentDate.isBefore(dayjs(data?.date)) && (
+							<MenuItem onClick={handleCancel}>
+								<Stack direction='row' gap={1}>
+									<UndoIcon htmlColor='green' />
+									Cancel
+								</Stack>
+							</MenuItem>
+						)}
+						{currentDate.isAfter(dayjs(data?.date)) && (
+							<MenuItem onClick={() => handleEditClick(data)}>
+								<Stack direction='row' gap={1}>
+									<AddAPhotoIcon htmlColor='steelblue' />
+									Upload
+								</Stack>
+							</MenuItem>
+						)}
+					</>
+				)}
 			</Popover>
 		</>
 	);

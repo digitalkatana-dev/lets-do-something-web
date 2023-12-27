@@ -16,7 +16,7 @@ import {
 import { MuiFileInput } from 'mui-file-input';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setMenuOpen } from '../../../../../../../../redux/slices/navSlice';
+import { setMenuOpen } from '../../redux/slices/navSlice';
 import {
 	toggleOpen,
 	createEvent,
@@ -26,14 +26,10 @@ import {
 	setSelectedFriend,
 	setHeadcount,
 	clearErrors,
-} from '../../../../../../../../redux/slices/calendarSlice';
-import { createMemory } from '../../../../../../../../redux/slices/memorySlice';
-import {
-	tagStyle,
-	arrayMatch,
-	objectMatch,
-} from '../../../../../../../../util/helpers';
-import { labelClasses } from '../../../../../../../../util/data';
+} from '../../redux/slices/calendarSlice';
+import { createMemory } from '../../redux/slices/memorySlice';
+import { tagStyle, arrayMatch, objectMatch } from '../../util/helpers';
+import { labelClasses } from '../../util/data';
 import Cropper from 'react-cropper';
 import dayjs from 'dayjs';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
@@ -49,7 +45,7 @@ import NotesIcon from '@mui/icons-material/Notes';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import UndoIcon from '@mui/icons-material/Undo';
 import './eventModal.scss';
-import IconBtn from '../../../../../../../../components/IconBtn';
+import IconBtn from '../../components/IconBtn';
 import ModalTabs from './components/ModalTabs';
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isSameOrAfter);
@@ -86,6 +82,15 @@ const EventModal = () => {
 	);
 	const attendees = selectedEvent?.attendees;
 	const rsvp = attendees?.find((item) => item?._id === user?._id);
+	const rsvpGuests = rsvp?.headcount - 1;
+	const rsvpMessage = `${
+		user?.firstName
+	}, you are all set! We have received your RSVP and can't wait to see you${
+		rsvpGuests === 0
+			? '!'
+			: ` and your ${rsvpGuests === 1 ? 'guest' : `${rsvpGuests} guests`}!`
+	}`;
+	const currentDate = dayjs();
 	const dispatch = useDispatch();
 
 	const handleDisabled = () => {
@@ -442,89 +447,78 @@ const EventModal = () => {
 										{selectedEvent?.notes ? selectedEvent?.notes : 'No notes!'}
 									</h6>
 								</div>
-								{isAttending ? (
+								{isAttending &&
+								currentDate.isBefore(dayjs(selectedEvent?.date)) ? (
 									<DialogContentText textAlign='center'>
-										{`${
-											user?.firstName
-										}, you're all set! We have received your RSVP and can't wait to meet your ${
-											rsvp?.headcount - 1
-										} guests!`}
+										{rsvpMessage}
 									</DialogContentText>
+								) : isAttending &&
+								  currentDate.isAfter(dayjs(selectedEvent?.date)) ? (
+									<>
+										<DialogContentText textAlign='center'>
+											Hello, {user.firstName}! We hope you enjoyed{' '}
+											{selectedEvent?.type}! If you took any photos, feel free
+											to upload them below.
+										</DialogContentText>
+										<div className='event-section alt'>
+											<MuiFileInput
+												placeholder='Click to Upload Memory'
+												size='small'
+												margin='dense'
+												variant='standard'
+												fullWidth
+												value={file}
+												onChange={handleFileChange}
+											/>
+											<div className='image-preview-container'>
+												{preview && (
+													<Cropper
+														src={preview}
+														initialAspectRatio={16 / 9}
+														guides={false}
+														background={false}
+														crop={onCrop}
+														ref={cropperRef}
+													/>
+												)}
+											</div>
+											<Button disabled={!cropped} onClick={handleAddMemory}>
+												Create Memory
+											</Button>
+										</div>
+									</>
 								) : (
 									<>
-										{selectedEvent &&
-										dayjs(selectedEvent?.date).isSameOrBefore(
-											new Date(),
-											'day'
-										) ? (
-											<>
-												<DialogContentText>
-													Hello, {user.firstName}!
-												</DialogContentText>
-												<div className='event-section alt'>
-													<MuiFileInput
-														placeholder='Click to Upload Memory'
-														size='small'
-														margin='dense'
-														variant='standard'
-														fullWidth
-														value={file}
-														onChange={handleFileChange}
-													/>
-													<div className='image-preview-container'>
-														{preview && (
-															<Cropper
-																src={preview}
-																initialAspectRatio={16 / 9}
-																guides={false}
-																background={false}
-																crop={onCrop}
-																ref={cropperRef}
-															/>
-														)}
-													</div>
-													<Button disabled={!cropped} onClick={handleAddMemory}>
-														Create Memory
-													</Button>
-												</div>
-											</>
-										) : (
-											<>
-												<DialogContentText textAlign='center'>
-													Hello, {user.firstName}! How many in your party?
-												</DialogContentText>
-												<TextField
-													disabled={
-														!selectedEvent ||
-														(selectedEvent?.isPublic &&
-															!selectedEvent?.rsvpOpen)
-													}
-													label='Headcount'
-													placeholder={
-														!selectedEvent?.rsvpOpen
-															? 'RSVP Currently Closed'
-															: ''
-													}
-													size='small'
-													margin='dense'
-													variant='standard'
-													fullWidth
-													value={headcount}
-													onChange={handleChange}
-													sx={{ marginTop: '15px' }}
-													onFocus={handleFocus}
-													InputProps={{
-														startAdornment: (
-															<InputAdornment position='start'>
-																<GroupAddIcon className='icon' />
-															</InputAdornment>
-														),
-													}}
-												/>
-												{errors?.headcount && (
-													<h6 className='error'>{errors?.headcount}</h6>
-												)}
-											</>
+										<DialogContentText textAlign='center'>
+											Hello, {user.firstName}! How many in your party?
+										</DialogContentText>
+										<TextField
+											disabled={
+												!selectedEvent ||
+												(selectedEvent?.isPublic && !selectedEvent?.rsvpOpen)
+											}
+											label='Headcount'
+											placeholder={
+												!selectedEvent?.rsvpOpen ? 'RSVP Currently Closed' : ''
+											}
+											size='small'
+											margin='dense'
+											variant='standard'
+											fullWidth
+											value={headcount}
+											onChange={handleChange}
+											sx={{ marginTop: '15px' }}
+											onFocus={handleFocus}
+											InputProps={{
+												startAdornment: (
+													<InputAdornment position='start'>
+														<GroupAddIcon className='icon' />
+													</InputAdornment>
+												),
+											}}
+										/>
+										{errors?.headcount && (
+											<h6 className='error'>{errors?.headcount}</h6>
 										)}
 									</>
 								)}

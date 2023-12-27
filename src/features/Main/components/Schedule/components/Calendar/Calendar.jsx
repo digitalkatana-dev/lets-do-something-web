@@ -10,7 +10,6 @@ import './calendar.scss';
 import CalendarHead from './components/CalendarHead';
 import Month from './components/Month';
 import Sidebar from './components/Sidebar';
-import EventModal from './components/EventModal';
 
 const Calendar = () => {
 	const { user } = useSelector((state) => state.user);
@@ -45,7 +44,6 @@ const Calendar = () => {
 
 	return (
 		<>
-			<EventModal />
 			<div id='calendar'>
 				<CalendarHead />
 				<div className='container'>

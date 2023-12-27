@@ -22,12 +22,12 @@ import {
 	findAndInvite,
 	removeGuest,
 	removeInvitedGuest,
-} from '../../../../../../../../../../redux/slices/calendarSlice';
+} from '../../../../redux/slices/calendarSlice';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import SendToMobileIcon from '@mui/icons-material/SendToMobile';
 import DeleteIcon from '@mui/icons-material/Delete';
-import IconBtn from '../../../../../../../../../../components/IconBtn';
+import IconBtn from '../../../IconBtn';
 
 const InviteTab = () => {
 	const {
@@ -69,6 +69,7 @@ const InviteTab = () => {
 				type: selectedEvent?.type,
 				date: selectedEvent?.date,
 				time: selectedEvent?.time,
+				notes: selectedEvent?.notes,
 				creator: user?._id,
 			};
 			dispatch(findAndInvite(data));
@@ -88,6 +89,7 @@ const InviteTab = () => {
 				type: selectedEvent?.type,
 				date: selectedEvent?.date,
 				time: selectedEvent?.time,
+				notes: selectedEvent?.notes,
 				creator: user?._id,
 			};
 			dispatch(findAndInvite(data));
