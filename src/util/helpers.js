@@ -224,7 +224,7 @@ export const handleDateSort = (array) => {
 		});
 	});
 
-	let sorted = newArray.sort((a, b) => a.date - b.date);
+	let sorted = newArray.sort((a, b) => b.date - a.date);
 
 	sorted.forEach((item) => {
 		item.date = dayjs(item.date).format('MM/DD/YYYY');
