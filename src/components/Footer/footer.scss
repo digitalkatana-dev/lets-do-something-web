@@ -1,15 +1,13 @@
 .footer {
-	height: calc(100vh / 6);
-	// background: #7597bd;
-	background: #33658a;
-	color: whitesmoke;
+	height: fit-content;
+	background: var(--brand);
+	color: var(--heading);
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	padding: 20px;
 	transition: all 1s ease-in-out;
 
-	// .social-container,
 	.contact,
 	.info {
 		display: flex;
@@ -41,7 +39,7 @@
 	}
 
 	&.active {
-		background-color: #7d67cb;
+		background-color: var(--brand-alt);
 	}
 }
 
@@ -55,15 +53,10 @@
 		justify-content: space-around;
 		align-items: center;
 
-		// .social-container,
 		.contact,
 		.info {
 			align-items: flex-start;
 		}
-
-		// .social-container .row {
-		// 	margin-left: -5px;
-		// }
 
 		.content,
 		.divider {
