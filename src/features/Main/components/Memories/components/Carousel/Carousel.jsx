@@ -14,7 +14,13 @@ const Carousel = ({ memories }) => {
 			{memories?.map((item) => {
 				const displayName = `${item.uploadedBy.firstName} ${item.uploadedBy.lastName}`;
 				return (
-					<div className='pic-container' key={item._id}>
+					<a
+						href={item.image}
+						className='pic-container'
+						key={item._id}
+						target='_blank'
+						rel='noreferrer'
+					>
 						<div className='pic-wrapper'>
 							<img src={item.image} alt='test' />
 							<div className='overlay'>
@@ -22,7 +28,7 @@ const Carousel = ({ memories }) => {
 								<h5>Uploaded by: {displayName}</h5>
 							</div>
 						</div>
-					</div>
+					</a>
 				);
 			})}
 		</Slider>
