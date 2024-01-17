@@ -147,7 +147,6 @@ const EventModal = () => {
 
 	const onCrop = () => {
 		const cropper = cropperRef.current?.cropper;
-		// console.log(cropper.getCroppedCanvas().toDataURL());
 		setCropped(cropper.getCroppedCanvas());
 	};
 

@@ -32,7 +32,6 @@ export const guestListEvents = (allEvents, errorHandler) => {
 				dayjs(item.date).month() === dayjs().month() &&
 				dayjs(item.date).year() === dayjs().year()
 		);
-		// console.log('Current Events', monthEvents);
 		monthEvents?.forEach((event) => {
 			formattedEvents.push({
 				_id: event._id,
@@ -40,7 +39,6 @@ export const guestListEvents = (allEvents, errorHandler) => {
 				confirmedGuests: event.attendees,
 			});
 		});
-		// console.log('Formatted', formattedEvents);
 		return formattedEvents;
 	} catch (err) {
 		errors.event = 'Error getting events';
