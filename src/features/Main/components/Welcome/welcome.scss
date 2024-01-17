@@ -1,6 +1,7 @@
 #welcome {
 	position: relative;
 	height: calc(100vh / 2);
+	max-height: 400px;
 
 	img {
 		height: 100%;
@@ -84,6 +85,15 @@
 		.message {
 			left: 0;
 			font-size: 6rem;
+			background: none;
+		}
+	}
+}
+
+@media only screen and (min-width: 2000px) {
+	#welcome {
+		.message {
+			left: 15%;
 		}
 	}
 }
