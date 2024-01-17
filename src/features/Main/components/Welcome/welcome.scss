@@ -1,40 +1,88 @@
 #welcome {
-	padding: 30px;
-	text-align: center;
+	position: relative;
+	height: calc(100vh / 2);
 
-	.alternate {
+	img {
+		height: 100%;
+		width: 100%;
+		object-fit: fill;
+	}
+
+	.message {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-around;
+		position: absolute;
+		top: 0%;
+		bottom: 0%;
+		left: 0px;
 		font-family: 'Rubik Bubbles';
 		font-size: 3rem;
+		background: linear-gradient(
+			to left,
+			rgba(0, 0, 0, 0.1),
+			rgba(0, 0, 0, 0.3)
+		);
 
-		.red {
-			color: red;
-		}
-
-		.green {
-			color: green;
+		span {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			color: var(--heading);
+			margin: 0 10px;
 		}
 	}
 }
 
 @media only screen and (min-width: 400px) {
 	#welcome {
-		.alternate {
-			font-size: 4rem;
+		.message {
+			font-size: 3.5rem;
+		}
+	}
+}
+
+@media only screen and (min-width: 600px) {
+	#welcome {
+		.message {
+			font-size: 2.5rem;
+			flex-direction: row;
+			top: 40%;
+			bottom: 40%;
+			border-radius: 7px;
 		}
 	}
 }
 
 @media only screen and (min-width: 800px) {
 	#welcome {
-		.alternate {
-			font-size: 5rem;
+		.message {
+			font-size: 3.5rem;
 		}
 	}
 }
 
 @media only screen and (min-width: 1000px) {
 	#welcome {
-		.alternate {
+		.message {
+			font-size: 4.5rem;
+		}
+	}
+}
+
+@media only screen and (min-width: 1200px) {
+	#welcome {
+		.message {
+			left: 5%;
+		}
+	}
+}
+
+@media only screen and (min-width: 1500px) {
+	#welcome {
+		.message {
+			left: 0;
 			font-size: 6rem;
 		}
 	}
