@@ -14,7 +14,6 @@ export const createMemory = createAsyncThunk(
 			success && dispatch(getMemories());
 			return success;
 		} catch (err) {
-			console.log(err);
 			return rejectWithValue(err.response.data);
 		}
 	}
@@ -27,7 +26,6 @@ export const getMemories = createAsyncThunk(
 			const res = await doSomethingApi.get('/memories');
 			return res.data;
 		} catch (err) {
-			console.log(err);
 			return rejectWithValue(err.response.data);
 		}
 	}

@@ -13,7 +13,6 @@ export const setMenuView = createAsyncThunk(
 			dispatch(clearErrors());
 			return data;
 		} catch (err) {
-			console.log(err);
 			return { message: 'Error setting menu view!' };
 		}
 	}

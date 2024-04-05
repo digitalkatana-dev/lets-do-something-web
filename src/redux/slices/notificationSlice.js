@@ -14,7 +14,6 @@ export const getLatestNotification = createAsyncThunk(
 			const res = await doSomethingApi.get('/notifications/latest');
 			return res.data;
 		} catch (err) {
-			console.log(err);
 			return rejectWithValue(err.response.data);
 		}
 	}
