@@ -166,13 +166,9 @@ const EventModal = () => {
 	};
 
 	const handleAddMemory = () => {
-		const fileName = `${file.name.split('.')[0]}--${
-			new Date().toISOString().split('T')[0]
-		}`;
-
 		cropped.toBlob((blob) => {
 			let memory = new FormData();
-			memory.append('memory', blob, fileName);
+			memory.append('memory', blob, file.name);
 			memory.append('date', selectedEvent?.date);
 			memory.append('location', selectedEvent?.location);
 			memory.append('eventId', selectedEvent._id);
