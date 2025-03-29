@@ -1,0 +1,24 @@
+.btn {
+	width: 70%;
+	padding: 10px 45px;
+	border-radius: 20px;
+	border: none;
+	background-color: var(--brand-alt);
+	color: var(--heading);
+	font-weight: bold;
+	box-shadow: var(--elevation);
+	transition-duration: 0.4s;
+
+	&:hover {
+		background: var(--hover);
+	}
+
+	&.auth-btn {
+		align-self: center;
+		margin: 10px 0;
+	}
+
+	&.dialog-btn {
+		width: 30%;
+	}
+}

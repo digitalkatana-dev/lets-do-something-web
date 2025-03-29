@@ -1,6 +1,6 @@
 .MuiPaper-root.menu {
 	width: 320px;
-	max-height: 580px;
+	max-height: fit-content;
 	position: fixed;
 	top: -460px;
 	right: 10px;
@@ -33,18 +33,13 @@
 			margin: 10px 0;
 		}
 
-		.notify {
-			display: flex;
-			flex-direction: column;
-			margin-top: 10px;
-			align-items: center;
-		}
-
 		.response-container {
 			text-align: center;
 
 			.success,
 			.error {
+				margin-top: 10px;
+
 				span {
 					vertical-align: middle;
 					margin-right: 2.5px;

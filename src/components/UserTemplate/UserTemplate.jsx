@@ -5,10 +5,10 @@ import './userTemplate.scss';
 
 const UserTemplate = ({ data }) => {
 	const { _id, firstName, lastName, profilePic } = data;
-	const { user } = useSelector((state) => state.user);
+	const { activeUser } = useSelector((state) => state.user);
 	const dispatch = useDispatch();
 	const displayName = firstName + ' ' + lastName;
-	const isFriend = user?.friends.some((item) => item._id === _id);
+	const isFriend = activeUser?.friends.some((item) => item._id === _id);
 
 	const handleFriend = () => {
 		dispatch(processFriend(_id));

@@ -12,19 +12,19 @@ import Month from './components/Month';
 import Sidebar from './components/Sidebar';
 
 const Calendar = () => {
-	const { user } = useSelector((state) => state.user);
+	const { activeUser } = useSelector((state) => state.user);
 	const { currentMonth, monthIndex } = useSelector((state) => state.calendar);
 	const dispatch = useDispatch();
 
 	const handleEventsAttending = useCallback(() => {
-		dispatch(setEventsAttending(user?.eventsAttending));
-	}, [user, dispatch]);
+		dispatch(setEventsAttending(activeUser?.eventsAttending));
+	}, [activeUser, dispatch]);
 
 	const handleGetEvents = useCallback(() => {
-		!user
+		!activeUser
 			? dispatch(getAllEvents())
-			: user && dispatch(getInvitedEvents(user?._id));
-	}, [user, dispatch]);
+			: activeUser && dispatch(getInvitedEvents(activeUser?._id));
+	}, [activeUser, dispatch]);
 
 	const handleCurrentMonth = useCallback(() => {
 		dispatch(setCurrentMonth(monthIndex));

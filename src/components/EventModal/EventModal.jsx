@@ -69,22 +69,22 @@ const EventModal = () => {
 		errors,
 	} = useSelector((state) => state.calendar);
 	const { success } = useSelector((state) => state.memory);
-	const { user } = useSelector((state) => state.user);
+	const { activeUser } = useSelector((state) => state.user);
 	const [file, setFile] = useState(null);
 	const [preview, setPreview] = useState(null);
 	const [cropped, setCropped] = useState(null);
 	const [warning, setWarning] = useState(false);
 	const cropperRef = useRef(null);
 	const eventAuthor = selectedEvent?.createdBy?._id;
-	const currentUser = user?._id;
+	const currentUser = activeUser?._id;
 	const isAttending = eventsAttending?.some(
 		(event) => event._id === selectedEvent?._id
 	);
 	const attendees = selectedEvent?.attendees;
-	const rsvp = attendees?.find((item) => item?._id === user?._id);
+	const rsvp = attendees?.find((item) => item?._id === activeUser?._id);
 	const rsvpGuests = rsvp?.headcount - 1;
 	const rsvpMessage = `${
-		user?.firstName
+		activeUser?.firstName
 	}, you are all set! We have received your RSVP and can't wait to see you${
 		rsvpGuests === 0
 			? '!'
@@ -193,7 +193,7 @@ const EventModal = () => {
 					notes: eventNote,
 					label: selectedLabel,
 					invitedGuests,
-					createdBy: user?._id,
+					createdBy: activeUser?._id,
 				};
 				dispatch(createEvent(data));
 				setWarning(false);
@@ -215,14 +215,14 @@ const EventModal = () => {
 				...(!arrayMatch(invitedGuests, selectedEvent?.invitedGuests) && {
 					invitedGuests,
 				}),
-				user: user?._id,
+				user: activeUser?._id,
 			};
 			dispatch(updateEvent(data));
 		} else {
 			data = {
 				eventId: selectedEvent?._id,
 				headcount,
-				user: user?._id,
+				user: activeUser?._id,
 				isAttending,
 			};
 			dispatch(processRsvp(data));
@@ -233,7 +233,7 @@ const EventModal = () => {
 		const data = {
 			eventId: selectedEvent?._id,
 			headcount: rsvp?.headcount,
-			user: user?._id,
+			user: activeUser?._id,
 		};
 		dispatch(processRsvp(data));
 	};
@@ -255,8 +255,8 @@ const EventModal = () => {
 			<DialogTitle className='dialog-title'>
 				<DragHandleIcon />
 				<span className='header'>
-					{!user && <>{!selectedEvent ? 'Create' : 'RSVP'}</>}
-					{user && (
+					{!activeUser && <>{!selectedEvent ? 'Create' : 'RSVP'}</>}
+					{activeUser && (
 						<>
 							{!selectedEvent
 								? 'Create'
@@ -273,7 +273,7 @@ const EventModal = () => {
 				</IconBtn>
 			</DialogTitle>
 			<DialogContent className='modal-content' dividers>
-				{!user && (
+				{!activeUser && (
 					<>
 						{!selectedEvent ? (
 							<>
@@ -394,7 +394,7 @@ const EventModal = () => {
 						)}
 					</>
 				)}
-				{user && (
+				{activeUser && (
 					<>
 						{!selectedEvent ||
 						(selectedEvent && eventAuthor === currentUser) ? (
@@ -451,7 +451,7 @@ const EventModal = () => {
 								  currentDate.isAfter(dayjs(selectedEvent?.date)) ? (
 									<>
 										<DialogContentText textAlign='center'>
-											Hello, {user.firstName}! We hope you enjoyed{' '}
+											Hello, {activeUser.firstName}! We hope you enjoyed{' '}
 											{selectedEvent?.type}! If you took any photos, feel free
 											to upload them below.
 										</DialogContentText>
@@ -485,7 +485,7 @@ const EventModal = () => {
 								) : (
 									<>
 										<DialogContentText textAlign='center'>
-											Hello, {user.firstName}! How many in your party?
+											Hello, {activeUser.firstName}! How many in your party?
 										</DialogContentText>
 										<TextField
 											disabled={
@@ -522,7 +522,7 @@ const EventModal = () => {
 					</>
 				)}
 			</DialogContent>
-			{user && dayjs(daySelected).isSameOrAfter(currentDate, 'day') && (
+			{activeUser && dayjs(daySelected).isSameOrAfter(currentDate, 'day') && (
 				<DialogActions>
 					{selectedEvent && isAttending ? (
 						<IconBtn tooltip='Undo' placement='left' onClick={handleCancel}>

@@ -1,0 +1,40 @@
+.text-input {
+	width: 100%;
+	border-radius: 10px;
+	margin: 10px;
+	margin-top: 0;
+	padding: 5px;
+	align-self: center;
+
+	label {
+		margin-left: 10px;
+	}
+
+	.input-container {
+		display: flex;
+		align-items: center;
+		border-radius: 10px;
+		border: 1px solid;
+		padding: 5px;
+
+		input {
+			width: 100%;
+			text-align: center;
+			padding: 5px;
+			outline: none;
+			border: none;
+			background-color: transparent;
+			color: var(--txt-primary);
+		}
+
+		.hide {
+			color: grey;
+		}
+	}
+
+	.error {
+		margin-top: 15px;
+		text-align: center;
+		color: var(--error);
+	}
+}

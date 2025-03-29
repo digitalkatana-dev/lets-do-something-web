@@ -9,12 +9,12 @@ import Reset from './components/Reset';
 
 const NavMenu = () => {
 	const { menuOpen, menuView } = useSelector((state) => state.nav);
-	const { user } = useSelector((state) => state.user);
+	const { activeUser } = useSelector((state) => state.user);
 	const dispatch = useDispatch();
 
 	const handleMenuOpen = useCallback(() => {
-		user && dispatch(setMenuOpen(false));
-	}, [user, dispatch]);
+		activeUser && dispatch(setMenuOpen(false));
+	}, [activeUser, dispatch]);
 
 	useEffect(() => {
 		handleMenuOpen();

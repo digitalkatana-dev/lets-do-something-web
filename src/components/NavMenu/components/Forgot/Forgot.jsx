@@ -1,4 +1,4 @@
-import { FormControl, TextField } from '@mui/material';
+import { FormControl } from '@mui/material';
 import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setMenuOpen, setMenuView } from '../../../../redux/slices/navSlice';
@@ -10,7 +10,9 @@ import {
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import Button from '../../../Button';
+import TextInput from '../../../../transition/TextInput';
+import Button1 from '../../../Button';
+import Button from '../../../../transition/Button';
 
 const Forgot = () => {
 	const { loading, email, success, errors } = useSelector(
@@ -45,7 +47,7 @@ const Forgot = () => {
 	}, [success, dispatch]);
 
 	const handleError = useCallback(() => {
-		errors?.message &&
+		errors?.token &&
 			setTimeout(() => {
 				dispatch(clearErrors());
 			}, 7000);
@@ -68,40 +70,37 @@ const Forgot = () => {
 					A link to reset your password will be sent to the email address
 					associated with your account.
 				</h6>
-				<FormControl variant='standard'>
-					<TextField
+				<FormControl fullWidth>
+					<TextInput
 						type='email'
-						label='Email'
-						size='small'
-						margin='dense'
+						placeholder='Email'
 						value={email}
 						onFocus={handleFocus}
 						onChange={handleChange}
+						error={errors?.email}
 					/>
-					{errors?.email && <h6 className='error'>{errors?.email}</h6>}
-					<Button
-						type='submit'
-						label='SUBMIT'
-						btnStyle={{ width: '150px', alignSelf: 'center' }}
-						loading={loading}
-					/>
+				</FormControl>
+				<FormControl fullWidth>
+					<Button type='submit' btnClass='auth-btn' loading={loading}>
+						Submit
+					</Button>
 				</FormControl>
 			</form>
 			<div className='response-container'>
-				{success?.message && (
+				{success && (
 					<h5 className='success'>
 						<span>
 							<CheckCircleOutlineIcon fontSize='inherit' />
 						</span>
-						{success?.message}
+						{success}
 					</h5>
 				)}
-				{errors?.message && (
+				{errors?.token && (
 					<h5 className='error'>
 						<span>
 							<ErrorOutlineIcon fontSize='inherit' />
 						</span>
-						{errors?.message}
+						{errors?.token}
 					</h5>
 				)}
 			</div>

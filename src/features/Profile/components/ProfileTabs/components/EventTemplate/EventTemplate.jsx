@@ -34,7 +34,7 @@ dayjs.extend(isSameOrBefore);
 dayjs.extend(isSameOrAfter);
 
 const EventTemplate = ({ data, type }) => {
-	const { user } = useSelector((state) => state.user);
+	const { activeUser } = useSelector((state) => state.user);
 	const { success } = useSelector((state) => state.calendar);
 	const [open, setOpen] = useState(null);
 	const [checked, setChecked] = useState(null);
@@ -44,12 +44,12 @@ const EventTemplate = ({ data, type }) => {
 	const isHost = type === 'host' ? true : false;
 	const currentDate = dayjs();
 	const attendees = data?.attendees;
-	const rsvp = attendees?.find((item) => item?._id === user?._id);
+	const rsvp = attendees?.find((item) => item?._id === activeUser?._id);
 
 	const handleRsvp = () => {
 		let rsvpData = {
 			_id: data?._id,
-			user: user?._id,
+			user: activeUser?._id,
 		};
 		if (checked) {
 			rsvpData.rsvpOpen = false;
@@ -75,7 +75,7 @@ const EventTemplate = ({ data, type }) => {
 		const rsvpData = {
 			eventId: data?._id,
 			headcount: rsvp?.headcount,
-			user: user?._id,
+			user: activeUser?._id,
 		};
 		dispatch(processRsvp(rsvpData));
 	};
@@ -96,7 +96,7 @@ const EventTemplate = ({ data, type }) => {
 	const handleDeleteClick = () => {
 		const delInfo = {
 			event: data._id,
-			user: user?._id,
+			user: activeUser?._id,
 		};
 
 		const delData = {

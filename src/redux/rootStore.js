@@ -20,7 +20,7 @@ import notificationReducer from './slices/notificationSlice';
 const userPersistConfig = {
 	key: 'user',
 	storage,
-	whitelist: ['user'],
+	whitelist: ['activeUser'],
 };
 
 const calendarPersistConfig = {

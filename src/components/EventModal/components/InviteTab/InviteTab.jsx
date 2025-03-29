@@ -37,9 +37,9 @@ const InviteTab = () => {
 		invitedGuests,
 		errors,
 	} = useSelector((state) => state.calendar);
-	const { user } = useSelector((state) => state.user);
+	const { activeUser } = useSelector((state) => state.user);
 	const filteredGuests = invitedGuests?.filter(
-		(item) => item?._id !== user?._id
+		(item) => item?._id !== activeUser?._id
 	);
 	const dispatch = useDispatch();
 
@@ -70,7 +70,7 @@ const InviteTab = () => {
 				date: selectedEvent?.date,
 				time: selectedEvent?.time,
 				notes: selectedEvent?.notes,
-				creator: user?._id,
+				creator: activeUser?._id,
 			};
 			dispatch(findAndInvite(data));
 		} else {
@@ -90,7 +90,7 @@ const InviteTab = () => {
 				date: selectedEvent?.date,
 				time: selectedEvent?.time,
 				notes: selectedEvent?.notes,
-				creator: user?._id,
+				creator: activeUser?._id,
 			};
 			dispatch(findAndInvite(data));
 		} else {
@@ -103,7 +103,7 @@ const InviteTab = () => {
 			const data = {
 				eventId: selectedEvent._id,
 				guest: guest._id,
-				user: user?._id,
+				user: activeUser?._id,
 			};
 			dispatch(removeInvitedGuest(data));
 		} else {
@@ -121,7 +121,7 @@ const InviteTab = () => {
 
 	return (
 		<>
-			{user?.friends.length > 0 && (
+			{activeUser?.friends.length > 0 && (
 				<div className='event-section alt'>
 					<FormControl fullWidth>
 						<div className='input-btn-row'>
@@ -137,7 +137,7 @@ const InviteTab = () => {
 								onChange={(e) => handleChange('select', e.target.value)}
 							>
 								<MenuItem value=''>Choose..</MenuItem>
-								{user?.friends.map((item) => (
+								{activeUser?.friends.map((item) => (
 									<MenuItem key={item._id} value={item}>
 										<Stack direction='row' alignItems='center'>
 											<ListItemAvatar>

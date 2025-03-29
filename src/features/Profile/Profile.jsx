@@ -10,15 +10,15 @@ import Friends from './components/ProfileTabs';
 import Footer from '../../components/Footer';
 
 const Profile = () => {
-	const { user } = useSelector((state) => state.user);
+	const { activeUser } = useSelector((state) => state.user);
 	const dispatch = useDispatch();
 
-	const tab1data = handleDateSort(user?.myEvents);
-	const tab2data = handleDateSort(user?.eventsAttending);
+	const tab1data = handleDateSort(activeUser?.myEvents);
+	const tab2data = handleDateSort(activeUser?.eventsAttending);
 
 	const loadUser = useCallback(() => {
-		dispatch(getUser(user?._id));
-	}, [dispatch, user?._id]);
+		dispatch(getUser(activeUser?._id));
+	}, [dispatch, activeUser?._id]);
 
 	useEffect(() => {
 		loadUser();
@@ -28,11 +28,11 @@ const Profile = () => {
 		<div id='profile'>
 			<Paper id='profile-container' elevation={10}>
 				<div className='greeting-container'>
-					<h4>Hi {user?.firstName}, Welcome back 👋</h4>
+					<h4>Hi {activeUser?.firstName}, Welcome back 👋</h4>
 				</div>
 				<User />
 				<Events tab1data={tab1data} tab2data={tab2data} type='events' />
-				<Friends tab1data={user?.friends} type='friends' />
+				<Friends tab1data={activeUser?.friends} type='friends' />
 			</Paper>
 			<Footer />
 		</div>
