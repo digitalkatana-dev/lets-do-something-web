@@ -18,7 +18,7 @@ import 'slick-carousel/slick/slick-theme.css';
 
 function App() {
 	const { deleteOpen } = useSelector((state) => state.app);
-	const { user } = useSelector((state) => state.user);
+	const { activeUser } = useSelector((state) => state.user);
 	const dispatch = useDispatch();
 	let refreshInterval;
 
@@ -29,13 +29,13 @@ function App() {
 	socket.on('rsvp received', () => handleRsvp());
 
 	const handleRefresh = useCallback(() => {
-		if (user !== null) {
-			socket.emit('refresh', user._id);
+		if (activeUser !== null) {
+			socket.emit('refresh', activeUser._id);
 			refreshInterval = setInterval(() => {
-				socket.emit('refresh', user._id);
+				socket.emit('refresh', activeUser._id);
 			}, 45000);
 		}
-	}, [user, refreshInterval]);
+	}, [activeUser, refreshInterval]);
 
 	useEffect(() => {
 		handleRefresh();

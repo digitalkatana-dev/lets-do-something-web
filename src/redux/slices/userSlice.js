@@ -128,7 +128,6 @@ export const processFriend = createAsyncThunk(
 export const userAdapter = createEntityAdapter();
 const initialState = userAdapter.getInitialState({
 	loading: false,
-	login: '',
 	firstName: '',
 	lastName: '',
 	phone: '',
@@ -136,7 +135,7 @@ const initialState = userAdapter.getInitialState({
 	password: '',
 	notify: 'sms',
 	show: false,
-	user: null,
+	activeUser: null,
 	searchResults: [],
 	success: null,
 	errors: null,
@@ -146,9 +145,6 @@ export const userSlice = createSlice({
 	name: 'user',
 	initialState,
 	reducers: {
-		setLogin: (state, action) => {
-			state.login = action.payload;
-		},
 		setFirstName: (state, action) => {
 			state.firstName = action.payload;
 		},
@@ -174,7 +170,6 @@ export const userSlice = createSlice({
 			state.errors = action.payload;
 		},
 		clearForm: (state) => {
-			state.login = '';
 			state.firstName = '';
 			state.lastName = '';
 			state.phone = '';
@@ -193,14 +188,13 @@ export const userSlice = createSlice({
 		},
 		logout: (state) => {
 			state.loading = false;
-			state.login = '';
 			state.firstName = '';
 			state.lastName = '';
 			state.phone = '';
 			state.email = '';
 			state.password = '';
 			state.notify = 'sms';
-			state.user = null;
+			state.activeUser = null;
 			state.searchResults = [];
 			state.success = null;
 			state.errors = null;
@@ -222,9 +216,9 @@ export const userSlice = createSlice({
 				state.email = '';
 				state.password = '';
 				state.notify = 'sms';
-				state.user = action.payload;
+				state.activeUser = action.payload;
 				socket.emit('setup', action.payload._id);
-				state.errors = false;
+				state.errors = null;
 			})
 			.addCase(register.rejected, (state, action) => {
 				state.loading = false;
@@ -236,11 +230,11 @@ export const userSlice = createSlice({
 			})
 			.addCase(userLogin.fulfilled, (state, action) => {
 				state.loading = false;
-				state.login = '';
+				state.email = '';
 				state.password = '';
-				state.user = action.payload;
+				state.activeUser = action.payload;
 				socket.emit('setup', action.payload._id);
-				state.errors = false;
+				state.errors = null;
 			})
 			.addCase(userLogin.rejected, (state, action) => {
 				state.loading = false;
@@ -252,7 +246,7 @@ export const userSlice = createSlice({
 			})
 			.addCase(getUser.fulfilled, (state, action) => {
 				state.loading = false;
-				state.user = action.payload;
+				state.activeUser = action.payload;
 			})
 			.addCase(getUser.rejected, (state, action) => {
 				state.loading = false;
@@ -260,11 +254,11 @@ export const userSlice = createSlice({
 			})
 			.addCase(updateProfilePic.pending, (state) => {
 				state.loading = true;
-				state.errors = false;
+				state.errors = null;
 			})
 			.addCase(updateProfilePic.fulfilled, (state, action) => {
 				state.loading = false;
-				state.user = action.payload;
+				state.activeUser = action.payload;
 			})
 			.addCase(updateProfilePic.rejected, (state, action) => {
 				state.loading = false;
@@ -302,7 +296,7 @@ export const userSlice = createSlice({
 			})
 			.addCase(updateUser.fulfilled, (state, action) => {
 				state.loading = false;
-				state.user = action.payload.userData;
+				state.activeUser = action.payload.userData;
 				state.success = action.payload.success;
 			})
 			.addCase(updateUser.rejected, (state, action) => {
@@ -328,7 +322,7 @@ export const userSlice = createSlice({
 			.addCase(processFriend.fulfilled, (state, action) => {
 				state.loading = false;
 				state.success = action.payload.success;
-				state.user = action.payload.userData;
+				state.activeUser = action.payload.userData;
 			})
 			.addCase(processFriend.rejected, (state, action) => {
 				state.loading = false;
@@ -344,7 +338,6 @@ export const userSlice = createSlice({
 });
 
 export const {
-	setLogin,
 	setFirstName,
 	setLastName,
 	setPhone,

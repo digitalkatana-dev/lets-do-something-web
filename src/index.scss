@@ -12,7 +12,11 @@
 	--muted-shadow: rgba(255, 255, 255, 0.06);
 	--reply: #4fc4cf;
 	--reply-shadow: rgba(79, 196, 207, 0.2);
+	--hover: #86ba90;
+	--elevation: 0px 6px 6px -3px rgba(0, 0, 0, 0.2),
+		0px 10px 14px 1px rgba(0, 0, 0, 0.14), 0px 4px 18px 3px rgba(0, 0, 0, 0.12);
 	--spacing: 15px;
+	--error: crimson;
 }
 
 * {
@@ -23,6 +27,17 @@
 	scrollbar-width: none;
 	&::-webkit-scrollbar {
 		display: none;
+	}
+
+	input[type='number']::-webkit-inner-spin-button,
+	input[type='number']::-webkit-outer-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+
+	/* For Firefox */
+	input[type='number'] {
+		-moz-appearance: textfield;
 	}
 }
 

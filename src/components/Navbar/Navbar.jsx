@@ -16,7 +16,7 @@ import './navbar.scss';
 
 const Navbar = () => {
 	const { menuOpen } = useSelector((state) => state.nav);
-	const { user, success } = useSelector((state) => state.user);
+	const { activeUser, success } = useSelector((state) => state.user);
 	const dispatch = useDispatch();
 	const location = useLocation();
 	const path = location.pathname.split('/')[2];
@@ -60,19 +60,19 @@ const Navbar = () => {
 	return (
 		<AppBar>
 			<Toolbar className={menuOpen ? 'navbar active' : 'navbar'}>
-				{user ? (
+				{activeUser ? (
 					<div className='user-area'>
-						<h3>Hello, {user.firstName}!</h3>
+						<h3>Hello, {activeUser.firstName}!</h3>
 						<Link to='/profile'>
 							<IconButton
 								tooltip='Profile'
 								placement='right-end'
 								className='avatar'
 							>
-								{user?.profilePic ? (
+								{activeUser?.profilePic ? (
 									<Avatar
-										alt={user?.firstName + ' ' + user?.lastName}
-										src={user?.profilePic}
+										alt={activeUser?.firstName + ' ' + activeUser?.lastName}
+										src={activeUser?.profilePic}
 										sx={{ width: 30, height: 30 }}
 									/>
 								) : (
@@ -84,7 +84,7 @@ const Navbar = () => {
 				) : (
 					<div></div>
 				)}
-				{user ? (
+				{activeUser ? (
 					<div className='user-controls'>
 						<Link to='/'>
 							<IconButton className='home'>

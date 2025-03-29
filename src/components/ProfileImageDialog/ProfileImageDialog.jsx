@@ -6,7 +6,6 @@ import {
 	DialogContent,
 	DialogTitle,
 	IconButton,
-	// Typography,
 } from '@mui/material';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,7 +13,7 @@ import { updateUser } from '../../redux/slices/userSlice';
 import CloseIcon from '@mui/icons-material/Close';
 
 const ProfileImageDialog = ({ open, type, handleClose }) => {
-	const { user } = useSelector((state) => state.user);
+	const { activeUser } = useSelector((state) => state.user);
 	const [avatar, setAvatar] = useState('');
 	const dispatch = useDispatch();
 
@@ -26,7 +25,7 @@ const ProfileImageDialog = ({ open, type, handleClose }) => {
 
 	const handleUpdate = () => {
 		let data = {
-			_id: user?._id,
+			_id: activeUser?._id,
 		};
 
 		if (type === 'profile') {
