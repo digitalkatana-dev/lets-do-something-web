@@ -10,6 +10,8 @@ import NavMenu from './components/NavMenu';
 import ProtectedRoute from './components/ProtectedRoute';
 import Main from './features/Main';
 import Profile from './features/Profile';
+import DOW from './features/DOW';
+import Footer from './components/Footer';
 import EventModal from './components/EventModal';
 import DeleteDialog from './components/DeleteDialog';
 import NotificationPopup from './components/NotificationPopup';
@@ -56,11 +58,13 @@ function App() {
 				<Routes>
 					<Route path='/' element={<Main />} />
 					<Route path='/reset-password/:id' element={<Main />} />
+					<Route path='/dow/:date' element={<DOW />} />
 					<Route
 						path='/profile'
 						element={<ProtectedRoute element={<Profile />} />}
 					/>
 				</Routes>
+				<Footer />
 			</Router>
 			<EventModal />
 			<DeleteDialog open={deleteOpen} />

@@ -1,0 +1,60 @@
+#dow {
+	height: fit-content;
+	min-height: calc(100vh - 56px);
+	margin-top: 57px;
+	display: flex;
+	flex-direction: column;
+	position: relative;
+
+	.action-bar {
+		height: 80px;
+		width: 100vw;
+		position: fixed;
+
+		border: 2px solid black;
+	}
+
+	.day-container {
+		margin-top: 80px;
+
+		.day-events {
+			height: 50vh;
+			border: 2px solid red;
+		}
+
+		.event-form {
+			height: fit-content;
+			border: 2px solid green;
+		}
+	}
+}
+
+@media only screen and (min-width: 600px) {
+	#dow {
+		min-height: calc(100vh - 64px);
+		margin-top: 64px;
+	}
+}
+
+@media only screen and (min-width: 700px) {
+	#dow {
+		.day-container {
+			display: flex;
+
+			.day-events {
+				width: 40%;
+			}
+		}
+	}
+}
+
+@media only screen and (min-width: 900px) {
+	#dow {
+	}
+}
+
+@media only screen and (min-width: 1200px) {
+}
+
+@media only screen and (min-width: 1536px) {
+}

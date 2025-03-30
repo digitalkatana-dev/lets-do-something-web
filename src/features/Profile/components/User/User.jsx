@@ -1,7 +1,6 @@
 import { IconButton } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { updateUser } from '../../../../redux/slices/userSlice';
+import { useSelector } from 'react-redux';
 import PhotoCameraOutlinedIcon from '@mui/icons-material/PhotoCameraOutlined';
 import './user.scss';
 import ProfileImageDialog from '../../../../components/ProfileImageDialog';
@@ -10,7 +9,6 @@ const User = () => {
 	const { activeUser, success } = useSelector((state) => state.user);
 	const [dialogOpen, setDialogOpen] = useState(false);
 	const [dialogType, setDialogType] = useState('profile');
-	const dispatch = useDispatch();
 
 	const handleDialogToggle = () => {
 		setDialogOpen(!dialogOpen);

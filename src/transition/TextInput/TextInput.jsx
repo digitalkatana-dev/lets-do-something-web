@@ -5,6 +5,7 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 const TextInput = ({
 	style,
+	containerClass,
 	label,
 	leftIcon,
 	rightIcon,
@@ -21,7 +22,13 @@ const TextInput = ({
 	return (
 		<div className='text-input' style={style}>
 			{label && <label>{label}</label>}
-			<div className='input-container'>
+			<div
+				className={
+					containerClass
+						? `input-container ${containerClass}`
+						: 'input-container'
+				}
+			>
 				{leftIcon}
 				<input
 					disabled={disabled}

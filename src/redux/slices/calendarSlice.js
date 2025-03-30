@@ -23,7 +23,6 @@ export const setDaySelected = createAsyncThunk(
 					eventTime ? reFormatTime(eventTime, day) : defaultTime(day)
 				)
 			);
-			dispatch(toggleOpen(true));
 			return day;
 		} catch (err) {
 			return { message: 'Error settng date' };

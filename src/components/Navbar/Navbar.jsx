@@ -19,7 +19,7 @@ const Navbar = () => {
 	const { activeUser, success } = useSelector((state) => state.user);
 	const dispatch = useDispatch();
 	const location = useLocation();
-	const path = location.pathname.split('/')[2];
+	const path = location.pathname.split('/')[1];
 
 	const handleMenu = () => {
 		dispatch(setMenuOpen(!menuOpen));
@@ -43,7 +43,7 @@ const Navbar = () => {
 	}, [dispatch, success]);
 
 	const handleResetPreload = useCallback(() => {
-		if (path) {
+		if (path === 'reset-password') {
 			dispatch(setMenuView('Reset'));
 			dispatch(setMenuOpen(true));
 		}

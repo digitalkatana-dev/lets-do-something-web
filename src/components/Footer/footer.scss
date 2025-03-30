@@ -1,12 +1,16 @@
 .footer {
+	width: 100vw;
 	height: fit-content;
 	background: var(--brand);
 	color: var(--heading);
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
+	position: fixed;
+	bottom: 0;
+	z-index: 5;
 	padding: 20px;
-	transition: all 1s ease-in-out;
+	transition: background-color 1s ease-in-out;
 
 	.contact,
 	.info {

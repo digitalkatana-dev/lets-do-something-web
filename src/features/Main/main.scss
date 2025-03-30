@@ -1,12 +1,14 @@
-.main {
-	height: calc(100vh - 56px);
+#main {
+	height: fit-content;
+	min-height: calc(100vh - 56px);
 	padding-top: 56px;
+	margin-bottom: 114px;
 	// border: 1px ridge crimson;
 }
 
 @media only screen and (min-width: 600px) {
-	.main {
-		height: calc(100vh - 64px);
+	#main {
+		min-height: calc(100vh - 64px);
 		padding-top: 64px;
 	}
 }
@@ -15,6 +17,9 @@
 }
 
 @media only screen and (min-width: 900px) {
+	#main {
+		margin-bottom: 125px;
+	}
 }
 
 @media only screen and (min-width: 1200px) {

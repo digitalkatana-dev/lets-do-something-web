@@ -7,7 +7,6 @@ import './profile.scss';
 import User from './components/User';
 import Events from './components/ProfileTabs';
 import Friends from './components/ProfileTabs';
-import Footer from '../../components/Footer';
 
 const Profile = () => {
 	const { activeUser } = useSelector((state) => state.user);
@@ -34,7 +33,6 @@ const Profile = () => {
 				<Events tab1data={tab1data} tab2data={tab2data} type='events' />
 				<Friends tab1data={activeUser?.friends} type='friends' />
 			</Paper>
-			<Footer />
 		</div>
 	);
 };

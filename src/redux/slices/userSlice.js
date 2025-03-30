@@ -42,19 +42,7 @@ export const getUser = createAsyncThunk(
 	'user/get_user',
 	async (data, { rejectWithValue }) => {
 		try {
-			const res = await doSomethingApi.get(`/users/?id=${data}`);
-			return res.data;
-		} catch (err) {
-			return rejectWithValue(err.response.data);
-		}
-	}
-);
-
-export const updateProfilePic = createAsyncThunk(
-	'user/profile_pic',
-	async (data, { rejectWithValue }) => {
-		try {
-			const res = await doSomethingApi.post('/users/profile-pic', data);
+			const res = await doSomethingApi.get(`/profiles/?id=${data}`);
 			return res.data;
 		} catch (err) {
 			return rejectWithValue(err.response.data);
@@ -93,7 +81,10 @@ export const updateUser = createAsyncThunk(
 	'user/update_user',
 	async (data, { rejectWithValue, dispatch }) => {
 		try {
-			const res = await doSomethingApi.put(`/users/${data?._id}/update`, data);
+			const res = await doSomethingApi.put(
+				`/profiles/${data?._id}/update`,
+				data
+			);
 			return res.data;
 		} catch (err) {
 			return rejectWithValue(err.response.data);
@@ -105,7 +96,7 @@ export const userSearch = createAsyncThunk(
 	'user/search',
 	async (data, { rejectWithValue }) => {
 		try {
-			const res = await doSomethingApi.get(`/users/?search=${data}`);
+			const res = await doSomethingApi.get(`/profiles/?search=${data}`);
 			return res.data;
 		} catch (err) {
 			return rejectWithValue(err.response.data);
@@ -117,7 +108,7 @@ export const processFriend = createAsyncThunk(
 	'user/add_remove_friend',
 	async (data, { rejectWithValue, dispatch }) => {
 		try {
-			const res = await doSomethingApi.put(`/users/${data}/friends`);
+			const res = await doSomethingApi.put(`/profiles/${data}/friends`);
 			return res.data;
 		} catch (err) {
 			return rejectWithValue(err.response.data);
@@ -252,18 +243,6 @@ export const userSlice = createSlice({
 				state.loading = false;
 				state.errors = action.payload;
 			})
-			.addCase(updateProfilePic.pending, (state) => {
-				state.loading = true;
-				state.errors = null;
-			})
-			.addCase(updateProfilePic.fulfilled, (state, action) => {
-				state.loading = false;
-				state.activeUser = action.payload;
-			})
-			.addCase(updateProfilePic.rejected, (state, action) => {
-				state.loading = false;
-				state.errors = action.payload;
-			})
 			.addCase(generatePasswordToken.pending, (state) => {
 				state.loading = true;
 				state.errors = null;
@@ -296,7 +275,7 @@ export const userSlice = createSlice({
 			})
 			.addCase(updateUser.fulfilled, (state, action) => {
 				state.loading = false;
-				state.activeUser = action.payload.userData;
+				state.activeUser = action.payload.updated;
 				state.success = action.payload.success;
 			})
 			.addCase(updateUser.rejected, (state, action) => {
@@ -322,7 +301,7 @@ export const userSlice = createSlice({
 			.addCase(processFriend.fulfilled, (state, action) => {
 				state.loading = false;
 				state.success = action.payload.success;
-				state.activeUser = action.payload.userData;
+				state.activeUser = action.payload.updated;
 			})
 			.addCase(processFriend.rejected, (state, action) => {
 				state.loading = false;

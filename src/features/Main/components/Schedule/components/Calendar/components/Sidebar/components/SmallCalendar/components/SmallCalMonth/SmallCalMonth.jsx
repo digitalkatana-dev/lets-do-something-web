@@ -1,6 +1,7 @@
 import { Grid } from '@mui/material';
 import { Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import {
 	setMonthIndex,
 	setDaySelected,
@@ -13,6 +14,7 @@ const SmallCalMonth = () => {
 	const { currentMonthSmall, monthIndexSmall, daySelected } = useSelector(
 		(state) => state.calendar
 	);
+	const navigate = useNavigate();
 	const dispatch = useDispatch();
 
 	const getDayClass = (day) => {
@@ -35,6 +37,7 @@ const SmallCalMonth = () => {
 		};
 		dispatch(setMonthIndex(monthIndexSmall));
 		dispatch(setDaySelected(data));
+		navigate(`/dow/${dayjs(day).format('MMM-DD-YYYY')}`);
 	};
 
 	return (
