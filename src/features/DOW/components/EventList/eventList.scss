@@ -1,0 +1,14 @@
+#event-list {
+	max-height: 75vh;
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+	overflow: scroll;
+	// border: 2px solid red;
+}
+
+@media only screen and (min-width: 700px) {
+	#event-list {
+		width: 50%;
+	}
+}

@@ -1,15 +1,16 @@
 import React from 'react';
+import { Container } from '@mui/material';
+import EventList from './components/EventList';
 import EventForm from './components/EventForm';
 import './dow.scss';
 
 const DOW = () => {
 	return (
 		<div id='dow'>
-			<div className='action-bar'>Actions</div>
-			<div className='day-container'>
-				<div className='day-events'>Events</div>
+			<Container maxWidth='lg'>
+				<EventList />
 				<EventForm />
-			</div>
+			</Container>
 		</div>
 	);
 };

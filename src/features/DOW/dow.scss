@@ -4,28 +4,9 @@
 	margin-top: 57px;
 	display: flex;
 	flex-direction: column;
-	position: relative;
 
-	.action-bar {
-		height: 80px;
-		width: 100vw;
-		position: fixed;
-
-		border: 2px solid black;
-	}
-
-	.day-container {
-		margin-top: 80px;
-
-		.day-events {
-			height: 50vh;
-			border: 2px solid red;
-		}
-
-		.event-form {
-			height: fit-content;
-			border: 2px solid green;
-		}
+	.MuiContainer-root {
+		padding-top: 20px;
 	}
 }
 
@@ -38,19 +19,14 @@
 
 @media only screen and (min-width: 700px) {
 	#dow {
-		.day-container {
+		.MuiContainer-root {
 			display: flex;
-
-			.day-events {
-				width: 40%;
-			}
+			gap: 15px;
 		}
 	}
 }
 
 @media only screen and (min-width: 900px) {
-	#dow {
-	}
 }
 
 @media only screen and (min-width: 1200px) {

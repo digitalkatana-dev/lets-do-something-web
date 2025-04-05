@@ -100,6 +100,9 @@ const EventTab = () => {
 					<InputLabel id='event-type'>Event Type</InputLabel>
 					<Select
 						labelId='event-type'
+						size='small'
+						margin='dense'
+						variant='standard'
 						value={eventType}
 						onChange={(e) => handleChange('type', e.target.value)}
 					>
