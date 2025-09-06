@@ -10,7 +10,7 @@ import {
 	TextField,
 	Typography,
 } from '@mui/material';
-import { MuiFileInput } from 'mui-file-input';
+// import { MuiFileInput } from 'mui-file-input';
 import { TimeField } from '@mui/x-date-pickers';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -275,7 +275,7 @@ const EventTab = () => {
 			{selectedEvent &&
 				dayjs(selectedEvent?.date).isSameOrBefore(new Date(), 'day') && (
 					<div className='event-section alt'>
-						<MuiFileInput
+						{/* <MuiFileInput
 							placeholder='Click to Upload Memory'
 							size='small'
 							margin='dense'
@@ -283,7 +283,7 @@ const EventTab = () => {
 							fullWidth
 							value={file}
 							onChange={handleFileChange}
-						/>
+						/> */}
 						<div className='image-preview-container'>
 							{preview && (
 								<Cropper

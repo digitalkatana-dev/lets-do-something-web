@@ -13,7 +13,7 @@ import {
 	Select,
 	TextField,
 } from '@mui/material';
-import { MuiFileInput } from 'mui-file-input';
+// import { MuiFileInput } from 'mui-file-input';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setMenuOpen } from '../../redux/slices/navSlice';
@@ -456,7 +456,7 @@ const EventModal = () => {
 											to upload them below.
 										</DialogContentText>
 										<div className='event-section alt'>
-											<MuiFileInput
+											{/* <MuiFileInput
 												placeholder='Click to Upload Memory'
 												size='small'
 												margin='dense'
@@ -464,7 +464,7 @@ const EventModal = () => {
 												fullWidth
 												value={file}
 												onChange={handleFileChange}
-											/>
+											/> */}
 											<div className='image-preview-container'>
 												{preview && (
 													<Cropper
