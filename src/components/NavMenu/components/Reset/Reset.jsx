@@ -6,7 +6,7 @@ import { setMenuOpen, setMenuView } from '../../../../redux/slices/navSlice';
 import {
 	setPassword,
 	resetPasswordWithToken,
-	clearErrors,
+	clearUserErrors,
 } from '../../../../redux/slices/userSlice';
 import LockResetIcon from '@mui/icons-material/LockReset';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
@@ -25,7 +25,7 @@ const Reset = () => {
 	const path = location.pathname.split('/')[2];
 
 	const handleFocus = () => {
-		dispatch(clearErrors());
+		dispatch(clearUserErrors());
 	};
 
 	const handleChange = (e) => {
@@ -55,7 +55,7 @@ const Reset = () => {
 
 	const handleErrors = useCallback(() => {
 		setTimeout(() => {
-			dispatch(clearErrors());
+			dispatch(clearUserErrors());
 		}, 7000);
 	}, [dispatch]);
 

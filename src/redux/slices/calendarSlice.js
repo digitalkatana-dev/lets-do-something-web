@@ -356,10 +356,10 @@ export const calendarSlice = createSlice({
 			state.invitedGuestInput = '';
 			state.invitedGuests = [];
 		},
-		clearSuccess: (state) => {
+		clearCalendarSuccess: (state) => {
 			state.success = null;
 		},
-		clearErrors: (state) => {
+		clearCalendarErrors: (state) => {
 			state.errors = null;
 		},
 	},
@@ -578,8 +578,8 @@ export const {
 	removeGuest,
 	setErrors,
 	clearEvent,
-	clearSuccess,
-	clearErrors,
+	clearCalendarSuccess,
+	clearCalendarErrors,
 } = calendarSlice.actions;
 
 export default calendarSlice.reducer;

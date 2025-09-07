@@ -1,22 +1,21 @@
 .MuiPaper-root.menu {
 	width: 320px;
 	max-height: fit-content;
-	position: fixed;
+	position: absolute;
 	top: -460px;
-	right: 10px;
+	left: 10px;
 	z-index: 3;
 	padding: 20px;
 	transition: all 1s ease;
 
 	&.active {
-		top: 55px;
+		top: 60px;
 	}
 
 	.menu-container {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		// border: 2px ridge indigo;
 
 		.icon {
 			&.auth {
@@ -59,7 +58,7 @@
 @media only screen and (min-width: 600px) {
 	.MuiPaper-root.menu {
 		&.active {
-			top: 63px;
+			top: 70px;
 		}
 	}
 }

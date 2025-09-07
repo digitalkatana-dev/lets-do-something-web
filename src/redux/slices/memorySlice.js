@@ -56,10 +56,10 @@ export const memorySlice = createSlice({
 		setEventId: (state, action) => {
 			state.eventId = action.payload;
 		},
-		clearSuccess: (state) => {
+		clearMemorySuccess: (state) => {
 			state.success = null;
 		},
-		clearErrors: (state) => {
+		clearMemoryErrors: (state) => {
 			state.errors = null;
 		},
 	},
@@ -96,8 +96,8 @@ export const {
 	setMemoryDate,
 	setMemoryLocation,
 	setEventId,
-	clearSuccess,
-	clearErrors,
+	clearMemorySuccess,
+	clearMemoryErrors,
 } = memorySlice.actions;
 
 export default memorySlice.reducer;

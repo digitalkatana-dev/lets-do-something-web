@@ -1,14 +1,14 @@
+import { AppBar, Avatar, IconButton, Toolbar } from '@mui/material';
 import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
-import { AppBar, Avatar, IconButton, Toolbar } from '@mui/material';
-import { setMenuOpen, setMenuView } from '../../redux/slices/navSlice';
 import {
-	clearUserErrors,
-	clearUserSuccess,
+	clearErrors,
+	clearSuccess,
 	logout,
 } from '../../redux/slices/userSlice';
-import MenuIcon from '@mui/icons-material/Menu';
+import { setMenuOpen, setMenuView } from '../../redux/slices/navSlice';
+import { persistor } from '../../redux/rootStore';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import HomeIcon from '@mui/icons-material/Home';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -24,19 +24,20 @@ const Navbar = () => {
 	const handleMenu = () => {
 		dispatch(setMenuOpen(!menuOpen));
 		setTimeout(() => {
-			dispatch(clearUserErrors());
+			dispatch(clearErrors());
 			dispatch(setMenuView('Login'));
-		}, 2000);
+		}, 1000);
 	};
 
 	const handleLogout = () => {
 		dispatch(logout());
+		persistor.purge();
 	};
 
 	const handleSuccess = useCallback(() => {
 		if (success) {
 			setTimeout(() => {
-				dispatch(clearUserSuccess());
+				dispatch(clearSuccess());
 			}, 5000);
 		}
 	}, [dispatch, success]);
@@ -57,20 +58,12 @@ const Navbar = () => {
 	}, [handleSuccess]);
 
 	return (
-		<AppBar className='navbar' position='static'>
-			<Toolbar
-				className={
-					activeUser
-						? 'toolbar user-view'
-						: menuOpen
-						? 'toolbar active'
-						: 'toolbar'
-				}
-			>
-				{activeUser && (
-					<section className='user-area'>
-						<h3>Hello, {activeUser.firstName}</h3>
-						<Link to={activeUser?.firstLogin ? '/create-profile' : '/profile'}>
+		<AppBar>
+			<Toolbar className={menuOpen ? 'navbar active' : 'navbar'}>
+				{activeUser ? (
+					<div className='user-area'>
+						<h3>Hello, {activeUser.firstName}!</h3>
+						<Link to='/profile'>
 							<IconButton
 								tooltip='Profile'
 								placement='right-end'
@@ -87,25 +80,29 @@ const Navbar = () => {
 								)}
 							</IconButton>
 						</Link>
-					</section>
+					</div>
+				) : (
+					<div></div>
 				)}
 				{activeUser ? (
-					<section className='user-controls'>
-						<Link to={activeUser?.firstLogin ? '/create-profile' : '/'}>
+					<div className='user-controls'>
+						<Link to='/'>
 							<IconButton className='home'>
-								<HomeIcon />
+								<HomeIcon className='white-txt' />
 							</IconButton>
 						</Link>
 						<Link to='/' onClick={handleLogout}>
 							<IconButton className='logout'>
-								<LogoutIcon />
+								<LogoutIcon className='white-txt' />
 							</IconButton>
 						</Link>
-					</section>
+					</div>
 				) : (
-					<IconButton className='mobile' onClick={handleMenu}>
-						<MenuIcon />
-					</IconButton>
+					<div className='hamburger' onClick={handleMenu}>
+						<span className='line1'></span>
+						<span className='line2'></span>
+						<span className='line3'></span>
+					</div>
 				)}
 			</Toolbar>
 		</AppBar>

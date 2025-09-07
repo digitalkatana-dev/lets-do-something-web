@@ -3,14 +3,14 @@ import {
 	createEntityAdapter,
 	createSlice,
 } from '@reduxjs/toolkit';
-import { clearForm, clearErrors } from './userSlice';
+import { clearForm, clearUserErrors } from './userSlice';
 
 export const setMenuView = createAsyncThunk(
 	'nav/set_view',
 	async (data, { dispatch }) => {
 		try {
 			dispatch(clearForm());
-			dispatch(clearErrors());
+			dispatch(clearUserErrors());
 			return data;
 		} catch (err) {
 			return { message: 'Error setting menu view!' };

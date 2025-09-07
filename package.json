@@ -17,6 +17,7 @@
 		"dayjs": "^1.11.18",
 		"express": "^5.1.0",
 		"express-favicon": "^2.0.4",
+		"jwt-decode": "^4.0.0",
 		"path": "^0.12.7",
 		"react": "^19.1.1",
 		"react-cropper": "^2.3.3",

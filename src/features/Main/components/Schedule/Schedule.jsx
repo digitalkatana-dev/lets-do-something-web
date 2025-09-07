@@ -2,8 +2,8 @@ import { Alert, Snackbar } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-	clearSuccess,
-	clearErrors,
+	clearCalendarSuccess,
+	clearCalendarErrors,
 } from '../../../../redux/slices/calendarSlice';
 import './schedule.scss';
 import Calendar from './components/Calendar';
@@ -16,8 +16,8 @@ const Schedule = () => {
 
 	const handleClose = (alert) => {
 		const alertActions = {
-			success: clearSuccess,
-			errors: clearErrors,
+			success: clearCalendarSuccess,
+			errors: clearCalendarErrors,
 		};
 
 		const action = alertActions[alert];
@@ -33,7 +33,7 @@ const Schedule = () => {
 		if (success) {
 			setOpen(true);
 			setTimeout(() => {
-				dispatch(clearSuccess());
+				dispatch(clearCalendarSuccess());
 			}, 5000);
 		}
 	}, [dispatch, success]);

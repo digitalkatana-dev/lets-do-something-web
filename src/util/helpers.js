@@ -1,4 +1,14 @@
+import { jwtDecode } from 'jwt-decode';
 import dayjs from 'dayjs';
+
+export const isTokenExpired = (token) => {
+	if (!token) return true;
+
+	try {
+		const { exp } = jwtDecode(token);
+		return Date.now() >= exp * 1000;
+	} catch (e) {}
+};
 
 export const getMonth = (month = dayjs().month()) => {
 	const year = dayjs().year();

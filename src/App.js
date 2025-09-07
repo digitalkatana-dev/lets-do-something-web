@@ -5,9 +5,9 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { getLatestNotification } from './redux/slices/notificationSlice';
 import { socket } from './util/socket';
 import './App.scss';
-import Navbar from './components/Navbar';
-import NavMenu from './components/NavMenu';
 import ProtectedRoute from './components/ProtectedRoute';
+import MainLayout from './layouts/MainLayout';
+import CreateProfile from './features/CreateProfile';
 import Main from './features/Main';
 import Profile from './features/Profile';
 import EventModal from './components/EventModal';
@@ -51,20 +51,31 @@ function App() {
 	return (
 		<div className='App'>
 			<Router>
-				<Navbar />
-				<NavMenu />
 				<Routes>
-					<Route path='/' element={<Main />} />
-					<Route path='/reset-password/:id' element={<Main />} />
+					<Route path='/' element={<MainLayout children={<Main />} />} />
+					<Route
+						path='/create-profile'
+						element={
+							<ProtectedRoute
+								element={<MainLayout children={<CreateProfile />} />}
+							/>
+						}
+					/>
+					<Route
+						path='/reset-password/:id'
+						element={<MainLayout children={<Main />} />}
+					/>
 					<Route
 						path='/profile'
-						element={<ProtectedRoute element={<Profile />} />}
+						element={
+							<ProtectedRoute element={<MainLayout children={<Profile />} />} />
+						}
 					/>
 				</Routes>
 			</Router>
 			<EventModal />
 			<DeleteDialog open={deleteOpen} />
-			<NotificationPopup />
+			{/* <NotificationPopup /> */}
 		</div>
 	);
 }

@@ -1,4 +1,8 @@
 :root {
+	--background-primary: #fffffe;
+	--background-secondary: #1e2025;
+	--txt-primary: #16161a;
+	--txt-secondary: #f5f5f5;
 	--brand: rgb(51, 100, 138);
 	--brand-shadow: rgba(51, 100, 138, 0.2);
 	--brand-alt: #7d67cb;
@@ -48,4 +52,5 @@ body {
 	-moz-osx-font-smoothing: grayscale;
 	scroll-behavior: smooth;
 	scroll-snap-type: y mandatory;
+	background-color: lightgray;
 }
