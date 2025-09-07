@@ -26,11 +26,22 @@
 			cursor: pointer;
 		}
 
+		.brand {
+			font-family: 'Bangers', system-ui;
+			font-weight: 400;
+			font-style: normal;
+			color: var(--brand);
+		}
+
 		&.active {
 			background-color: #7d67cb;
 			color: var(--txt-secondary);
 
 			.mobile {
+				color: var(--txt-secondary);
+			}
+
+			.brand {
 				color: var(--txt-secondary);
 			}
 		}
@@ -50,7 +61,7 @@
 				justify-content: center;
 				align-items: center;
 
-				h3 {
+				.greeting {
 					font-weight: 500;
 				}
 
