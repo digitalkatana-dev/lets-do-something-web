@@ -145,7 +145,7 @@ const InviteTab = () => {
 													src={
 														item.profilePic
 															? item.profilePic
-															: 'http://localhost:3005/uploads/avatars/avatar_26.jpg'
+															: 'https://dosomething-backend.onrender.com/uploads/avatars/avatar_26.jpg'
 													}
 													alt='guest'
 												/>
@@ -235,7 +235,7 @@ const InviteTab = () => {
 									src={
 										item.profilePic
 											? item.profilePic
-											: 'http://localhost:3005/uploads/avatars/avatar_26.jpg'
+											: 'https://dosomething-backend.onrender.com/uploads/avatars/avatar_26.jpg'
 									}
 									alt='guest'
 								/>

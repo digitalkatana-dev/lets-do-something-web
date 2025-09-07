@@ -4,7 +4,7 @@ import { logout } from '../redux/slices/userSlice';
 import { isTokenExpired } from '../util/helpers';
 
 const instance = axios.create({
-	baseURL: 'http://localhost:3005',
+	baseURL: 'https://dosomething-backend.onrender.com',
 });
 
 instance.interceptors.request.use(
