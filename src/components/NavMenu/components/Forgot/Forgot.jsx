@@ -5,7 +5,7 @@ import { setMenuOpen, setMenuView } from '../../../../redux/slices/navSlice';
 import {
 	setEmail,
 	generatePasswordToken,
-	clearErrors,
+	clearUserErrors,
 } from '../../../../redux/slices/userSlice';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
@@ -21,7 +21,7 @@ const Forgot = () => {
 	const dispatch = useDispatch();
 
 	const handleFocus = () => {
-		dispatch(clearErrors());
+		dispatch(clearUserErrors());
 	};
 
 	const handleChange = (e) => {
@@ -49,7 +49,7 @@ const Forgot = () => {
 	const handleError = useCallback(() => {
 		errors?.token &&
 			setTimeout(() => {
-				dispatch(clearErrors());
+				dispatch(clearUserErrors());
 			}, 7000);
 	}, [errors, dispatch]);
 

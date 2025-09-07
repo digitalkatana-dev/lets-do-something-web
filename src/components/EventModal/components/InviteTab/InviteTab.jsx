@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-	clearErrors,
+	clearCalendarErrors,
 	setSelectedFriend,
 	addFriendToGuestList,
 	setInvitedGuestInput,
@@ -44,7 +44,7 @@ const InviteTab = () => {
 	const dispatch = useDispatch();
 
 	const handleFocus = () => {
-		dispatch(clearErrors());
+		dispatch(clearCalendarErrors());
 	};
 
 	const handleChange = (input, value) => {
@@ -145,7 +145,7 @@ const InviteTab = () => {
 													src={
 														item.profilePic
 															? item.profilePic
-															: 'https://dosomething-backend.onrender.com/uploads/avatars/avatar_26.jpg'
+															: 'http://localhost:3005/uploads/avatars/avatar_26.jpg'
 													}
 													alt='guest'
 												/>
@@ -235,7 +235,7 @@ const InviteTab = () => {
 									src={
 										item.profilePic
 											? item.profilePic
-											: 'https://dosomething-backend.onrender.com/uploads/avatars/avatar_26.jpg'
+											: 'http://localhost:3005/uploads/avatars/avatar_26.jpg'
 									}
 									alt='guest'
 								/>

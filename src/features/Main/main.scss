@@ -1,13 +1,9 @@
 .main {
-	height: calc(100vh - 56px);
-	padding-top: 56px;
-	// border: 1px ridge crimson;
+	height: 100%;
 }
 
 @media only screen and (min-width: 600px) {
 	.main {
-		height: calc(100vh - 64px);
-		padding-top: 64px;
 	}
 }
 

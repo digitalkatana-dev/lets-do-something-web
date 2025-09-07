@@ -1,0 +1,42 @@
+#create-profile {
+	width: 100%;
+	height: fit-content;
+	min-height: calc(100vh - 56px);
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	border: 4px solid;
+
+	#create-profile-container {
+		width: 95%;
+		height: fit-content;
+		padding: 25px;
+
+		.greeting-wrapper {
+			background-color: rgba(0, 0, 0, 0.8);
+			color: whitesmoke;
+			padding: 10px;
+			border-radius: 10px;
+		}
+
+		.user-form {
+			margin: 20px auto;
+		}
+	}
+}
+
+@media only screen and (min-width: 600px) {
+	#create-profile {
+		min-height: calc(100vh - 64px);
+
+		#create-profile-container {
+			width: 75%;
+
+			.user-form {
+				width: 50%;
+				justify-self: center;
+			}
+		}
+	}
+}

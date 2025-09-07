@@ -8,30 +8,15 @@ import { setMenuView } from './navSlice';
 import { socket } from '../../util/socket';
 import doSomethingApi from '../../api/doSomethingApi';
 
-export const register = createAsyncThunk(
-	'user/register',
+export const userAuth = createAsyncThunk(
+	'user/auth',
 	async (data, { rejectWithValue, dispatch }) => {
 		try {
-			const res = await doSomethingApi.post('/users/register', data);
-			const { token, userData } = res.data;
-			await localStorage.setItem('token', token);
+			const res = await doSomethingApi.post('/users/auth', data);
+			const { token, userProfile } = res.data;
+			localStorage.setItem('token', token);
 			dispatch(setMenuView('Login'));
-			return userData;
-		} catch (err) {
-			return rejectWithValue(err.response.data);
-		}
-	}
-);
-
-export const userLogin = createAsyncThunk(
-	'user/login',
-	async (data, { rejectWithValue, dispatch }) => {
-		try {
-			const res = await doSomethingApi.post('/users/login', data);
-			const { token, userData } = res.data;
-			await localStorage.setItem('token', token);
-			dispatch(setMenuView('Login'));
-			return userData;
+			return userProfile;
 		} catch (err) {
 			return rejectWithValue(err.response.data);
 		}
@@ -93,7 +78,10 @@ export const updateUser = createAsyncThunk(
 	'user/update_user',
 	async (data, { rejectWithValue, dispatch }) => {
 		try {
-			const res = await doSomethingApi.put(`/users/${data?._id}/update`, data);
+			const res = await doSomethingApi.put(
+				`/profiles/${data?._id}/update`,
+				data
+			);
 			return res.data;
 		} catch (err) {
 			return rejectWithValue(err.response.data);
@@ -180,10 +168,10 @@ export const userSlice = createSlice({
 		clearSearchResults: (state) => {
 			state.searchResults = [];
 		},
-		clearSuccess: (state) => {
+		clearUserSuccess: (state) => {
 			state.success = null;
 		},
-		clearErrors: (state) => {
+		clearUserErrors: (state) => {
 			state.errors = null;
 		},
 		logout: (state) => {
@@ -204,39 +192,22 @@ export const userSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder
-			.addCase(register.pending, (state) => {
+			.addCase(userAuth.pending, (state) => {
 				state.loading = true;
 				state.errors = null;
 			})
-			.addCase(register.fulfilled, (state, action) => {
+			.addCase(userAuth.fulfilled, (state, action) => {
 				state.loading = false;
-				state.firstName = '';
-				state.lastName = '';
-				state.phone = '';
-				state.email = '';
-				state.password = '';
-				state.notify = 'sms';
 				state.activeUser = action.payload;
 				socket.emit('setup', action.payload._id);
 				state.errors = null;
-			})
-			.addCase(register.rejected, (state, action) => {
-				state.loading = false;
-				state.errors = action.payload;
-			})
-			.addCase(userLogin.pending, (state) => {
-				state.loading = true;
-				state.errors = null;
-			})
-			.addCase(userLogin.fulfilled, (state, action) => {
-				state.loading = false;
 				state.email = '';
 				state.password = '';
-				state.activeUser = action.payload;
-				socket.emit('setup', action.payload._id);
-				state.errors = null;
+				if (action.payload.firstLogin) {
+					window.location = '/create-profile';
+				}
 			})
-			.addCase(userLogin.rejected, (state, action) => {
+			.addCase(userAuth.rejected, (state, action) => {
 				state.loading = false;
 				state.errors = action.payload;
 			})
@@ -296,8 +267,14 @@ export const userSlice = createSlice({
 			})
 			.addCase(updateUser.fulfilled, (state, action) => {
 				state.loading = false;
-				state.activeUser = action.payload.userData;
+				state.activeUser = action.payload.updated;
 				state.success = action.payload.success;
+				state.firstName = '';
+				state.lastName = '';
+				state.phone = '';
+				state.email = '';
+				state.password = '';
+				state.notify = 'sms';
 			})
 			.addCase(updateUser.rejected, (state, action) => {
 				state.loading = false;
@@ -348,8 +325,8 @@ export const {
 	setErrors,
 	clearForm,
 	clearSearchResults,
-	clearSuccess,
-	clearErrors,
+	clearUserSuccess,
+	clearUserErrors,
 	logout,
 } = userSlice.actions;
 

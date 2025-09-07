@@ -1,0 +1,23 @@
+#main-layout {
+	height: 100vh;
+	max-height: 100vh !important;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 0;
+	overflow: hidden;
+	background-color: inherit;
+	position: relative;
+
+	.content {
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		flex-shrink: 0;
+		justify-content: center;
+		align-items: center;
+		position: relative;
+		overflow-y: auto;
+	}
+}

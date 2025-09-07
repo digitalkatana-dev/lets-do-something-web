@@ -35,10 +35,10 @@ export const notificationSlice = createSlice({
 		clearLatest: (state) => {
 			state.latest = null;
 		},
-		clearSuccess: (state) => {
+		clearNotificationSuccess: (state) => {
 			state.success = null;
 		},
-		clearErrors: (state) => {
+		clearNotificationErrors: (state) => {
 			state.errors = null;
 		},
 	},
@@ -59,7 +59,10 @@ export const notificationSlice = createSlice({
 	},
 });
 
-export const { clearLatest, clearSuccess, clearErrors } =
-	notificationSlice.actions;
+export const {
+	clearLatest,
+	clearNotificationSuccess,
+	clearNotificationErrors,
+} = notificationSlice.actions;
 
 export default notificationSlice.reducer;

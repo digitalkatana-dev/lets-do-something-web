@@ -65,11 +65,11 @@ const ProfileImageDialog = ({ open, type, handleClose }) => {
 					let source;
 
 					if (type === 'profile') {
-						source = `https://dosomething-backend.onrender.com/uploads/avatars/avatar_${
+						source = `http://localhost:3005/uploads/avatars/avatar_${
 							index + 1
 						}.jpg`;
 					} else if (type === 'cover') {
-						source = `https://dosomething-backend.onrender.com/uploads/covers/cover_${
+						source = `http://localhost:3005/uploads/covers/cover_${
 							index + 1
 						}.jpg`;
 					}

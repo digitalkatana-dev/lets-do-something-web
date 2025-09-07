@@ -2,7 +2,7 @@ import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
 	getMemories,
-	clearSuccess,
+	clearMemorySuccess,
 } from '../../../../redux/slices/memorySlice';
 import './memories.scss';
 import Carousel from './components/Carousel';
@@ -18,7 +18,7 @@ const Memories = () => {
 	const handleSuccess = useCallback(() => {
 		if (success) {
 			setTimeout(() => {
-				dispatch(clearSuccess());
+				dispatch(clearMemorySuccess());
 			}, 5000);
 		}
 	}, [dispatch, success]);

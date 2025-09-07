@@ -25,7 +25,7 @@ import {
 	setSelectedEvent,
 	setSelectedFriend,
 	setHeadcount,
-	clearErrors,
+	clearCalendarErrors,
 } from '../../redux/slices/calendarSlice';
 import { createMemory } from '../../redux/slices/memorySlice';
 import { tagStyle, arrayMatch, objectMatch } from '../../util/helpers';
@@ -138,7 +138,7 @@ const EventModal = () => {
 	};
 
 	const handleFocus = () => {
-		dispatch(clearErrors());
+		dispatch(clearCalendarErrors());
 	};
 
 	const handleChange = (e) => {
