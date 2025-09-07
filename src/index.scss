@@ -54,3 +54,31 @@ body {
 	scroll-snap-type: y mandatory;
 	background-color: lightgray;
 }
+
+.responsive-h1 {
+	font-size: clamp(2rem, 3vw + 1rem, 4.5rem);
+}
+
+.responsive-h2 {
+	font-size: clamp(1.5rem, 2vw + 1rem, 3.5rem);
+}
+
+.responsive-h3 {
+	font-size: clamp(1.25rem, 1.5vw + 1rem, 2.5rem);
+}
+
+.responsive-h4 {
+	font-size: clamp(1.125rem, 1.25vw + 0.75rem, 2rem);
+}
+
+.responsive-h5 {
+	font-size: clamp(1rem, 1vw + 0.5rem, 1.5rem);
+}
+
+.responsive-h6 {
+	font-size: clamp(0.875rem, 0.75vw + 0.5rem, 1.25rem);
+}
+
+.responsive-p {
+	font-size: clamp(0.875rem, 0.5vw + 0.5rem, 1.125rem);
+}

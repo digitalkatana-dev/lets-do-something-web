@@ -69,7 +69,9 @@ const Navbar = () => {
 			>
 				{activeUser && (
 					<section className='user-area'>
-						<h3>Hello, {activeUser.firstName}</h3>
+						<h6 className='greeting responsive-h6'>
+							Hello, {activeUser.firstName}
+						</h6>
 						<Link to={activeUser?.firstLogin ? '/create-profile' : '/profile'}>
 							<IconButton
 								tooltip='Profile'
@@ -89,6 +91,9 @@ const Navbar = () => {
 						</Link>
 					</section>
 				)}
+				<section className='brand-wrapper'>
+					<h3 className='brand'>Let's Do Something!</h3>
+				</section>
 				{activeUser ? (
 					<section className='user-controls'>
 						<Link to={activeUser?.firstLogin ? '/create-profile' : '/'}>
