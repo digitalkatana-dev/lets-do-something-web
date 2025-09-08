@@ -1,14 +1,16 @@
 import React from 'react';
+import {
+	dynamicWelcomeImage,
+	dynamicWelcomeMessage,
+} from '../../../../util/helpers';
 import './welcome.scss';
 
 const Welcome = () => {
 	return (
 		<div id='welcome'>
-			<img src='new-year.jpg' alt='' />
+			<img src={dynamicWelcomeImage()} alt='' />
 			<div className='message'>
-				<span>Happy</span>
-				<span>New</span>
-				<span>Year!</span>
+				<span>{dynamicWelcomeMessage()}</span>
 			</div>
 		</div>
 	);
