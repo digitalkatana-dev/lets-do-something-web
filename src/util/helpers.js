@@ -1,6 +1,118 @@
 import { jwtDecode } from 'jwt-decode';
 import dayjs from 'dayjs';
 
+export const dynamicWelcomeImage = () => {
+	const dateArray = [
+		{ date: '1/1', url: 'new-year.jpg' },
+		{ date: '2/14', url: 'valentines-day.jpg' },
+		{ date: '3/17', url: 'st-patricks-day.jpg' },
+		{ date: '4/5', url: 'easter.jpg' },
+		{ date: '5/25', url: 'memorial-day.jpg' },
+		{ date: '7/4', url: 'july-fourth.jpg' },
+		{ date: '9/1', url: 'labor-day.jpg' },
+		{ date: '10/31', url: 'halloween.jpg' },
+		{ date: '10/27', url: 'thanksgiving.jpg' },
+		{ date: '12/23', url: 'happy-holidays.jpg' },
+	];
+
+	// Get today's date in m/dd format
+	const today = new Date();
+	const todayMonth = today.getMonth() + 1; // getMonth() is zero-based
+	const todayDay = today.getDate();
+
+	// Convert date strings to comparable numeric values (MMDD -> e.g., "9/07" -> 907)
+	const todayNumeric = todayMonth * 100 + todayDay;
+
+	// Convert and sort array by date
+	const sortedArray = dateArray
+		.map((item) => {
+			const [month, day] = item.date.split('/').map(Number);
+			return { ...item, numericDate: month * 100 + day };
+		})
+		.sort((a, b) => a.numericDate - b.numericDate);
+
+	let closestMatch = null;
+
+	for (const item of sortedArray) {
+		const diff = todayNumeric - item.numericDate;
+
+		// Exact match
+		if (diff === 0) {
+			return item.url;
+		}
+
+		// Within 4 days AFTER a date
+		if (diff > 0 && diff <= 4) {
+			return item.url;
+		}
+
+		// Track closest prior for fallback
+		if (diff > 0) {
+			closestMatch = item;
+		}
+	}
+
+	// If no match or within 4 days, fallback
+	return closestMatch ? closestMatch.url : 'san-diego.jpg';
+};
+
+export const dynamicWelcomeMessage = () => {
+	const dateArray = [
+		{ date: '1/1', message: 'Happy New Year!' },
+		{ date: '2/14', message: "Happy Valentine's Day!" },
+		{ date: '3/17', message: "Happy St. Patrick's Day!" },
+		{ date: '4/5', message: 'Happy Easter!' },
+		{ date: '5/25', message: 'Happy Memorial Day!' },
+		{ date: '7/4', message: 'Happy 4th of July!' },
+		{ date: '9/1', message: 'Happy Labor Day!' },
+		{ date: '10/31', message: 'Happy Halloween!' },
+		{ date: '10/27', message: 'Happy Thanksgiving!' },
+		{ date: '12/23', message: 'Happy Holidays!' },
+	];
+
+	// Get today's date in m/dd format
+	const today = new Date();
+	const todayMonth = today.getMonth() + 1; // getMonth() is zero-based
+	const todayDay = today.getDate();
+
+	// Convert date strings to comparable numeric values (MMDD -> e.g., "9/07" -> 907)
+	const todayNumeric = todayMonth * 100 + todayDay;
+
+	// Convert and sort array by date
+	const sortedArray = dateArray
+		.map((item) => {
+			const [month, day] = item.date.split('/').map(Number);
+			return { ...item, numericDate: month * 100 + day };
+		})
+		.sort((a, b) => a.numericDate - b.numericDate);
+
+	let closestMatch = null;
+
+	for (const item of sortedArray) {
+		const diff = todayNumeric - item.numericDate;
+
+		// Exact match
+		if (diff === 0) {
+			return item.message;
+		}
+
+		// Within 4 days AFTER a date
+		if (diff > 0 && diff <= 4) {
+			return item.message;
+		}
+
+		// Track closest prior for fallback
+		if (diff > 0) {
+			closestMatch = item;
+		}
+	}
+
+	// If no match or within 4 days, fallback
+	return closestMatch
+		? closestMatch.message
+		: 'Get out there and have some fun!';
+};
+
 export const isTokenExpired = (token) => {
 	if (!token) return true;
 
