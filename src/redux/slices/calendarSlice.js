@@ -23,7 +23,6 @@ export const setDaySelected = createAsyncThunk(
 					eventTime ? reFormatTime(eventTime, day) : defaultTime(day)
 				)
 			);
-			dispatch(toggleOpen(true));
 			return day;
 		} catch (err) {
 			return { message: 'Error settng date' };
@@ -53,6 +52,18 @@ export const getAllEvents = createAsyncThunk(
 	async (eventInfo, { rejectWithValue }) => {
 		try {
 			const res = await doSomethingApi.get('/events');
+			return res.data;
+		} catch (err) {
+			return rejectWithValue(err.response.data);
+		}
+	}
+);
+
+export const getDayEvents = createAsyncThunk(
+	'calendar/get_day_events',
+	async (data, { rejectWithValue }) => {
+		try {
+			const res = await doSomethingApi.get(`/events/?date=${data}`);
 			return res.data;
 		} catch (err) {
 			return rejectWithValue(err.response.data);
@@ -228,6 +239,7 @@ const initialState = calendarAdapter.getInitialState({
 	daySelected: null,
 	allEvents: null,
 	currentEvents: null,
+	fsDayEvents: null,
 	selectedEvent: null,
 	guestList: null,
 	eventsAttending: null,
@@ -271,6 +283,9 @@ export const calendarSlice = createSlice({
 		},
 		setEventsAttending: (state, action) => {
 			state.eventsAttending = action.payload;
+		},
+		setFSDayEvents: (state, action) => {
+			state.fsDayEvents = action.payload;
 		},
 		setSelectedEvent: (state, action) => {
 			state.selectedEvent = action.payload;
@@ -341,6 +356,12 @@ export const calendarSlice = createSlice({
 		removeGuest: (state, action) => {
 			state.invitedGuests = action.payload;
 		},
+		clearSelectedDay: (state) => {
+			state.daySelected = null;
+		},
+		clearFSDayEvents: (state) => {
+			state.fsDayEvents = null;
+		},
 		setErrors: (state, action) => {
 			state.errors = action.payload;
 		},
@@ -408,6 +429,18 @@ export const calendarSlice = createSlice({
 				// 		  );
 			})
 			.addCase(getAllEvents.rejected, (state, action) => {
+				state.loading = false;
+				state.errors = action.payload;
+			})
+			.addCase(getDayEvents.pending, (state) => {
+				state.loading = true;
+				state.errors = null;
+			})
+			.addCase(getDayEvents.fulfilled, (state, action) => {
+				state.loading = false;
+				state.dayEvents = action.payload;
+			})
+			.addCase(getDayEvents.rejected, (state, action) => {
 				state.loading = false;
 				state.errors = action.payload;
 			})
@@ -562,6 +595,7 @@ export const {
 	setMonthIndexSmall,
 	setGuestList,
 	setEventsAttending,
+	setFSDayEvents,
 	setSelectedEvent,
 	setIsPublic,
 	setRSVPOpen,
@@ -576,6 +610,8 @@ export const {
 	addFriendToGuestList,
 	setInvitedGuestInput,
 	removeGuest,
+	clearSelectedDay,
+	clearFSDayEvents,
 	setErrors,
 	clearEvent,
 	clearCalendarSuccess,

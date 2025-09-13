@@ -1,19 +1,21 @@
 import { Grid } from '@mui/material';
 import { Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import {
 	setMonthIndex,
 	setDaySelected,
+	setFSDayEvents,
 } from '../../../../../../../../../../../../redux/slices/calendarSlice';
 import dayjs from 'dayjs';
 import './smallMonth.scss';
 import TouchableOpacity from '../../../../../../../../../../../../components/TouchableOpacity';
 
 const SmallCalMonth = () => {
-	const { currentMonthSmall, monthIndexSmall, daySelected } = useSelector(
-		(state) => state.calendar
-	);
+	const { currentMonthSmall, monthIndexSmall, daySelected, allEvents } =
+		useSelector((state) => state.calendar);
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 
 	const getDayClass = (day) => {
 		const format = 'MM-DD-YY';
@@ -33,8 +35,15 @@ const SmallCalMonth = () => {
 		const data = {
 			day,
 		};
+		const events = allEvents?.filter(
+			(event) =>
+				dayjs(event.date).format('MM-DD-YY') === dayjs(day).format('MM-DD-YY')
+		);
+
 		dispatch(setMonthIndex(monthIndexSmall));
 		dispatch(setDaySelected(data));
+		dispatch(setFSDayEvents(events));
+		navigate('/selected-day');
 	};
 
 	return (

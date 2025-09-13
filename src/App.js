@@ -10,6 +10,8 @@ import MainLayout from './layouts/MainLayout';
 import CreateProfile from './features/CreateProfile';
 import Main from './features/Main';
 import Profile from './features/Profile';
+import FSDay from './features/Main/components/Schedule/components/Calendar/components/FSDay';
+import FSEvent from './features/Main/components/Schedule/components/Calendar/components/FSEvent';
 import EventModal from './components/EventModal';
 import DeleteDialog from './components/DeleteDialog';
 import NotificationPopup from './components/NotificationPopup';
@@ -70,6 +72,10 @@ function App() {
 						element={
 							<ProtectedRoute element={<MainLayout children={<Profile />} />} />
 						}
+					/>
+					<Route
+						path='selected-day'
+						element={<MainLayout children={<FSDay />} />}
 					/>
 				</Routes>
 			</Router>

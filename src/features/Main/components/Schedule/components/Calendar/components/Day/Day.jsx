@@ -1,7 +1,9 @@
 import { Grid } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import {
+	setFSDayEvents,
 	setDaySelected,
 	setSelectedEvent,
 } from '../../../../../../../../redux/slices/calendarSlice';
@@ -13,12 +15,15 @@ const Day = ({ day, rowIdx }) => {
 	const { allEvents } = useSelector((state) => state.calendar);
 	const [dayEvents, setDayEvents] = useState([]);
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 
 	const handleClick = () => {
 		const data = {
 			day,
 		};
 		dispatch(setDaySelected(data));
+		dispatch(setFSDayEvents(dayEvents));
+		navigate('/selected-day');
 	};
 
 	const handleSelectedEvent = (e, item) => {

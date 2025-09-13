@@ -1,0 +1,124 @@
+#event-form {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	padding: 20px;
+	border: 2px solid;
+
+	.header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+
+		.header-content {
+			font-size: 0.67em;
+			font-weight: bold;
+		}
+	}
+
+	.sign-in-btn {
+		margin: 0 auto;
+		color: rgba(0, 0, 0, 0.38);
+	}
+
+	.event-section {
+		min-height: 54px;
+		display: flex;
+		align-items: center;
+		margin: 10px 0;
+
+		&.alt {
+			flex-direction: column;
+			justify-content: center;
+
+			.input-btn-row {
+				width: 100%;
+				display: flex;
+				align-items: center;
+
+				.add-icon {
+					color: green;
+				}
+			}
+
+			.list {
+				width: 100%;
+				margin-top: 20px;
+
+				.invited-guests {
+					border-bottom: 1px ridge steelblue;
+				}
+
+				.list-item {
+					border-bottom: 1px solid grey;
+					margin-top: 10px;
+				}
+			}
+		}
+
+		.icon {
+			width: 20px;
+			height: 20px;
+			color: grey;
+
+			&.space {
+				margin-right: 10px;
+			}
+		}
+
+		.no-user {
+			width: 100%;
+			display: flex;
+			align-items: flex-end;
+			border-bottom: 1px dotted rgba(0, 0, 0, 0.42);
+
+			.icon-container {
+				.icon-label {
+					font-size: small; //12px
+					color: rgba(0, 0, 0, 0.38);
+					margin-bottom: 6px;
+				}
+			}
+		}
+
+		.tag-swatch {
+			width: 100%;
+			display: flex;
+			justify-content: space-between;
+		}
+
+		.image-preview-container {
+			width: 100%;
+			max-width: 100%;
+			display: block;
+		}
+	}
+
+	.MuiDialogContentText-root.rsvp-details {
+		text-align: center;
+		margin-top: 5px;
+		margin-bottom: 5px;
+
+		&.sign-in-warning {
+			font-weight: bold;
+		}
+	}
+
+	#modal-tabs {
+		min-height: 502px;
+	}
+
+	.send-reminder {
+		color: green;
+	}
+
+	.undo,
+	.delete {
+		color: red;
+	}
+
+	.action-container {
+		display: flex;
+		gap: 5px;
+	}
+}

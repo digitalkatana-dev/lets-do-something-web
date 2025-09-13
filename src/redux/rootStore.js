@@ -26,7 +26,7 @@ const userPersistConfig = {
 const calendarPersistConfig = {
 	key: 'calendar',
 	storage,
-	whitelist: ['eventsAttending'],
+	whitelist: ['eventsAttending', 'daySelected', 'fsDayEvents'],
 };
 
 export const store = configureStore({

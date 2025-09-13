@@ -27,7 +27,7 @@ export const getUser = createAsyncThunk(
 	'user/get_user',
 	async (data, { rejectWithValue }) => {
 		try {
-			const res = await doSomethingApi.get(`/users/?id=${data}`);
+			const res = await doSomethingApi.get(`/profiles/?id=${data}`);
 			return res.data;
 		} catch (err) {
 			return rejectWithValue(err.response.data);

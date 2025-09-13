@@ -10,7 +10,7 @@ const Welcome = () => {
 		<div id='welcome'>
 			<img src={dynamicWelcomeImage()} alt='' />
 			<div className='message'>
-				<span>{dynamicWelcomeMessage()}</span>
+				<h2 className='responsive-h1'>{dynamicWelcomeMessage()}</h2>
 			</div>
 		</div>
 	);
