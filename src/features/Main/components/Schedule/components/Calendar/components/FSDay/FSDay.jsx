@@ -1,20 +1,16 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import {
-	Avatar,
-	Divider,
-	IconButton,
-	List,
-	ListItem,
-	ListItemAvatar,
-	ListItemText,
-} from '@mui/material';
+import { IconButton, Paper } from '@mui/material';
 import {
 	toggleOpen,
+	setSelectedEvent,
+	setDaySelected,
 	clearSelectedDay,
 	clearFSDayEvents,
 } from '../../../../../../../../redux/slices/calendarSlice';
 import CloseIcon from '@mui/icons-material/Close';
+import dayjs from 'dayjs';
+import EventItem from '../../../../../../../../components/EventItem';
 import EventForm from '../../../../../../../../components/EventForm';
 import Button from '../../../../../../../../transition/Button';
 import './fsday.scss';
@@ -48,6 +44,19 @@ const FSDay = () => {
 		}, 1500);
 	};
 
+	const handleSelectedEvent = (e, item) => {
+		const itemDay = `${dayjs(item.date).format(
+			'ddd, DD MMM YYYY'
+		)} 08:00:00 GMT`;
+		const data = {
+			day: itemDay,
+			eventTime: item.time,
+		};
+		e.stopPropagation();
+		dispatch(setSelectedEvent(item));
+		dispatch(setDaySelected(data));
+	};
+
 	const handleClick = () => {
 		dispatch(toggleOpen(true));
 	};
@@ -61,33 +70,13 @@ const FSDay = () => {
 				</IconButton>
 			</header>
 			<div id='content-wrapper'>
-				<section id='day-event-list'>
-					<List
-						sx={{
-							maxHeight: '100%',
-							overflowY: 'scroll',
-							bgcolor: 'background.paper',
-						}}
-					>
-						{fsDayEvents?.map((item) => (
-							<div key={item._id}>
-								<ListItem
-									style={{ backgroundColor: `${item.label}` }}
-									alignItems='flex-start'
-								>
-									<ListItemAvatar>
-										<Avatar src={item.createdBy.profilePic} />
-									</ListItemAvatar>
-									<ListItemText
-										primary={item.type}
-										secondary={`${item.location} ${item.time}`}
-									/>
-								</ListItem>
-								<Divider variant='inset' component='li' />
-							</div>
-						))}
-					</List>
-				</section>
+				<Paper id='day-event-list' elevation={7}>
+					{fsDayEvents?.map((item) => (
+						<div key={item?._id} onClick={(e) => handleSelectedEvent(e, item)}>
+							<EventItem data={item} type='fsDay' />
+						</div>
+					))}
+				</Paper>
 				<section id='day-actions'>
 					<Button onClick={handleClick}>Create new event</Button>
 				</section>

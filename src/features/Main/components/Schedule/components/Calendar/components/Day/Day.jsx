@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import {
 	setFSDayEvents,
 	setDaySelected,
-	setSelectedEvent,
+	// setSelectedEvent,
 } from '../../../../../../../../redux/slices/calendarSlice';
 import { getCurrentDayClass } from '../../../../../../../../util/helpers';
 import dayjs from 'dayjs';
@@ -26,18 +26,18 @@ const Day = ({ day, rowIdx }) => {
 		navigate('/selected-day');
 	};
 
-	const handleSelectedEvent = (e, item) => {
-		const itemDay = `${dayjs(item.date).format(
-			'ddd, DD MMM YYYY'
-		)} 08:00:00 GMT`;
-		const data = {
-			day: itemDay,
-			eventTime: item.time,
-		};
-		e.stopPropagation();
-		dispatch(setSelectedEvent(item));
-		dispatch(setDaySelected(data));
-	};
+	// const handleSelectedEvent = (e, item) => {
+	// 	const itemDay = `${dayjs(item.date).format(
+	// 		'ddd, DD MMM YYYY'
+	// 	)} 08:00:00 GMT`;
+	// 	const data = {
+	// 		day: itemDay,
+	// 		eventTime: item.time,
+	// 	};
+	// 	e.stopPropagation();
+	// 	dispatch(setSelectedEvent(item));
+	// 	dispatch(setDaySelected(data));
+	// };
 
 	useEffect(() => {
 		const events = allEvents?.filter(
@@ -56,22 +56,23 @@ const Day = ({ day, rowIdx }) => {
 						{dayjs(day).format('D')}
 					</p>
 				</header>
-				{dayEvents?.map((item) => (
-					<button
-						key={item._id}
-						onClick={(e) => handleSelectedEvent(e, item)}
-						style={{ backgroundColor: `${item.label}` }}
-						className={'day-event'}
-					>
+				<section className='events'>
+					{dayEvents?.map((item) => (
 						<div
-							className={
-								item.location.length > 8 ? 'btn-txt scrolled' : 'btn-txt'
-							}
+							key={item._id}
+							style={{ backgroundColor: `${item.label}` }}
+							className='day-event'
 						>
-							{item.location}
+							<div
+								className={
+									item.location.length > 8 ? 'btn-txt scrolled' : 'btn-txt'
+								}
+							>
+								{item.location}
+							</div>
 						</div>
-					</button>
-				))}
+					))}
+				</section>
 			</Grid>
 		</div>
 	);

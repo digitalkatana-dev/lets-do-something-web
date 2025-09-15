@@ -13,12 +13,19 @@
 	}
 
 	#content-wrapper {
+		flex: 1;
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
+		gap: 20px;
 
 		#day-event-list {
-			height: 80%;
+			height: 90%;
+			padding: 10px;
+			background-color: #fffffe;
+			border-radius: 7px;
+			margin: auto 0;
+			overflow-y: scroll;
 		}
 
 		#event-details {
@@ -29,16 +36,30 @@
 
 @media only screen and (min-width: 600px) {
 	#fsday {
+		justify-content: center;
+		position: relative;
+
+		header {
+			position: absolute;
+			top: 20px;
+			right: 20px;
+			left: 20px;
+		}
+
 		#content-wrapper {
 			flex-direction: row;
 			justify-content: space-around;
+			align-items: center;
+			margin-top: 45px;
 
-			#day-event-list {
+			#day-event-list,
+			#event-details {
 				width: 45%;
 			}
 
 			#event-details {
-				width: 45%;
+				height: fit-content;
+				min-height: 85%;
 				display: block;
 			}
 

@@ -19,6 +19,8 @@
 	.cell {
 		width: 35px;
 		height: 35px;
+		display: flex;
+		flex-direction: column;
 
 		header {
 			margin-top: 5px;
@@ -47,6 +49,11 @@
 
 		.selected-day {
 			background-color: rgba(128, 0, 128, 0.5);
+		}
+
+		.events {
+			flex: 1;
+			overflow-y: auto;
 		}
 
 		.day-event {

@@ -2,6 +2,7 @@ import { IconButton, Tooltip } from '@mui/material';
 import './iconBtn.scss';
 
 const IconBtn = ({
+	id,
 	tooltip,
 	placement,
 	edge,
@@ -14,6 +15,7 @@ const IconBtn = ({
 		<>
 			{disabled ? (
 				<IconButton
+					id={id}
 					edge={edge}
 					disabled={disabled}
 					onClick={onClick}
@@ -25,6 +27,7 @@ const IconBtn = ({
 			) : (
 				<Tooltip title={tooltip} placement={placement}>
 					<IconButton
+						id={id}
 						edge={edge}
 						onClick={onClick}
 						onMouseDown={onMouseDown}

@@ -1,0 +1,275 @@
+import { useCallback, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+	Avatar,
+	IconButton,
+	MenuItem,
+	Paper,
+	Popover,
+	Stack,
+	Switch,
+	Typography,
+} from '@mui/material';
+import { setDeleteData, openDelete } from '../../redux/slices/appSlice';
+import {
+	setDaySelected,
+	setSelectedEvent,
+	processRsvp,
+	updateEvent,
+	deleteEvent,
+} from '../../redux/slices/calendarSlice';
+import { getBackgroundColor } from '../../util/helpers';
+import dayjs from 'dayjs';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import UndoIcon from '@mui/icons-material/Undo';
+import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
+import './event-item.scss';
+dayjs.extend(isSameOrBefore);
+dayjs.extend(isSameOrAfter);
+
+const EventItem = ({ data, type }) => {
+	const { activeUser } = useSelector((state) => state.user);
+	const { success } = useSelector((state) => state.calendar);
+	const [open, setOpen] = useState(null);
+	const [checked, setChecked] = useState(null);
+	const dispatch = useDispatch();
+	const background = getBackgroundColor(data?.label);
+	const isAttend = type === 'attend' ? true : false;
+	const isHost = type === 'host' ? true : false;
+	const currentDate = dayjs();
+	const attendees = data?.attendees;
+	const rsvp = attendees?.find((item) => item?._id === activeUser?._id);
+
+	const handleRsvp = () => {
+		let rsvpData = {
+			_id: data?._id,
+			user: activeUser?._id,
+		};
+		if (checked) {
+			rsvpData.rsvpOpen = false;
+			setChecked(false);
+		} else if (!checked) {
+			rsvpData.rsvpOpen = true;
+			setChecked(true);
+		}
+		dispatch(updateEvent(rsvpData));
+	};
+
+	const handleOpenMenu = (event) => {
+		setOpen(event.currentTarget);
+	};
+
+	const handleCloseMenu = () => {
+		setOpen(null);
+		dispatch(setDaySelected(null));
+		dispatch(setSelectedEvent(null));
+	};
+
+	const handleCancel = () => {
+		const rsvpData = {
+			eventId: data?._id,
+			headcount: rsvp?.headcount,
+			user: activeUser?._id,
+		};
+		dispatch(processRsvp(rsvpData));
+	};
+
+	const handleEditClick = (item) => {
+		const itemDay = `${dayjs(item.date).format(
+			'ddd, DD MMM YYYY'
+		)} 08:00:00 GMT`;
+		const data = {
+			day: itemDay,
+			eventTime: item.time,
+		};
+		dispatch(setDaySelected(data));
+		dispatch(setSelectedEvent(item));
+		setOpen(false);
+	};
+
+	const handleDeleteClick = () => {
+		const delInfo = {
+			event: data._id,
+			user: activeUser?._id,
+		};
+
+		const delData = {
+			type: 'event',
+			action: deleteEvent(delInfo),
+		};
+
+		dispatch(setDeleteData(delData));
+		dispatch(openDelete(true));
+		handleCloseMenu();
+	};
+
+	const loadEvent = useCallback(() => {
+		setChecked(data?.rsvpOpen);
+	}, [data]);
+
+	const handleSuccess = useCallback(() => {
+		if (success) {
+			dispatch(openDelete(false));
+		}
+	}, [success, dispatch]);
+
+	useEffect(() => {
+		loadEvent();
+	}, [loadEvent]);
+
+	useEffect(() => {
+		handleSuccess();
+	}, [handleSuccess]);
+
+	return (
+		<Paper
+			className='event-item'
+			elevation={10}
+			style={{ backgroundColor: background }}
+		>
+			<section className={type === 'fsDay' ? 'third one fsDay' : 'third one'}>
+				<Stack
+					direction='row'
+					alignItems='center'
+					gap={1}
+					className='event-info'
+				>
+					<section className='host-avatar'>
+						<Avatar src={data?.createdBy?.profilePic} />
+					</section>
+					<section className='event-details'>
+						{type === 'fsDay' ? (
+							<>
+								<h5>{data?.type}</h5>
+								<h6>
+									{data?.location} {dayjs(data.time).format('LT')}
+								</h6>
+							</>
+						) : (
+							<>
+								<h5>
+									{data?.type} @ {data.location}
+								</h5>
+								<h6>
+									{data.date} @ {dayjs(data.time).format('LT')}
+								</h6>
+							</>
+						)}
+					</section>
+				</Stack>
+			</section>
+			{isHost && (
+				<>
+					<section
+						className={type === 'fsDay' ? 'third two fsDay' : 'third two'}
+					>
+						<section className='rsvp-info'>
+							<h5>RSVP</h5>
+							<Stack direction='row' spacing={1} alignItems='center'>
+								<Typography>Closed</Typography>
+								<Switch
+									checked={checked}
+									color='secondary'
+									onChange={handleRsvp}
+								/>
+								<Typography>Open</Typography>
+							</Stack>
+						</section>
+					</section>
+					<section
+						className={type === 'fsDay' ? 'third three fsDay' : 'third three'}
+					>
+						<section className='host-actions'>
+							<IconButton edge='end' onClick={handleOpenMenu}>
+								<MoreVertIcon />
+							</IconButton>
+						</section>
+					</section>
+				</>
+			)}
+			{isAttend && (
+				<>
+					<section
+						className={type === 'fsDay' ? 'third two fsDay' : 'third two'}
+					/>
+					<section
+						className={type === 'fsDay' ? 'third three fsDay' : 'third three'}
+					>
+						<section className='guest-actions'>
+							<IconButton edge='end' onClick={handleOpenMenu}>
+								<MoreVertIcon />
+							</IconButton>
+						</section>
+					</section>
+				</>
+			)}
+			<Popover
+				open={!!open}
+				anchorEl={open}
+				onClose={handleCloseMenu}
+				anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+				transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+				slotProps={{ paper: { sx: { width: 140 } } }}
+			>
+				{isHost && (
+					<>
+						<MenuItem
+							onClick={() => handleEditClick(data)}
+							sx={{ color: 'steelblue' }}
+						>
+							<Stack direction='row' gap={1}>
+								{currentDate.isBefore(dayjs(data?.date)) ? (
+									<>
+										<EditIcon />
+										Edit
+									</>
+								) : (
+									<>
+										<AddAPhotoIcon />
+										Upload
+									</>
+								)}
+							</Stack>
+						</MenuItem>
+
+						<MenuItem onClick={handleDeleteClick} sx={{ color: 'error.main' }}>
+							<Stack direction='row' gap={1}>
+								<DeleteForeverIcon />
+								Delete
+							</Stack>
+						</MenuItem>
+					</>
+				)}
+				{isAttend && (
+					<>
+						{currentDate.isBefore(dayjs(data?.date)) && (
+							<MenuItem onClick={handleCancel} sx={{ color: 'error.main' }}>
+								<Stack direction='row' gap={1}>
+									<UndoIcon />
+									Cancel
+								</Stack>
+							</MenuItem>
+						)}
+						{currentDate.isAfter(dayjs(data?.date)) && (
+							<MenuItem
+								onClick={() => handleEditClick(data)}
+								sx={{ color: 'steelblue' }}
+							>
+								<Stack direction='row' gap={1}>
+									<AddAPhotoIcon />
+									Upload
+								</Stack>
+							</MenuItem>
+						)}
+					</>
+				)}
+			</Popover>
+		</Paper>
+	);
+};
+
+export default EventItem;

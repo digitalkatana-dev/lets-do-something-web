@@ -123,7 +123,7 @@ export const findGuest = createAsyncThunk(
 	'calendar/find_guest',
 	async (guestInfo, { rejectWithValue }) => {
 		try {
-			const res = await doSomethingApi.post('/users/check', guestInfo);
+			const res = await doSomethingApi.post('/profiles/find', guestInfo);
 			return res.data;
 		} catch (err) {
 			return rejectWithValue(err.response.data);
@@ -438,7 +438,7 @@ export const calendarSlice = createSlice({
 			})
 			.addCase(getDayEvents.fulfilled, (state, action) => {
 				state.loading = false;
-				state.dayEvents = action.payload;
+				state.fsDayEvents = action.payload;
 			})
 			.addCase(getDayEvents.rejected, (state, action) => {
 				state.loading = false;

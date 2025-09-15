@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material';
-import EventTemplate from '../EventTemplate';
 import SearchTab from '../SearchTab';
+import EventItem from '../../../../../../components/EventItem';
 import UserTemplate from '../../../../../../components/UserTemplate';
 
 const TabPanel = ({ children, index, value, type, ...other }) => {
@@ -25,7 +25,7 @@ const TabPanel = ({ children, index, value, type, ...other }) => {
 								  ))
 								: (type === 'host' || type === 'attend') &&
 								  children.map((item) => (
-										<EventTemplate key={item._id} data={item} type={type} />
+										<EventItem key={item._id} data={item} type={type} />
 								  ))}
 							{children.length === 0 && (
 								<Typography>Nothing to Show!</Typography>

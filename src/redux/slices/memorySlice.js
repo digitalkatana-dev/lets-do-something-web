@@ -39,8 +39,8 @@ const initialState = memoryAdapter.getInitialState({
 	eventId: '',
 	memory: null,
 	allMemories: null,
-	success: null,
-	errors: null,
+	memorySuccess: null,
+	memoryErrors: null,
 });
 
 export const memorySlice = createSlice({
@@ -57,29 +57,29 @@ export const memorySlice = createSlice({
 			state.eventId = action.payload;
 		},
 		clearMemorySuccess: (state) => {
-			state.success = null;
+			state.memorySuccess = null;
 		},
 		clearMemoryErrors: (state) => {
-			state.errors = null;
+			state.memoryErrors = null;
 		},
 	},
 	extraReducers: (builder) => {
 		builder
 			.addCase(createMemory.pending, (state) => {
 				state.loading = true;
-				state.errors = null;
+				state.memoryErrors = null;
 			})
 			.addCase(createMemory.fulfilled, (state, action) => {
 				state.loading = false;
-				state.success = action.payload;
+				state.memorySuccess = action.payload;
 			})
 			.addCase(createMemory.rejected, (state, action) => {
 				state.loading = false;
-				state.errors = action.payload;
+				state.memoryErrors = action.payload;
 			})
 			.addCase(getMemories.pending, (state) => {
 				state.loading = true;
-				state.errors = null;
+				state.memoryErrors = null;
 			})
 			.addCase(getMemories.fulfilled, (state, action) => {
 				state.loading = false;
@@ -87,7 +87,7 @@ export const memorySlice = createSlice({
 			})
 			.addCase(getMemories.rejected, (state, action) => {
 				state.loading = false;
-				state.errors = action.payload;
+				state.memoryErrors = action.payload;
 			});
 	},
 });

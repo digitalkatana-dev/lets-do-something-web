@@ -42,7 +42,7 @@ import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import UndoIcon from '@mui/icons-material/Undo';
 import './event-form.scss';
 import IconBtn from '../IconBtn';
-import ModalTabs from '../EventModal/components/ModalTabs';
+import EventFormTabs from './components/EventFormTabs';
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isSameOrAfter);
 
@@ -121,11 +121,12 @@ const EventForm = () => {
 	};
 
 	const handleClose = () => {
-		dispatch(toggleOpen(false));
-		setTimeout(() => {
-			dispatch(setSelectedEvent(null));
-			dispatch(setSelectedFriend(null));
-		}, 500);
+		dispatch(setSelectedEvent(null));
+		// dispatch(toggleOpen(false));
+		// setTimeout(() => {
+		// 	dispatch(setSelectedEvent(null));
+		// 	dispatch(setSelectedFriend(null));
+		// }, 500);
 	};
 
 	const handleSignIn = () => {
@@ -247,7 +248,12 @@ const EventForm = () => {
 	}, [success]);
 
 	return (
-		<Paper id='event-form'>
+		<Paper id='event-form' elevation={7}>
+			{activeUser && selectedEvent && (
+				<IconBtn id='event-close-btn' onClick={handleClose}>
+					<CloseIcon />
+				</IconBtn>
+			)}
 			{/* <section className='header'>
 				<DragHandleIcon />
 				<span className='header-content'>
@@ -398,7 +404,7 @@ const EventForm = () => {
 							{!selectedEvent ||
 							(selectedEvent && eventAuthor === currentUser) ? (
 								<>
-									<ModalTabs />
+									<EventFormTabs />
 								</>
 							) : (
 								<>
