@@ -12,6 +12,7 @@ import {
 	Select,
 	TextField,
 } from '@mui/material';
+import { MuiFileInput } from 'mui-file-input';
 import { setMenuOpen } from '../../redux/slices/navSlice';
 import {
 	toggleOpen,
@@ -22,9 +23,15 @@ import {
 	setSelectedFriend,
 	setHeadcount,
 	clearCalendarErrors,
+	setEventTime,
 } from '../../redux/slices/calendarSlice';
 import { createMemory } from '../../redux/slices/memorySlice';
-import { tagStyle, arrayMatch, objectMatch } from '../../util/helpers';
+import {
+	tagStyle,
+	arrayMatch,
+	objectMatch,
+	defaultTime,
+} from '../../util/helpers';
 import { labelClasses } from '../../util/data';
 import Cropper from 'react-cropper';
 import dayjs from 'dayjs';
@@ -40,13 +47,13 @@ import CheckIcon from '@mui/icons-material/Check';
 import NotesIcon from '@mui/icons-material/Notes';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import UndoIcon from '@mui/icons-material/Undo';
-import './event-form.scss';
+import './eventInfo.scss';
 import IconBtn from '../IconBtn';
-import EventFormTabs from './components/EventFormTabs';
+import EventInfoTabs from './components/EventInfoTabs';
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isSameOrAfter);
 
-const EventForm = () => {
+const EventInfo = () => {
 	const {
 		open,
 		daySelected,
@@ -87,6 +94,7 @@ const EventForm = () => {
 			: ` and your ${rsvpGuests === 1 ? 'guest' : `${rsvpGuests} guests`}!`
 	}`;
 	const currentDate = dayjs();
+	const isBeforeCheck = dayjs(eventTime).isSameOrBefore(dayjs(daySelected));
 	const dispatch = useDispatch();
 
 	const handleDisabled = () => {
@@ -121,7 +129,11 @@ const EventForm = () => {
 	};
 
 	const handleClose = () => {
+		const itemDay = `${dayjs(daySelected).format(
+			'ddd, DD MMM YYYY'
+		)} 08:00:00 GMT`;
 		dispatch(setSelectedEvent(null));
+		dispatch(setEventTime(defaultTime(itemDay)));
 		// dispatch(toggleOpen(false));
 		// setTimeout(() => {
 		// 	dispatch(setSelectedEvent(null));
@@ -247,8 +259,10 @@ const EventForm = () => {
 		}
 	}, [success]);
 
+	// console.log(isBefore);
+
 	return (
-		<Paper id='event-form' elevation={7}>
+		<div id='eventInfo'>
 			{activeUser && selectedEvent && (
 				<IconBtn id='event-close-btn' onClick={handleClose}>
 					<CloseIcon />
@@ -280,7 +294,7 @@ const EventForm = () => {
 						<>
 							{!selectedEvent ? (
 								<>
-									<div className='event-section alt'>
+									<section className='event-section alt'>
 										<FormControl variant='standard' size='small' fullWidth>
 											<InputLabel id='event-type'>Event Type</InputLabel>
 											<Select labelId='event-type' disabled value=''>
@@ -289,12 +303,12 @@ const EventForm = () => {
 												</MenuItem>
 											</Select>
 										</FormControl>
-									</div>
-									<div className='event-section'>
+									</section>
+									<section className='event-section'>
 										<EventIcon className='icon space' />
 										<h5>{dayjs(daySelected)?.format('dddd, MMMM DD')}</h5>
-									</div>
-									<div className='event-section'>
+									</section>
+									<section className='event-section'>
 										<div className='no-user'>
 											<div className='icon-container'>
 												<p className='icon-label'>Time</p>
@@ -308,8 +322,8 @@ const EventForm = () => {
 												Sign in to create an event!
 											</Button>
 										</div>
-									</div>
-									<div className='event-section'>
+									</section>
+									<section className='event-section'>
 										<div className='no-user'>
 											<div className='icon-container'>
 												<p className='icon-label'>Location</p>
@@ -323,8 +337,8 @@ const EventForm = () => {
 												Sign in to create an event!
 											</Button>
 										</div>
-									</div>
-									<div className='event-section'>
+									</section>
+									<section className='event-section'>
 										<div className='no-user'>
 											<div className='icon-container'>
 												<p className='icon-label'>Notes</p>
@@ -338,8 +352,8 @@ const EventForm = () => {
 												Sign in to create an event!
 											</Button>
 										</div>
-									</div>
-									<div className='event-section'>
+									</section>
+									<section className='event-section'>
 										<BookmarkBorderIcon className='icon space' />
 										<div className='tag-swatch'>
 											{labelClasses.map((item, i) => (
@@ -348,34 +362,34 @@ const EventForm = () => {
 												</span>
 											))}
 										</div>
-									</div>
+									</section>
 								</>
 							) : (
 								<>
-									<DialogContentText className='rsvp-details'>
+									<h3 className='rsvp-details'>
 										{selectedEvent?.type} @ {selectedEvent?.location}
-									</DialogContentText>
-									<DialogContentText className='rsvp-details'>
+									</h3>
+									<h4 className='rsvp-details'>
 										Hosted by:{' '}
 										{selectedEvent?.createdBy?.firstName +
 											' ' +
 											selectedEvent?.createdBy?.lastName}
-									</DialogContentText>
-									<div className='event-section'>
+									</h4>
+									<section className='event-section'>
 										<EventIcon className='icon space' />
 										<h5>
 											{dayjs(selectedEvent?.date).format('dddd, MMMM DD')}
 										</h5>
-									</div>
-									<div className='event-section'>
+									</section>
+									<section className='event-section'>
 										<ScheduleIcon className='icon space' />
 										<h5>{dayjs(selectedEvent?.time).format('LT')}</h5>
-									</div>
-									<div className='event-section'>
+									</section>
+									<section className='event-section'>
 										<MyLocationIcon className='icon space' />
 										<h5>{selectedEvent?.location}</h5>
-									</div>
-									<div className='event-section'>
+									</section>
+									<section className='event-section'>
 										<div className='icon-container'>
 											<NotesIcon className='icon' />
 										</div>
@@ -386,15 +400,15 @@ const EventForm = () => {
 										>
 											Sign in to RSVP!
 										</Button>
-									</div>
-									<div className='event-section'>
+									</section>
+									<section className='event-section'>
 										<div className='no-user'>
 											<div className='icon-container'>
 												<p className='icon-label'>Headcount</p>
 												<GroupAddIcon className='icon' />
 											</div>
 										</div>
-									</div>
+									</section>
 								</>
 							)}
 						</>
@@ -404,20 +418,20 @@ const EventForm = () => {
 							{!selectedEvent ||
 							(selectedEvent && eventAuthor === currentUser) ? (
 								<>
-									<EventFormTabs />
+									<EventInfoTabs />
 								</>
 							) : (
 								<>
-									<DialogContentText className='rsvp-details'>
+									<h3 className='rsvp-details'>
 										{selectedEvent?.type} @ {selectedEvent?.location}
-									</DialogContentText>
-									<DialogContentText className='rsvp-details'>
+									</h3>
+									<h4 className='rsvp-details'>
 										Hosted by:{' '}
 										{selectedEvent?.createdBy.firstName +
 											' ' +
 											selectedEvent?.createdBy.lastName}
-									</DialogContentText>
-									<div className='event-section'>
+									</h4>
+									<section className='event-section'>
 										<EventIcon className='icon space' />
 										<h5>
 											{selectedEvent ? (
@@ -426,8 +440,8 @@ const EventForm = () => {
 												<>{dayjs(daySelected)?.format('dddd, MMMM DD')}</>
 											)}
 										</h5>
-									</div>
-									<div className='event-section'>
+									</section>
+									<section className='event-section'>
 										<ScheduleIcon className='icon space' />
 										<h5>
 											{selectedEvent ? (
@@ -436,19 +450,19 @@ const EventForm = () => {
 												<>TBD</>
 											)}
 										</h5>
-									</div>
-									<div className='event-section'>
+									</section>
+									<section className='event-section'>
 										<MyLocationIcon className='icon space' />
 										<h5>{selectedEvent ? selectedEvent.location : 'TBD'}</h5>
-									</div>
-									<div className='event-section'>
+									</section>
+									<section className='event-section'>
 										<NotesIcon className='icon space' />
 										<h6>
 											{selectedEvent?.notes
 												? selectedEvent?.notes
 												: 'No notes!'}
 										</h6>
-									</div>
+									</section>
 									{isAttending &&
 									currentDate.isBefore(dayjs(selectedEvent?.date)) ? (
 										<DialogContentText textAlign='center'>
@@ -463,15 +477,15 @@ const EventForm = () => {
 												to upload them below.
 											</DialogContentText>
 											<div className='event-section alt'>
-												{/* <MuiFileInput
-												placeholder='Click to Upload Memory'
-												size='small'
-												margin='dense'
-												variant='standard'
-												fullWidth
-												value={file}
-												onChange={handleFileChange}
-											/> */}
+												<MuiFileInput
+													placeholder='Click to Upload Memory'
+													size='small'
+													margin='dense'
+													variant='standard'
+													fullWidth
+													value={file}
+													onChange={handleFileChange}
+												/>
 												<div className='image-preview-container'>
 													{preview && (
 														<Cropper
@@ -491,9 +505,9 @@ const EventForm = () => {
 										</>
 									) : (
 										<>
-											<DialogContentText textAlign='center'>
+											<h4 textAlign='center'>
 												Hello, {activeUser.firstName}! How many in your party?
-											</DialogContentText>
+											</h4>
 											<TextField
 												disabled={
 													!selectedEvent ||
@@ -530,48 +544,74 @@ const EventForm = () => {
 							)}
 						</>
 					)}
-					{activeUser &&
-						dayjs(daySelected).isSameOrAfter(currentDate, 'day') && (
-							<>
-								{selectedEvent && isAttending ? (
-									<IconBtn
-										tooltip='Undo'
-										placement='left'
-										onClick={handleCancel}
-									>
-										<UndoIcon className='undo' />
-									</IconBtn>
-								) : (
-									<>
-										{warning ? (
-											<Alert
-												severity='warning'
-												action={
-													<div className='action-container'>
-														<Button onClick={handleClearWarning}>Cancel</Button>
-														<Button onClick={handleSubmit}>Proceed</Button>
-													</div>
-												}
-												style={{ width: '100%' }}
-											>
-												Don't forget to invite friends!
-											</Alert>
-										) : (
-											<Button
-												disabled={handleDisabled()}
-												onClick={handleSubmit}
-											>
-												Submit
-											</Button>
-										)}
-									</>
-								)}
-							</>
-						)}
+					{/* {activeUser && isBeforeCheck ? (
+						<>
+							{selectedEvent && isAttending ? (
+								<IconBtn tooltip='Undo' placement='left' onClick={handleCancel}>
+									<UndoIcon className='undo' />
+								</IconBtn>
+							) : (
+								<>
+									{warning ? (
+										<Alert
+											severity='warning'
+											action={
+												<div className='action-container'>
+													<Button onClick={handleClearWarning}>Cancel</Button>
+													<Button onClick={handleSubmit}>Proceed</Button>
+												</div>
+											}
+											style={{ width: '100%' }}
+										>
+											Don't forget to invite friends!
+										</Alert>
+									) : (
+										<Button disabled={handleDisabled()} onClick={handleSubmit}>
+											Submit
+										</Button>
+									)}
+								</>
+							)}
+						</>
+					) : (
+						activeUser &&
+						dayjs(daySelected).isSameOrBefore(currentDate, 'day') &&
+						null
+					)} */}
+					{activeUser && isBeforeCheck && (
+						<>
+							{selectedEvent && isAttending ? (
+								<IconBtn tooltip='Undo' placement='left' onClick={handleCancel}>
+									<UndoIcon className='undo' />
+								</IconBtn>
+							) : (
+								<>
+									{warning ? (
+										<Alert
+											severity='warning'
+											action={
+												<div className='action-container'>
+													<Button onClick={handleClearWarning}>Cancel</Button>
+													<Button onClick={handleSubmit}>Proceed</Button>
+												</div>
+											}
+											style={{ width: '100%' }}
+										>
+											Don't forget to invite friends!
+										</Alert>
+									) : (
+										<Button disabled={handleDisabled()} onClick={handleSubmit}>
+											Submit
+										</Button>
+									)}
+								</>
+							)}
+						</>
+					)}
 				</form>
 			</section>
-		</Paper>
+		</div>
 	);
 };
 
-export default EventForm;
+export default EventInfo;

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Box, Tabs, Tab } from '@mui/material';
 import TabPanel from './components/TabPanel';
 
-const EventFormTabs = ({ tab1data, tab2data }) => {
+const EventInfoTabs = ({ tab1data, tab2data }) => {
 	const [value, setValue] = useState(0);
 
 	const a11yProps = (index) => {
@@ -30,4 +30,4 @@ const EventFormTabs = ({ tab1data, tab2data }) => {
 	);
 };
 
-export default EventFormTabs;
+export default EventInfoTabs;

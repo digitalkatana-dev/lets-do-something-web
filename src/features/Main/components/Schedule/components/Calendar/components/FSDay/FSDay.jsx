@@ -1,22 +1,26 @@
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { IconButton, Paper } from '@mui/material';
 import {
 	toggleOpen,
 	setSelectedEvent,
-	setDaySelected,
+	setEventTime,
 	clearSelectedDay,
 	clearFSDayEvents,
 } from '../../../../../../../../redux/slices/calendarSlice';
+import { reFormatTime } from '../../../../../../../../util/helpers';
 import CloseIcon from '@mui/icons-material/Close';
 import dayjs from 'dayjs';
 import EventItem from '../../../../../../../../components/EventItem';
-import EventForm from '../../../../../../../../components/EventForm';
+import EventInfo from '../../../../../../../../components/EventInfo';
 import Button from '../../../../../../../../transition/Button';
 import './fsday.scss';
 
 const FSDay = () => {
 	const { daySelected, fsDayEvents } = useSelector((state) => state.calendar);
+	const [isMobile, setIsMobile] = useState(false);
+	const [selectedDate, setSelectedDate] = useState('');
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 
@@ -48,40 +52,74 @@ const FSDay = () => {
 		const itemDay = `${dayjs(item.date).format(
 			'ddd, DD MMM YYYY'
 		)} 08:00:00 GMT`;
-		const data = {
-			day: itemDay,
-			eventTime: item.time,
-		};
-		e.stopPropagation();
+		dispatch(setEventTime(reFormatTime(item.time, itemDay)));
 		dispatch(setSelectedEvent(item));
-		dispatch(setDaySelected(data));
+		isMobile && dispatch(toggleOpen(true));
 	};
 
 	const handleClick = () => {
 		dispatch(toggleOpen(true));
 	};
 
+	const handleMobile = useCallback(() => {
+		const handleResize = () => {
+			if (window.innerWidth <= 600) {
+				setIsMobile(true);
+			} else {
+				setIsMobile(false);
+			}
+		};
+
+		window.addEventListener('resize', handleResize);
+		handleResize();
+
+		return () => {
+			window.removeEventListener('resize', handleResize);
+		};
+	}, []);
+
+	const handleDate = useCallback(() => {
+		if (selectedDate !== daySelected.split('07')[0]) {
+			setSelectedDate(daySelected.split('07')[0]);
+		}
+	}, [daySelected, selectedDate]);
+
+	useEffect(() => {
+		handleMobile();
+	}, [handleMobile]);
+
+	useEffect(() => {
+		handleDate();
+	}, [handleDate]);
+
 	return (
 		<div id='fsday'>
 			<header>
-				<h3>{daySelected.split('07')[0]}</h3>
+				<h3>{selectedDate}</h3>
 				<IconButton onClick={handleClose}>
 					<CloseIcon />
 				</IconButton>
 			</header>
 			<div id='content-wrapper'>
-				<Paper id='day-event-list' elevation={7}>
-					{fsDayEvents?.map((item) => (
-						<div key={item?._id} onClick={(e) => handleSelectedEvent(e, item)}>
-							<EventItem data={item} type='fsDay' />
-						</div>
-					))}
-				</Paper>
-				<section id='day-actions'>
-					<Button onClick={handleClick}>Create new event</Button>
+				<section id='day-event-list'>
+					<Paper className='fsDay-surface' elevation={7}>
+						{fsDayEvents?.map((item) => (
+							<div
+								key={item?._id}
+								onClick={(e) => handleSelectedEvent(e, item)}
+							>
+								<EventItem data={item} type='fsDay' />
+							</div>
+						))}
+					</Paper>
+					<Button id='create-event-btn' onClick={handleClick}>
+						Create new event
+					</Button>
 				</section>
 				<section id='event-details'>
-					<EventForm />
+					<Paper className='fsDay-surface' elevation={7}>
+						<EventInfo />
+					</Paper>
 				</section>
 			</div>
 		</div>

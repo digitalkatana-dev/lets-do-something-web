@@ -4,6 +4,7 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
+	gap: 20px;
 	padding: 25px;
 
 	header {
@@ -17,15 +18,29 @@
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
-		gap: 20px;
+
+		#day-event-list,
+		#event-details {
+			height: 100%;
+
+			.fsDay-surface {
+				height: 90%;
+				padding: 10px;
+				border-radius: 7px;
+			}
+		}
 
 		#day-event-list {
-			height: 90%;
-			padding: 10px;
-			background-color: #fffffe;
-			border-radius: 7px;
-			margin: auto 0;
-			overflow-y: scroll;
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+			.fsDay-surface {
+				overflow-y: auto;
+			}
+
+			#create-event-btn {
+				align-self: center;
+			}
 		}
 
 		#event-details {
@@ -36,35 +51,29 @@
 
 @media only screen and (min-width: 600px) {
 	#fsday {
-		justify-content: center;
-		position: relative;
-
-		header {
-			position: absolute;
-			top: 20px;
-			right: 20px;
-			left: 20px;
-		}
-
 		#content-wrapper {
 			flex-direction: row;
 			justify-content: space-around;
 			align-items: center;
-			margin-top: 45px;
 
 			#day-event-list,
 			#event-details {
 				width: 45%;
+
+				#create-event-btn {
+					display: none;
+				}
 			}
 
 			#event-details {
-				height: fit-content;
-				min-height: 85%;
 				display: block;
-			}
 
-			#day-actions {
-				display: none;
+				.fsDay-surface {
+					min-height: 90%;
+					height: fit-content;
+					display: flex;
+					flex-direction: column;
+				}
 			}
 		}
 	}

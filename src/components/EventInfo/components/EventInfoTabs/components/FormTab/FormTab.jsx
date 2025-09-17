@@ -57,6 +57,7 @@ const FormTab = () => {
 	const [file, setFile] = useState(null);
 	const [preview, setPreview] = useState(null);
 	const [cropped, setCropped] = useState(null);
+	const isAfterCheck = dayjs(eventTime).isSameOrAfter(dayjs(daySelected));
 	const cropperRef = useRef(null);
 	const dispatch = useDispatch();
 
@@ -276,35 +277,34 @@ const FormTab = () => {
 					))}
 				</div>
 			</section>
-			{selectedEvent &&
-				dayjs(selectedEvent?.date).isSameOrBefore(new Date(), 'day') && (
-					<section className='event-section alt'>
-						<MuiFileInput
-							placeholder='Click to upload memory'
-							size='small'
-							margin='dense'
-							variant='standard'
-							fullWidth
-							value={file}
-							onChange={handleFileChange}
-						/>
-						<div className='image-preview-container'>
-							{preview && (
-								<Cropper
-									src={preview}
-									initialAspectRatio={16 / 9}
-									guides={false}
-									background={false}
-									crop={onCrop}
-									ref={cropperRef}
-								/>
-							)}
-						</div>
-						<Button disabled={!cropped} onClick={handleAddMemory}>
-							Create Memory
-						</Button>
-					</section>
-				)}
+			{selectedEvent && isAfterCheck && (
+				<section className='event-section alt'>
+					<MuiFileInput
+						placeholder='Click to upload memory'
+						size='small'
+						margin='dense'
+						variant='standard'
+						fullWidth
+						value={file}
+						onChange={handleFileChange}
+					/>
+					<div className='image-preview-container'>
+						{preview && (
+							<Cropper
+								src={preview}
+								initialAspectRatio={16 / 9}
+								guides={false}
+								background={false}
+								crop={onCrop}
+								ref={cropperRef}
+							/>
+						)}
+					</div>
+					<Button disabled={!cropped} onClick={handleAddMemory}>
+						Create Memory
+					</Button>
+				</section>
+			)}
 		</>
 	);
 };

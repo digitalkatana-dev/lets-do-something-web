@@ -4,6 +4,7 @@ import { CircularProgress } from '@mui/material';
 import './button.scss';
 
 const Button = ({
+	id,
 	loading,
 	fullWidth,
 	btnClass,
@@ -18,6 +19,7 @@ const Button = ({
 
 	return (
 		<button
+			id={id}
 			className={btnClass ? `btn ${btnClass}` : 'btn'}
 			style={btnStyle}
 			type={type}
