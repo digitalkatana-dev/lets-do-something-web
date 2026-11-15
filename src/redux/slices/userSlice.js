@@ -8,11 +8,25 @@ import { setMenuView } from './navSlice';
 import { socket } from '../../util/socket';
 import doSomethingApi from '../../api/doSomethingApi';
 
-export const userAuth = createAsyncThunk(
-	'user/auth',
+export const userRegistration = createAsyncThunk(
+	'user/register',
 	async (data, { rejectWithValue, dispatch }) => {
 		try {
-			const res = await doSomethingApi.post('/users/auth', data);
+			const res = await doSomethingApi.post('/api/users/register', data);
+			const { token, userProfile } = res.data;
+			localStorage.setItem('token', token);
+			dispatch(setMenuView('Login'));
+			return userProfile;
+		} catch (err) {
+			return rejectWithValue(err.response.data);
+		}
+	}
+);
+export const userAuth = createAsyncThunk(
+	'user/login',
+	async (data, { rejectWithValue, dispatch }) => {
+		try {
+			const res = await doSomethingApi.post('/api/users/login', data);
 			const { token, userProfile } = res.data;
 			localStorage.setItem('token', token);
 			dispatch(setMenuView('Login'));
@@ -27,7 +41,7 @@ export const getUser = createAsyncThunk(
 	'user/get_user',
 	async (data, { rejectWithValue }) => {
 		try {
-			const res = await doSomethingApi.get(`/users/?id=${data}`);
+			const res = await doSomethingApi.get(`/api/users/?id=${data}`);
 			return res.data;
 		} catch (err) {
 			return rejectWithValue(err.response.data);
@@ -39,7 +53,7 @@ export const updateProfilePic = createAsyncThunk(
 	'user/profile_pic',
 	async (data, { rejectWithValue }) => {
 		try {
-			const res = await doSomethingApi.post('/users/profile-pic', data);
+			const res = await doSomethingApi.post('/api/users/profile-pic', data);
 			return res.data;
 		} catch (err) {
 			return rejectWithValue(err.response.data);
@@ -52,7 +66,7 @@ export const generatePasswordToken = createAsyncThunk(
 	async (userData, { rejectWithValue }) => {
 		try {
 			const res = await doSomethingApi.post(
-				'/users/generate-password-token',
+				'/api/users/generate-password-token',
 				userData
 			);
 			return res.data;
@@ -66,7 +80,7 @@ export const resetPasswordWithToken = createAsyncThunk(
 	'user/reset_with_token',
 	async (userData, { rejectWithValue }) => {
 		try {
-			const res = await doSomethingApi.post('/users/reset-password', userData);
+			const res = await doSomethingApi.post('/api/users/reset-password', userData);
 			return res.data;
 		} catch (err) {
 			return rejectWithValue(err.response.data);
@@ -79,7 +93,7 @@ export const updateUser = createAsyncThunk(
 	async (data, { rejectWithValue, dispatch }) => {
 		try {
 			const res = await doSomethingApi.put(
-				`/profiles/${data?._id}/update`,
+				`/api/profiles/${data?._id}/update`,
 				data
 			);
 			return res.data;
@@ -93,7 +107,7 @@ export const userSearch = createAsyncThunk(
 	'user/search',
 	async (data, { rejectWithValue }) => {
 		try {
-			const res = await doSomethingApi.get(`/users/?search=${data}`);
+			const res = await doSomethingApi.get(`/api/users/?search=${data}`);
 			return res.data;
 		} catch (err) {
 			return rejectWithValue(err.response.data);
@@ -105,7 +119,7 @@ export const processFriend = createAsyncThunk(
 	'user/add_remove_friend',
 	async (data, { rejectWithValue, dispatch }) => {
 		try {
-			const res = await doSomethingApi.put(`/users/${data}/friends`);
+			const res = await doSomethingApi.put(`/api/users/${data}/friends`);
 			return res.data;
 		} catch (err) {
 			return rejectWithValue(err.response.data);
@@ -192,6 +206,23 @@ export const userSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder
+			.addCase(userRegistration.pending, (state) => {
+				state.loading = true;
+				state.errors = null;
+			})
+			.addCase(userRegistration.fulfilled, (state, action) => {
+				state.loading = false;
+				state.activeUser = action.payload;
+				socket.emit('setup', action.payload._id);
+				state.errors = null;
+				state.email = '';
+				state.password = '';
+				window.location = '/create-profile';
+			})
+			.addCase(userRegistration.rejected, (state, action) => {
+				state.loading = false;
+				state.errors = action.payload;
+			})
 			.addCase(userAuth.pending, (state) => {
 				state.loading = true;
 				state.errors = null;
@@ -199,13 +230,9 @@ export const userSlice = createSlice({
 			.addCase(userAuth.fulfilled, (state, action) => {
 				state.loading = false;
 				state.activeUser = action.payload;
-				socket.emit('setup', action.payload._id);
-				state.errors = null;
 				state.email = '';
 				state.password = '';
-				if (action.payload.firstLogin) {
-					window.location = '/create-profile';
-				}
+				state.errors = null;
 			})
 			.addCase(userAuth.rejected, (state, action) => {
 				state.loading = false;
