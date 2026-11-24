@@ -13,10 +13,10 @@ export const userRegistration = createAsyncThunk(
 	async (data, { rejectWithValue, dispatch }) => {
 		try {
 			const res = await doSomethingApi.post('/api/users/register', data);
-			const { token, userProfile } = res.data;
+			const { token, ...others } = res.data;
 			localStorage.setItem('token', token);
 			dispatch(setMenuView('Login'));
-			return userProfile;
+			return {...others};
 		} catch (err) {
 			return rejectWithValue(err.response.data);
 		}
@@ -27,10 +27,10 @@ export const userAuth = createAsyncThunk(
 	async (data, { rejectWithValue, dispatch }) => {
 		try {
 			const res = await doSomethingApi.post('/api/users/login', data);
-			const { token, userProfile } = res.data;
+			const { token, ...others } = res.data;
 			localStorage.setItem('token', token);
 			dispatch(setMenuView('Login'));
-			return userProfile;
+			return {...others};
 		} catch (err) {
 			return rejectWithValue(err.response.data);
 		}
@@ -138,6 +138,7 @@ const initialState = userAdapter.getInitialState({
 	notify: 'sms',
 	show: false,
 	activeUser: null,
+	allUsers: [],
 	searchResults: [],
 	success: null,
 	errors: null,
@@ -171,6 +172,16 @@ export const userSlice = createSlice({
 		setErrors: (state, action) => {
 			state.errors = action.payload;
 		},
+	    userSearch: (state, action) => {
+	      const queryWords = action.payload
+	        .toLowerCase()
+	        .split(' ')
+	        .filter(Boolean);
+	      state.searchResults = state.allUsers.filter((user) => {
+	        const userName = user.firstName.toLowerCase() ?? '';
+	        return queryWords.every((word) => userName.includes(word));
+	      });
+	    },
 		clearForm: (state) => {
 			state.firstName = '';
 			state.lastName = '';
@@ -197,6 +208,7 @@ export const userSlice = createSlice({
 			state.password = '';
 			state.notify = 'sms';
 			state.activeUser = null;
+			state.allUsers = [];
 			state.searchResults = [];
 			state.success = null;
 			state.errors = null;
@@ -212,8 +224,9 @@ export const userSlice = createSlice({
 			})
 			.addCase(userRegistration.fulfilled, (state, action) => {
 				state.loading = false;
-				state.activeUser = action.payload;
-				socket.emit('setup', action.payload._id);
+				state.activeUser = action.payload.userProfile;
+				state.allUsers = action.payload.allUsers;
+				socket.emit('setup', action.payload.userProfile._id);
 				state.errors = null;
 				state.email = '';
 				state.password = '';
@@ -229,7 +242,8 @@ export const userSlice = createSlice({
 			})
 			.addCase(userAuth.fulfilled, (state, action) => {
 				state.loading = false;
-				state.activeUser = action.payload;
+				state.activeUser = action.payload.userProfile;
+				state.allUsers = action.payload.allUsers;
 				state.email = '';
 				state.password = '';
 				state.errors = null;
@@ -307,18 +321,18 @@ export const userSlice = createSlice({
 				state.loading = false;
 				state.errors = action.payload;
 			})
-			.addCase(userSearch.pending, (state) => {
-				state.loading = true;
-				state.errors = null;
-			})
-			.addCase(userSearch.fulfilled, (state, action) => {
-				state.loading = false;
-				state.searchResults = action.payload;
-			})
-			.addCase(userSearch.rejected, (state, action) => {
-				state.loading = false;
-				state.errors = action.payload;
-			})
+			// .addCase(userSearch.pending, (state) => {
+			// 	state.loading = true;
+			// 	state.errors = null;
+			// })
+			// .addCase(userSearch.fulfilled, (state, action) => {
+			// 	state.loading = false;
+			// 	state.searchResults = action.payload;
+			// })
+			// .addCase(userSearch.rejected, (state, action) => {
+			// 	state.loading = false;
+			// 	state.errors = action.payload;
+			// })
 			.addCase(processFriend.pending, (state) => {
 				state.loading = true;
 				state.errors = null;
@@ -350,6 +364,7 @@ export const {
 	setNotify,
 	setShow,
 	setErrors,
+	userSearch,
 	clearForm,
 	clearSearchResults,
 	clearUserSuccess,
