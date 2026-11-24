@@ -103,17 +103,17 @@ export const updateUser = createAsyncThunk(
 	}
 );
 
-export const userSearch = createAsyncThunk(
-	'user/search',
-	async (data, { rejectWithValue }) => {
-		try {
-			const res = await doSomethingApi.get(`/api/users/?search=${data}`);
-			return res.data;
-		} catch (err) {
-			return rejectWithValue(err.response.data);
-		}
-	}
-);
+// export const userSearch = createAsyncThunk(
+// 	'user/search',
+// 	async (data, { rejectWithValue }) => {
+// 		try {
+// 			const res = await doSomethingApi.get(`/api/users/?search=${data}`);
+// 			return res.data;
+// 		} catch (err) {
+// 			return rejectWithValue(err.response.data);
+// 		}
+// 	}
+// );
 
 export const processFriend = createAsyncThunk(
 	'user/add_remove_friend',
